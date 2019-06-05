@@ -4,7 +4,6 @@ We'd love for you to contribute to our source code and to make Tag You're It eve
 
  - [Code of Conduct](#coc)
  - [Issues and Bugs](#issue)
- - [Feature Requests](#feature)
  - [Submission Guidelines](#submit)
  - [Coding Rules](#rules)
 
