@@ -1,0 +1,13 @@
+<resources>
+  <!-- Default screen margins, per the Android Design guidelines. -->
+  <dimen name="nav_header_height">160dp</dimen>
+  <!-- Default screen margins, per the Android Design guidelines. -->
+  <dimen name="activity_horizontal_margin">16dp</dimen>
+  <dimen name="activity_vertical_margin">16dp</dimen>
+  <dimen name="play_size">50dp</dimen>
+  <dimen name="media_player_title">30sp</dimen>
+  <dimen name="media_player_part">14sp</dimen>
+  <dimen name="media_player_close_top">0dp</dimen>
+  <dimen name="media_player_speed_bottom">0dp</dimen>
+  <dimen name="media_player_balance_bottom">0dp</dimen>
+</resources>

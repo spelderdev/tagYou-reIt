@@ -1,0 +1,66 @@
+<?xml version="1.0" ?>
+<tags available="125" count="10" stamp="2011-06-28 18:04:30">
+  <tag index="1">
+    <id>31</id>
+    <Title>After Today</Title>
+    <AltTitle/>
+    <Version/>
+    <WritKey>Major:F</WritKey>
+    <Parts>4</Parts>
+    <Type>Barbershop</Type>
+    <Recording>stereo - one part on one side, the other three parts on the other side
+    </Recording>
+    <TeachVid/>
+    <Notes/>
+    <Arranger>Jay Giallombardo</Arranger>
+    <ArrWebsite/>
+    <Arranged>1971</Arranged>
+    <SungBy>Acoustix</SungBy>
+    <SungWebsite/>
+    <SungYear/>
+    <Quartet>Daniel Gillis</Quartet>
+    <QWebsite>http://www.vocalharmonies.com</QWebsite>
+    <Teacher/>
+    <TWebsite/>
+    <Provider>Daniel Gillis</Provider>
+    <ProvWebsite>http://www.vocalharmonies.com</ProvWebsite>
+    <Posted>Sat, 13 Dec 2008</Posted>
+    <Classic>110</Classic>
+    <Rating>3.1490384615385</Rating>
+    <RatingCount>291</RatingCount>
+    <Downloaded>434</Downloaded>
+    <SheetMusic type="gif">http://www.barbershoptags.com/dbaction.php?action=DownloadFile&amp;dbase=tags&amp;id=31&amp;fldname=SheetMusic</SheetMusic>
+    <Notation/>
+    <AllParts type="mp3">http://www.barbershoptags.com/dbaction.php?action=DownloadFile&amp;dbase=tags&amp;id=31&amp;fldname=AllParts</AllParts>
+    <Bass type="mp3">http://www.barbershoptags.com/dbaction.php?action=DownloadFile&amp;dbase=tags&amp;id=31&amp;fldname=Bass</Bass>
+    <Bari type="mp3">http://www.barbershoptags.com/dbaction.php?action=DownloadFile&amp;dbase=tags&amp;id=31&amp;fldname=Bari</Bari>
+    <Lead type="mp3">http://www.barbershoptags.com/dbaction.php?action=DownloadFile&amp;dbase=tags&amp;id=31&amp;fldname=Lead</Lead>
+    <Tenor type="mp3">http://www.barbershoptags.com/dbaction.php?action=DownloadFile&amp;dbase=tags&amp;id=31&amp;fldname=Tenor</Tenor>
+    <Other1/>
+    <Other2/>
+    <Other3/>
+    <Other4/>
+    <videos available="1" count="1">
+      <video index="1">
+        <id>83</id>
+        <Desc>Description</Desc>
+        <SungKey>Major:Ab</SungKey>
+        <Multitrack>Yes</Multitrack>
+        <Code>uxzJHrj0-eI</Code>
+        <SungBy>Ronnie Spann (aka BBSTENOR419)</SungBy>
+        <SungWebsite/>
+        <Posted>Mon, 30 Mar 2009</Posted>
+      </video>
+      <video index="2">
+        <id>84</id>
+        <Desc>Description</Desc>
+        <SungKey>Major:Ab</SungKey>
+        <Multitrack>Yes</Multitrack>
+        <Code>uxzJHrj0-eI</Code>
+        <SungBy>Ronnie Spann (aka BBSTENOR419)</SungBy>
+        <SungWebsite/>
+        <Posted>Mon, 30 Mar 2009</Posted>
+      </video>
+    </videos>
+  </tag>
+</tags>

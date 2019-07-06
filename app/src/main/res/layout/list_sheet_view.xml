@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:tools="http://schemas.android.com/tools"
+  android:layout_width="match_parent"
+  android:layout_height="match_parent"
+  android:background="@android:color/white"
+  android:orientation="vertical">
+
+  <RelativeLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="15dp"
+    android:layout_marginBottom="4dp">
+
+    <LinearLayout
+      android:id="@+id/tag_list_rating"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_alignParentStart="true"
+      android:layout_centerVertical="true"
+      android:layout_marginStart="10dp"
+      android:layout_marginLeft="10dp"
+      android:layout_marginEnd="10dp"
+      android:layout_marginRight="10dp"
+      android:orientation="vertical">
+
+      <RatingBar
+        android:id="@+id/tag_list_ratingBar"
+        style="@style/starsRatingBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:isIndicator="true"
+        android:numStars="1"
+        android:progressDrawable="@drawable/orange_rating"/>
+
+      <TextView
+        android:id="@+id/tag_list_ratingText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:textSize="12sp"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+      android:id="@+id/tag_title_view"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_toEndOf="@id/tag_list_rating"
+      android:gravity="center"
+      android:orientation="horizontal">
+
+      <TextView
+        android:id="@+id/title"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:layout_weight="1"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:text="@string/tag_name"
+        android:textColor="@color/darkTitle"
+        android:textSize="24sp"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+      android:id="@+id/tag_arranger_view"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_below="@id/tag_title_view"
+      android:layout_marginBottom="4dp"
+      android:layout_toEndOf="@id/tag_list_rating"
+      android:orientation="horizontal">
+
+      <TextView
+        android:id="@+id/tag_list_arranger"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:text="@string/by_arranger"
+        android:textColor="@color/darkSecondaryTitle"/>
+
+      <TextView
+        android:id="@+id/tag_list_line_sep"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingStart="2dp"
+        android:paddingLeft="2dp"
+        android:paddingEnd="2dp"
+        android:paddingRight="2dp"
+        android:text="@string/separator"
+        android:textColor="@color/darkSecondaryTitle"
+        android:textSize="12sp"/>
+
+      <TextView
+        android:id="@+id/tag_list_version"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:text="@string/long_version"
+        android:textColor="@color/darkSecondaryTitle"/>
+
+    </LinearLayout>
+
+  </RelativeLayout>
+
+  <LinearLayout
+    android:id="@+id/tag_key_view"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/list_item_select"
+    android:minHeight="48dp">
+
+    <ImageView
+      android:id="@+id/icon"
+      android:layout_width="24dp"
+      android:layout_height="24dp"
+      android:layout_gravity="center_vertical"
+      android:layout_marginStart="16dp"
+      android:src="@drawable/ic_key"/>
+
+    <TextView
+      android:id="@+id/tag_list_key"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_gravity="center_vertical"
+      android:layout_marginStart="32dp"
+      android:layout_marginEnd="16dp"
+      android:maxLines="1"
+      android:text="Key"
+      android:textColor="@color/text_gray"
+      android:textSize="16sp"/>
+
+  </LinearLayout>
+
+  <ListView
+    android:id="@+id/list"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:clipToPadding="false"
+    android:divider="@null"
+    android:paddingBottom="8dp"
+    android:scrollbarStyle="outsideOverlay"
+    tools:listitem="@layout/sheet_list_item"/>
+
+</LinearLayout>

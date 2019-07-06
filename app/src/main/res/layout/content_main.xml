@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:app="http://schemas.android.com/apk/res-auto"
+  xmlns:tools="http://schemas.android.com/tools"
+  android:layout_width="match_parent"
+  android:layout_height="fill_parent"
+  app:layout_behavior="@string/appbar_scrolling_view_behavior"
+  tools:context=".ui.MainActivity"
+  tools:showIn="@layout/app_bar_main">
+
+  <androidx.appcompat.widget.Toolbar
+    android:id="@+id/track_toolbar"
+    android:layout_width="match_parent"
+    android:layout_height="60dp"
+    android:layout_alignParentBottom="true"
+    android:background="@color/colorPrimaryDark"
+    android:visibility="gone"
+    app:contentInsetLeft="0dp"
+    app:contentInsetStart="0dp">
+
+    <LinearLayout
+      android:layout_width="40dp"
+      android:layout_height="40dp"
+      android:layout_gravity="start"
+      android:layout_marginStart="10dp"
+      android:layout_marginLeft="10dp"
+      android:layout_marginEnd="10dp"
+      android:layout_marginRight="10dp"
+      android:paddingTop="5dp"
+      android:paddingBottom="5dp">
+
+      <ProgressBar
+        android:id="@+id/player_loading"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"/>
+
+      <ImageView
+        android:id="@+id/player_control"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:contentDescription="@string/playbackControl"
+        android:visibility="gone"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_marginEnd="35dp"
+      android:orientation="vertical">
+
+      <TextView
+        android:id="@+id/selected_track_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:textColor="#FFFFFF"
+        android:textSize="20sp"/>
+
+      <TextView
+        android:id="@+id/selected_track_part"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="5dp"
+        android:textColor="#BBBBBB"
+        android:textSize="14sp"/>
+
+    </LinearLayout>
+
+    <ImageView
+      android:id="@+id/player_close"
+      android:layout_width="30dp"
+      android:layout_height="30dp"
+      android:layout_gravity="end"
+      android:contentDescription="@string/close"
+      android:paddingStart="5dp"
+      android:paddingTop="5dp"
+      android:paddingEnd="10dp"
+      android:paddingBottom="5dp"
+      android:src="@drawable/ic_close_white_24dp"/>
+
+  </androidx.appcompat.widget.Toolbar>
+
+  <FrameLayout
+    android:id="@+id/fragment_container"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_above="@id/track_toolbar"/>
+
+</RelativeLayout>

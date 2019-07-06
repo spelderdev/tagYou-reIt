@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <color name="colorPrimary">#3A2A70</color>
+  <color name="colorPrimaryDark">#090244</color>
+  <color name="colorAccent">#e48126</color>
+  <color name="darkTitle">#212121</color>
+  <color name="darkSecondaryTitle">#616161</color>
+  <color name="lightText">#dbdbdb</color>
+  <color name="text_gray">#8C000000</color>
+  <color name="divider_gray">#AAe2e2e2</color>
+  <color name="card_view_background">#FFFFFFFF</color>
+</resources>

@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:bwq="http://schemas.android.com/tools">
+
+  <item
+    android:id="@+id/menu_sub_header"
+    android:title="@string/tag_menu_tracks">
+    <menu android:id="@+id/menu_submenu">
+      <item
+        android:id="@+id/menu_track_all"
+        android:icon="@drawable/ic_play_circle_outline"
+        android:title="@string/tag_menu_all_parts"/>
+      <item
+        android:id="@+id/menu_track_tenor"
+        android:icon="@drawable/ic_play_circle_tenor"
+        android:title="@string/tag_menu_tenor"/>
+      <item
+        android:id="@+id/menu_track_lead"
+        android:icon="@drawable/ic_play_circle_lead"
+        android:title="@string/tag_menu_lead"/>
+      <item
+        android:id="@+id/menu_track_bass"
+        android:icon="@drawable/ic_play_circle_bass"
+        android:title="@string/tag_menu_bass"/>
+      <item
+        android:id="@+id/menu_track_bari"
+        android:icon="@drawable/ic_play_circle_bari"
+        android:title="@string/tag_menu_bari"/>
+      <item
+        android:id="@+id/menu_track_other1"
+        android:icon="@drawable/ic_play"
+        android:title="@string/tag_menu_other1"/>
+      <item
+        android:id="@+id/menu_track_other2"
+        android:icon="@drawable/ic_play"
+        android:title="@string/tag_menu_other2"/>
+      <item
+        android:id="@+id/menu_track_other3"
+        android:icon="@drawable/ic_play"
+        android:title="@string/tag_menu_other3"/>
+      <item
+        android:id="@+id/menu_track_other4"
+        android:icon="@drawable/ic_play"
+        android:title="@string/tag_menu_other4"/>
+    </menu>
+  </item>
+
+  <item
+    android:id="@+id/menu_videos"
+    android:title="@string/tag_menu_video_title">
+    <menu android:id="@+id/menu_video">
+      <item
+        android:id="@+id/menu_video_1"
+        android:icon="@drawable/ic_video_1"
+        android:title="@string/tag_menu_video1"/>
+      <item
+        android:id="@+id/menu_video_2"
+        android:icon="@drawable/ic_video_2"
+        android:title="@string/tag_menu_video2"/>
+      <item
+        android:id="@+id/menu_video_3"
+        android:icon="@drawable/ic_video_3"
+        android:title="@string/tag_menu_video3"/>
+      <item
+        android:id="@+id/menu_video_4"
+        android:icon="@drawable/ic_video_4"
+        android:title="@string/tag_menu_video4"/>
+      <item
+        android:id="@+id/menu_video_more"
+        android:icon="@drawable/ic_video_circle_outline"
+        android:title="@string/tag_menu_video_more"/>
+    </menu>
+  </item>
+
+  <item
+    android:id="@+id/menu_rate"
+    android:icon="@drawable/ic_star"
+    android:title="@string/tag_menu_rate"/>
+  <item
+    android:id="@+id/menu_share"
+    android:icon="@drawable/ic_share_variant"
+    android:title="@string/tag_menu_share"
+    bwq:actionProviderClass="android.support.v7.widget.ShareActionProvider"/>
+
+</menu>

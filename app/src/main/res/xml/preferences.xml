@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+  android:layout_width="fill_parent"
+  android:layout_height="fill_parent">
+
+  <SwitchPreference
+    android:defaultValue="true"
+    android:icon="@drawable/favorite"
+    android:key="pref_favorites_save"
+    android:summary="Download Favorite Tags to Device"
+    android:title="Save Favorites"/>
+
+  <EditTextPreference
+    android:defaultValue="14"
+    android:digits="0123456789"
+    android:icon="@drawable/clock"
+    android:inputType="number"
+    android:key="pref_key_update_frequency"
+    android:maxLength="3"
+    android:summary="Frequency to update downloaded tags"
+    android:title="@string/update"/>
+
+  <EditTextPreference
+    android:defaultValue="440.0"
+    android:digits="0123456789."
+    android:icon="@drawable/tune"
+    android:inputType="numberDecimal"
+    android:key="tuning"
+    android:maxLength="5"
+    android:summary="Change the base tuning frequency of pitch pipe"
+    android:title="@string/tuning"/>
+
+  <PreferenceCategory android:title="Backup">
+
+    <Preference
+      android:icon="@drawable/backup"
+      android:key="pref_key_backup"
+      android:summary="Backup Favorites to Google Drive"
+      android:title="Backup"/>
+
+    <Preference
+      android:icon="@drawable/restore"
+      android:key="pref_key_restore"
+      android:summary="Restore Favorites from Google Drive"
+      android:title="Restore"/>
+  </PreferenceCategory>
+
+  <PreferenceCategory android:title="About">
+
+    <PreferenceScreen
+      android:icon="@drawable/policy"
+      android:key="pref_key_privacy"
+      android:summary="View our privacy policy"
+      android:title="Privacy Policy"></PreferenceScreen>
+  </PreferenceCategory>
+</PreferenceScreen>

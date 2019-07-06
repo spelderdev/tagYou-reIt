@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:app="http://schemas.android.com/apk/res-auto"
+  android:layout_width="fill_parent"
+  android:layout_height="wrap_content">
+
+  <ListPreference
+    android:defaultValue="any"
+    android:entries="@array/partFilter"
+    android:entryValues="@array/partFilterVal"
+    android:key="@string/filter_part_key"
+    android:summary="%s"
+    android:title="Parts"
+    app:iconSpaceReserved="false"/>
+
+  <SwitchPreference
+    android:defaultValue="false"
+    android:key="@string/filter_sheet_music_key"
+    android:title="Sheet Music"
+    app:iconSpaceReserved="false"/>
+
+  <SwitchPreference
+    android:defaultValue="false"
+    android:key="@string/filter_learning_track_key"
+    android:title="Learning Tracks"
+    app:iconSpaceReserved="false"/>
+
+  <ListPreference
+    android:defaultValue="key_any"
+    android:entries="@array/keyFilter"
+    android:entryValues="@array/keyFilterVal"
+    android:key="@string/filter_key_key"
+    android:summary="%s"
+    android:title="Key"
+    app:iconSpaceReserved="false"/>
+
+  <ListPreference
+    android:defaultValue="any"
+    android:entries="@array/typeFilter"
+    android:entryValues="@array/typeFilterVal"
+    android:key="@string/filter_type_key"
+    android:summary="%s"
+    android:title="Type"
+    app:iconSpaceReserved="false"/>
+
+  <ListPreference
+    android:defaultValue="any"
+    android:entries="@array/ratingFilter"
+    android:entryValues="@array/ratingFilterVal"
+    android:key="@string/filter_rating_key"
+    android:summary="%s"
+    android:title="Minimum Rating"
+    app:iconSpaceReserved="false"/>
+
+</PreferenceScreen>
