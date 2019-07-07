@@ -90,4 +90,15 @@
     <item>4</item>
     <item>4.5</item>
   </string-array>
+
+  <string-array name="tagTouchAction">
+    <item>Nothing</item>
+    <item>Fullscreen</item>
+    <item>Open Menu</item>
+  </string-array>
+  <string-array name="tagTouchActionVal">
+    <item>nothing</item>
+    <item>fullscreen</item>
+    <item>menu</item>
+  </string-array>
 </resources>
