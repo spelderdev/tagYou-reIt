@@ -3,22 +3,14 @@
   android:layout_width="fill_parent"
   android:layout_height="fill_parent">
 
-  <SwitchPreference
-    android:defaultValue="true"
-    android:icon="@drawable/favorite"
-    android:key="pref_favorites_save"
-    android:summary="Download Favorite Tags to Device"
-    android:title="Save Favorites"/>
-
-  <EditTextPreference
-    android:defaultValue="14"
-    android:digits="0123456789"
-    android:icon="@drawable/clock"
-    android:inputType="number"
-    android:key="pref_key_update_frequency"
-    android:maxLength="3"
-    android:summary="Frequency to update downloaded tags"
-    android:title="@string/update"/>
+  <ListPreference
+    android:defaultValue="fullscreen"
+    android:entries="@array/tagTouchAction"
+    android:entryValues="@array/tagTouchActionVal"
+    android:icon="@drawable/tap"
+    android:key="pref_key_touch_action"
+    android:summary="%s"
+    android:title="Tag Touch Action"/>
 
   <EditTextPreference
     android:defaultValue="440.0"
@@ -29,6 +21,27 @@
     android:maxLength="5"
     android:summary="Change the base tuning frequency of pitch pipe"
     android:title="@string/tuning"/>
+
+  <PreferenceCategory android:title="Download">
+
+    <SwitchPreference
+      android:defaultValue="true"
+      android:icon="@drawable/favorite"
+      android:key="pref_favorites_save"
+      android:summary="Download Favorite Tags to Device"
+      android:title="Save Favorites"/>
+
+    <EditTextPreference
+      android:defaultValue="14"
+      android:digits="0123456789"
+      android:icon="@drawable/clock"
+      android:inputType="number"
+      android:key="pref_key_update_frequency"
+      android:maxLength="3"
+      android:summary="Frequency to update downloaded tags"
+      android:title="@string/update"/>
+
+  </PreferenceCategory>
 
   <PreferenceCategory android:title="Backup">
 
@@ -43,6 +56,7 @@
       android:key="pref_key_restore"
       android:summary="Restore Favorites from Google Drive"
       android:title="Restore"/>
+
   </PreferenceCategory>
 
   <PreferenceCategory android:title="About">
@@ -51,6 +65,7 @@
       android:icon="@drawable/policy"
       android:key="pref_key_privacy"
       android:summary="View our privacy policy"
-      android:title="Privacy Policy"></PreferenceScreen>
+      android:title="Privacy Policy"/>
+
   </PreferenceCategory>
 </PreferenceScreen>

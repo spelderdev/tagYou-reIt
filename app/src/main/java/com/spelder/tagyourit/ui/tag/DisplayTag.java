@@ -55,6 +55,10 @@ public class DisplayTag extends Fragment {
 
   private static final int PITCH_DOWN_TIME_MILLIS = 500;
 
+  private static final String TOUCH_ACTION_KEY_FULLSCREEN = "fullscreen";
+
+  private static final String TOUCH_ACTION_KEY_MENU = "menu";
+
   private SharedPreferences preferences;
 
   private TouchImageView mImageView;
@@ -134,23 +138,13 @@ public class DisplayTag extends Fragment {
     mImageView = view.findViewById(R.id.image);
     mImageView.setOnClickListener(
         v -> {
-          if (!fullscreenState) {
-            hideSystemUI();
-          } else {
-            showSystemUI();
-          }
-          fullscreenState = !fullscreenState;
+          handleTouchView();
         });
 
     mPdfView = view.findViewById(R.id.pdfView);
     mPdfView.setOnClickListener(
         v -> {
-          if (!fullscreenState) {
-            hideSystemUI();
-          } else {
-            showSystemUI();
-          }
-          fullscreenState = !fullscreenState;
+          handleTouchView();
         });
 
     no_pdf_text = view.findViewById(R.id.no_pdf);
@@ -176,6 +170,24 @@ public class DisplayTag extends Fragment {
     mPdfView.useBestQuality(true);
 
     retrieveTagInfo(context);
+  }
+
+  private void handleTouchView() {
+    String touchAction = preferences.getString("pref_key_touch_action", "fullscreen");
+    if (touchAction.equals(TOUCH_ACTION_KEY_FULLSCREEN)) {
+      handleFullscreen();
+    } else if (touchAction.equals(TOUCH_ACTION_KEY_MENU)) {
+      showBottomMenu();
+    }
+  }
+
+  private void handleFullscreen() {
+    if (!fullscreenState) {
+      hideSystemUI();
+    } else {
+      showSystemUI();
+    }
+    fullscreenState = !fullscreenState;
   }
 
   @Override
