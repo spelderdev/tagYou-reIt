@@ -1,7 +1,6 @@
 package com.spelder.tagyourit.drive;
 
 import android.app.Activity;
-import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.Toast;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
@@ -9,31 +8,20 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.api.Scope;
-import com.google.android.gms.drive.Drive;
-import com.google.android.gms.drive.DriveContents;
-import com.google.android.gms.drive.DriveFile;
-import com.google.android.gms.drive.DriveFolder;
-import com.google.android.gms.drive.DriveResourceClient;
-import com.google.android.gms.drive.MetadataBuffer;
-import com.google.android.gms.drive.MetadataChangeSet;
-import com.google.android.gms.drive.query.Filters;
-import com.google.android.gms.drive.query.Query;
-import com.google.android.gms.drive.query.SearchableField;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
-import com.google.android.gms.tasks.Tasks;
+import com.google.api.client.extensions.android.http.AndroidHttp;
+import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
+import com.google.api.client.json.gson.GsonFactory;
+import com.google.api.services.drive.Drive;
+import com.google.api.services.drive.DriveScopes;
+import com.spelder.tagyourit.R;
 import com.spelder.tagyourit.db.TagDbHelper;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
 /** Backs up and restores the tag database to the user's Google Drive account. */
-@SuppressWarnings("WeakerAccess")
 public class FavoritesBackup {
   public static final int REQUEST_CODE_SIGN_IN = 0;
 
@@ -43,23 +31,13 @@ public class FavoritesBackup {
 
   private static String dbFilePath;
   private final Activity activity;
-  private DriveResourceClient mDriveResourceClient;
+  private DriveServiceHelper mDriveServiceHelper;
   private Action action;
 
-  private final OnSuccessListener<MetadataBuffer> successListener =
-      new OnSuccessListener<MetadataBuffer>() {
-        @Override
-        public void onSuccess(MetadataBuffer metadata) {
-          switch (action) {
-            case BACKUP:
-              new BackupAsyncTask(mDriveResourceClient, FavoritesBackup.this).execute(metadata);
-              break;
-            case RESTORE:
-              new RestoreAsyncTask(mDriveResourceClient, FavoritesBackup.this).execute(metadata);
-              break;
-          }
-        }
-      };
+  private enum Action {
+    BACKUP,
+    RESTORE
+  }
 
   public FavoritesBackup(Activity activity) {
     dbFilePath = activity.getDatabasePath(TagDbHelper.DATABASE_NAME).getAbsolutePath();
@@ -72,17 +50,18 @@ public class FavoritesBackup {
 
   /** Starts the sign-in process and initializes the Drive client. */
   private void signIn() {
-    Set<Scope> requiredScopes = new HashSet<>(2);
-    requiredScopes.add(Drive.SCOPE_FILE);
-    requiredScopes.add(Drive.SCOPE_APPFOLDER);
+    Set<Scope> requiredScopes = new HashSet<>(1);
+    requiredScopes.add(new Scope(DriveScopes.DRIVE_FILE));
     GoogleSignInAccount signInAccount = GoogleSignIn.getLastSignedInAccount(activity);
-    if (signInAccount != null && signInAccount.getGrantedScopes().containsAll(requiredScopes)) {
+    if (signInAccount != null
+        && signInAccount.getAccount() != null
+        && signInAccount.getGrantedScopes().containsAll(requiredScopes)) {
       initializeDriveClient(signInAccount);
     } else {
       GoogleSignInOptions signInOptions =
           new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-              .requestScopes(Drive.SCOPE_FILE)
-              .requestScopes(Drive.SCOPE_APPFOLDER)
+              .requestEmail()
+              .requestScopes(new Scope(DriveScopes.DRIVE_FILE))
               .build();
       GoogleSignInClient googleSignInClient = GoogleSignIn.getClient(activity, signInOptions);
       activity.startActivityForResult(googleSignInClient.getSignInIntent(), REQUEST_CODE_SIGN_IN);
@@ -93,34 +72,99 @@ public class FavoritesBackup {
    * Continues the sign-in process, initializing the Drive clients with the current user's account.
    */
   public void initializeDriveClient(GoogleSignInAccount signInAccount) {
-    mDriveResourceClient = Drive.getDriveResourceClient(activity, signInAccount);
-    onDriveClientReady();
-  }
+    Log.d(TAG, "Signed in as " + signInAccount.getEmail());
 
-  private void onDriveClientReady() {
+    // Use the authenticated account to sign in to the Drive service.
+    GoogleAccountCredential credential =
+        GoogleAccountCredential.usingOAuth2(
+            activity, Collections.singleton(DriveScopes.DRIVE_FILE));
+    credential.setSelectedAccount(signInAccount.getAccount());
+    Drive googleDriveService =
+        new Drive.Builder(AndroidHttp.newCompatibleTransport(), new GsonFactory(), credential)
+            .setApplicationName(activity.getResources().getString(R.string.app_name))
+            .build();
+
+    // The DriveServiceHelper encapsulates all REST API and SAF functionality.
+    // Its instantiation is required before handling any onClick actions.
+    mDriveServiceHelper = new DriveServiceHelper(googleDriveService);
+
     performAction();
   }
 
-  /**
-   * Retrieves results for the next page. For the first run, it retrieves results for the first
-   * page.
-   */
   private void performAction() {
-    Query query =
-        new Query.Builder().addFilter(Filters.eq(SearchableField.TITLE, FILE_NAME)).build();
-    Task<MetadataBuffer> queryTask = mDriveResourceClient.query(query);
-    queryTask
-        .addOnSuccessListener(activity, successListener)
+    switch (action) {
+      case BACKUP:
+        backupAction();
+        break;
+      case RESTORE:
+        restoreAction();
+        break;
+    }
+  }
+
+  private void backupAction() {
+    mDriveServiceHelper
+        .queryFiles(FILE_NAME)
+        .addOnCompleteListener(
+            task -> {
+              Log.d(TAG, "Backing up file from " + dbFilePath);
+              TagDbHelper.clearInstance();
+              File dbFile = new File(dbFilePath);
+              Task<?> fileTask;
+              if (task.getResult() != null && task.getResult().isEmpty()) {
+                fileTask = mDriveServiceHelper.createFile(FILE_NAME, dbFile);
+              } else {
+                fileTask = mDriveServiceHelper.updateFile(task.getResult(), FILE_NAME, dbFile);
+              }
+
+              checkTaskComplete(fileTask);
+            })
+        .addOnFailureListener(task -> showMessage(activity, "Error while backing up contents"));
+  }
+
+  private void checkTaskComplete(Task<?> task) {
+    task.addOnCompleteListener(
+            checkTask -> {
+              switch (action) {
+                case BACKUP:
+                  showMessage(activity, "Successfully backed up contents");
+                  break;
+                case RESTORE:
+                  showMessage(activity, "Successfully restored contents");
+                  break;
+              }
+            })
         .addOnFailureListener(
-            activity,
-            e -> {
-              Log.e(TAG, "Error retrieving files", e);
-              showMessage(activity, "");
+            checkTask -> {
+              switch (action) {
+                case BACKUP:
+                  showMessage(activity, "Error while backing up contents");
+                  break;
+                case RESTORE:
+                  showMessage(activity, "Error while restoring contents");
+                  break;
+              }
             });
   }
 
-  private Activity getActivity() {
-    return activity;
+  private void restoreAction() {
+
+    mDriveServiceHelper
+        .queryFiles(FILE_NAME)
+        .addOnCompleteListener(
+            task -> {
+              Log.d(TAG, "Restoring file to " + dbFilePath);
+              TagDbHelper.clearInstance();
+              File dbFile = new File(dbFilePath);
+              if (task.getResult() != null) {
+                Task<?> fileTask = mDriveServiceHelper.downloadFile(task.getResult(), dbFile);
+
+                checkTaskComplete(fileTask);
+              } else {
+                Log.d(TAG, "File not found");
+              }
+            })
+        .addOnFailureListener(task -> showMessage(activity, "Error restoring..."));
   }
 
   public void backup() {
@@ -131,209 +175,5 @@ public class FavoritesBackup {
   public void restore() {
     action = Action.RESTORE;
     signIn();
-  }
-
-  private enum Action {
-    BACKUP,
-    RESTORE
-  }
-
-  private static final class BackupAsyncTask extends AsyncTask<MetadataBuffer, Void, Boolean> {
-    private final DriveResourceClient mDriveResourceClient;
-
-    private final FavoritesBackup favoritesBackup;
-
-    BackupAsyncTask(DriveResourceClient mDriveResourceClient, FavoritesBackup favoritesBackup) {
-      this.mDriveResourceClient = mDriveResourceClient;
-      this.favoritesBackup = favoritesBackup;
-    }
-
-    @Override
-    protected Boolean doInBackground(MetadataBuffer... params) {
-      if (params[0].getCount() > 0) {
-        Log.i(TAG, "" + params[0].get(0).getDriveId());
-        Log.d(TAG, "Modified date: " + params[0].get(0).getModifiedDate());
-        DriveFile file = params[0].get(0).getDriveId().asDriveFile();
-        editFile(file);
-
-        return true;
-      } else {
-        createFile();
-
-        return true;
-      }
-    }
-
-    private void editFile(DriveFile file) {
-      Task<DriveContents> openTask = mDriveResourceClient.openFile(file, DriveFile.MODE_WRITE_ONLY);
-      openTask
-          .continueWithTask(
-              task -> {
-                DriveContents contents = task.getResult();
-
-                if (contents == null) {
-                  return null;
-                }
-
-                try (OutputStream out = contents.getOutputStream()) {
-                  copyFile(out);
-                }
-
-                return mDriveResourceClient.commitContents(contents, null);
-              })
-          .addOnSuccessListener(
-              favoritesBackup.getActivity(),
-              driveFile ->
-                  showMessage(favoritesBackup.getActivity(), "Successfully backed up contents"))
-          .addOnFailureListener(
-              favoritesBackup.getActivity(),
-              e -> {
-                Log.e(TAG, "Unable to create file", e);
-                showMessage(favoritesBackup.getActivity(), "Error while backing up contents");
-              });
-    }
-
-    private void copyFile(OutputStream outputStream) {
-      Log.d(TAG, "Copying file to " + dbFilePath);
-
-      File dbFile = new File(dbFilePath);
-      FileInputStream fis = null;
-      try {
-        fis = new FileInputStream(dbFile);
-        byte[] buffer = new byte[1024];
-        int length;
-        while ((length = fis.read(buffer)) > 0) {
-          outputStream.write(buffer, 0, length);
-        }
-      } catch (IOException e) {
-        e.printStackTrace();
-      } finally {
-        if (fis != null) {
-          try {
-            fis.close();
-          } catch (IOException e) {
-            e.printStackTrace();
-          }
-        }
-      }
-    }
-
-    private void createFile() {
-      Log.d(TAG, "Creating new file");
-
-      final Task<DriveFolder> appFolderTask = mDriveResourceClient.getAppFolder();
-      final Task<DriveContents> createContentsTask = mDriveResourceClient.createContents();
-
-      Tasks.whenAll(appFolderTask, createContentsTask)
-          .continueWithTask(
-              task -> {
-                DriveFolder parent = appFolderTask.getResult();
-                DriveContents contents = createContentsTask.getResult();
-
-                if (contents == null || parent == null) {
-                  return null;
-                }
-
-                OutputStream outputStream = contents.getOutputStream();
-                copyFile(outputStream);
-
-                MetadataChangeSet changeSet =
-                    new MetadataChangeSet.Builder()
-                        .setTitle(FILE_NAME)
-                        .setMimeType("text/plain")
-                        .build();
-
-                return mDriveResourceClient.createFile(parent, changeSet, contents);
-              })
-          .addOnSuccessListener(
-              favoritesBackup.getActivity(),
-              driveFile ->
-                  showMessage(favoritesBackup.getActivity(), "Successfully backed up contents"))
-          .addOnFailureListener(
-              favoritesBackup.getActivity(),
-              e -> {
-                Log.e(TAG, "Unable to create file", e);
-                showMessage(favoritesBackup.getActivity(), "Error while backing up contents");
-              });
-    }
-  }
-
-  private static final class RestoreAsyncTask extends AsyncTask<MetadataBuffer, Boolean, Boolean> {
-    private final DriveResourceClient mDriveResourceClient;
-
-    private final FavoritesBackup favoritesBackup;
-
-    RestoreAsyncTask(DriveResourceClient mDriveResourceClient, FavoritesBackup favoritesBackup) {
-      this.mDriveResourceClient = mDriveResourceClient;
-      this.favoritesBackup = favoritesBackup;
-    }
-
-    @Override
-    protected Boolean doInBackground(MetadataBuffer... params) {
-      if (params[0].getCount() > 0) {
-        DriveFile file = params[0].get(0).getDriveId().asDriveFile();
-        Log.d(TAG, "" + file.getDriveId());
-        Log.d(TAG, "Modified date: " + params[0].get(0).getModifiedDate());
-
-        retrieveContents(file);
-      } else {
-        Log.d(TAG, "File not found");
-      }
-
-      return true;
-    }
-
-    private void copyFile(InputStream inputStream) {
-      Log.d(TAG, "Copying file to " + dbFilePath);
-
-      OutputStream output = null;
-      int length;
-      try {
-        output = new FileOutputStream(dbFilePath);
-        byte[] buffer = new byte[1024];
-        while ((length = inputStream.read(buffer)) > 0) {
-          output.write(buffer, 0, length);
-        }
-      } catch (IOException e) {
-        Log.e(TAG, "IOException while reading from the stream", e);
-      } finally {
-        if (output != null) {
-          try {
-            output.close();
-          } catch (IOException e) {
-            e.printStackTrace();
-          }
-        }
-      }
-    }
-
-    private void retrieveContents(DriveFile file) {
-      TagDbHelper.clearInstance();
-
-      Task<DriveContents> openFileTask =
-          mDriveResourceClient.openFile(file, DriveFile.MODE_READ_ONLY);
-      openFileTask
-          .continueWithTask(
-              task -> {
-                DriveContents contents = task.getResult();
-
-                if (contents == null) {
-                  return null;
-                }
-
-                copyFile(contents.getInputStream());
-                return mDriveResourceClient.discardContents(contents);
-              })
-          .addOnSuccessListener(
-              favoritesBackup.getActivity(),
-              driveFile ->
-                  showMessage(favoritesBackup.getActivity(), "Successfully restored backup"))
-          .addOnFailureListener(
-              favoritesBackup.getActivity(),
-              e -> {
-                Log.e(TAG, "Unable to create file", e);
-                showMessage(favoritesBackup.getActivity(), "Error while restoring backup");
-              });
-    }
   }
 }
