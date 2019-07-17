@@ -171,14 +171,14 @@ public class MusicService extends Service
   }
 
   public void pause() {
-    if (player != null) {
+    if (player != null && player.isPlaying()) {
       player.pause();
-    }
 
-    notificationHandler.updateNotificationPause();
+      notificationHandler.updateNotificationPause();
 
-    for (MusicNotifier notifier : notifierList) {
-      notifier.pause();
+      for (MusicNotifier notifier : notifierList) {
+        notifier.pause();
+      }
     }
   }
 
