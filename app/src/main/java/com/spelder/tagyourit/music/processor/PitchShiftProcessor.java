@@ -8,6 +8,9 @@ import static java.lang.Math.sqrt;
 
 import android.util.Log;
 import com.spelder.tagyourit.music.model.AudioEvent;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import org.apache.commons.math3.complex.Complex;
 import org.apache.commons.math3.transform.DftNormalization;
 import org.apache.commons.math3.transform.FastFourierTransformer;
@@ -157,6 +160,46 @@ public class PitchShiftProcessor implements AudioProcessor {
           gAnaFreq[k] = tmp;
         }
 
+        gAnaMagnitude[0] = 0;
+        gAnaMagnitude[1] = 0;
+
+        /*ArrayList<Double> fundamental = new ArrayList<>();
+        double[] maxValues = new double[20];
+        double[] maxValueFrequency = new double[maxValues.length];
+        for (int k = 0; k < fftFrameSize2; k++) {
+          double freq = gAnaFreq[k];
+          if (Math.abs(freq - 180) < 15) {
+             fundamental.add(k);
+           }
+           if (Math.abs(freq - 370) < 15) {
+             fundamental.add(k);
+           }
+           if (Math.abs(freq - 278) < 15) {
+             fundamental.add(k);
+           }
+           if (Math.abs(freq - 466) < 15) {
+             fundamental.add(k);
+          }
+          // if (freq < 5000) {
+          // fundamental.add(k);
+          // }
+          if (freq > 10 && freq < 550 && gAnaMagnitude[k] > maxValues[maxValues.length - 1]) {
+            maxValues[maxValues.length - 1] = gAnaMagnitude[k];
+            maxValueFrequency[maxValues.length - 1] = gAnaFreq[k];
+            sortArrays(maxValues, maxValueFrequency);
+          }
+        }
+
+        for (int k = 0; k < maxValues.length; k++) {
+          double val = maxValueFrequency[k];
+          if (isFundamental(val, maxValueFrequency)) {
+            fundamental.add(maxValueFrequency[k]);
+          }
+        }
+
+        Log.d(TAG, "freq: " + Arrays.toString(maxValueFrequency));
+        Log.d(TAG, "fundamental: " + fundamental);*/
+
         /* ***************** PROCESSING ******************* */
         /* this does the actual pitch shifting */
         double[] gSynMagnitude = new double[fftFrameSize2];
@@ -164,11 +207,48 @@ public class PitchShiftProcessor implements AudioProcessor {
 
         for (int k = 0; k < fftFrameSize2; k++) {
           index = (int) (k * pitchShift);
+          double val = gAnaFreq[k];
           if (index < fftFrameSize2) {
-            gSynMagnitude[index] += gAnaMagnitude[k];
-            gSynFreq[index] = gAnaFreq[k] * pitchShift;
+            if (true) {
+              gSynMagnitude[index] += gAnaMagnitude[k];
+              gSynFreq[index] = gAnaFreq[k] * pitchShift;
+            } else {
+              //gSynMagnitude[k] += gAnaMagnitude[k];
+              //gSynFreq[k] = gAnaFreq[k];
+            }
           }
         }
+
+        double maxSignal = 0;
+        for (int k = 0; k < fftFrameSize2; k++) {
+          if (gSynMagnitude[k] > maxSignal) {
+            maxSignal = gSynMagnitude[k];
+          }
+          if (gAnaMagnitude[k] > maxSignal) {
+            maxSignal = gAnaMagnitude[k];
+          }
+        }
+
+        for (int k = 0; k < fftFrameSize2; k++) {
+          //gSynMagnitude[k] /= maxSignal;
+          //gAnaMagnitude[k] /= maxSignal;
+          gSynMagnitude[k] *= gAnaMagnitude[k];
+        }
+
+        double newMaxSignal = 0;
+        for (int k = 0; k < fftFrameSize2; k++) {
+          if (gSynMagnitude[k] > newMaxSignal) {
+            newMaxSignal = gSynMagnitude[k];
+          }
+        }
+
+        for (int k = 0; k < fftFrameSize2; k++) {
+          gAnaMagnitude[k] *= maxSignal;
+          gSynMagnitude[k] = (gSynMagnitude[k] / newMaxSignal) * maxSignal;
+        }
+
+        Log.d(TAG, "magn: " + Arrays.toString(gAnaMagnitude));
+        Log.d(TAG, "new magn: " + Arrays.toString(gSynMagnitude));
 
         /* ***************** SYNTHESIS ******************* */
         /* this is the synthesis step */
@@ -217,6 +297,46 @@ public class PitchShiftProcessor implements AudioProcessor {
 
         /* move input FIFO */
         System.arraycopy(gInFIFO, stepSize, gInFIFO, 0, inFifoLatency);
+      }
+    }
+  }
+
+  private boolean isFundamental(double val, double[] frequencyArray) {
+    for (double frequency : frequencyArray) {
+      for (int i = 3; i <= 8; i++) {
+        if (Math.abs(val / frequency - i) < 0.05) {
+          return false;
+        }
+      }
+    }
+    return true;
+  }
+
+  private boolean isHarmonic(double val, List<Double> fundamentalList) {
+    for (double fundamental : fundamentalList) {
+      for (int i = 1; i <= 12; i++) {
+        if (Math.abs((val / fundamental) - i) < 0.01) {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+
+  private void sortArrays(double[] sortArray, double[] additionalArray) {
+    double temp;
+    double additionalTemp;
+    for (int i = 1; i < sortArray.length; i++) {
+      for (int j = i; j > 0; j--) {
+        if (sortArray[j] > sortArray[j - 1]) {
+          temp = sortArray[j];
+          sortArray[j] = sortArray[j - 1];
+          sortArray[j - 1] = temp;
+
+          additionalTemp = additionalArray[j];
+          additionalArray[j] = additionalArray[j - 1];
+          additionalArray[j - 1] = additionalTemp;
+        }
       }
     }
   }
