@@ -178,19 +178,18 @@ public class PitchShiftProcessor implements AudioProcessor {
             gSynFreq[index] = gAnaFreq[k] * pitchShift;
           }
         }
-        double max = 0;
+
         for (int k = 2; k < fftFrameSize2; k++) {
-          if (gSynMagnitude[k] > max) {
-            max = gSynMagnitude[k];
+          double env = getEnvelopeAtFreq(gSynFreq[k]);
+          if (gSynMagnitude[k] > env) {
+            gSynMagnitude[k] = env;
+          } else {
+            gSynMagnitude[k] +=
+                (((env - gSynMagnitude[k]) / env) * gSynMagnitude[k]);
           }
-        }
-
-        for (int k = 2; k < fftFrameSize2; k++) {
-          gSynMagnitude[k] /= max;
-        }
-
-        for (int k = 2; k < fftFrameSize2; k++) {
-          gSynMagnitude[k] *= getEnvelopeAtFreq(gSynFreq[k]);
+          if (gSynMagnitude[k] < 0 || Double.isNaN(gSynMagnitude[k])) {
+            gSynMagnitude[k] = 0;
+          }
         }
 
         /*String orig = "";
@@ -203,7 +202,7 @@ public class PitchShiftProcessor implements AudioProcessor {
         }
         Log.d(TAG, "Orig: " + orig);
         //Log.d(TAG, "Env: " + env);
-        Log.d(TAG, "After: " + after);*/
+        System.out.println( "After: " + after);*/
 
         /* ***************** SYNTHESIS ******************* */
         /* this is the synthesis step */
@@ -291,7 +290,7 @@ public class PitchShiftProcessor implements AudioProcessor {
       }
       mean /= numberValuesCombine;
       envelope[k / numberValuesCombine] = mean;
-      envelopeFreq[k / numberValuesCombine] = gAnaFreq[k];
+      envelopeFreq[k / numberValuesCombine] = gAnaFreq[k + numberValuesCombine/ 2];
     }
 
     /*String env2 = "";
