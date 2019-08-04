@@ -8,9 +8,6 @@ import static java.lang.Math.sqrt;
 
 import android.util.Log;
 import com.spelder.tagyourit.music.model.AudioEvent;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import org.apache.commons.math3.complex.Complex;
 import org.apache.commons.math3.transform.DftNormalization;
 import org.apache.commons.math3.transform.FastFourierTransformer;
@@ -38,6 +35,12 @@ public class PitchShiftProcessor implements AudioProcessor {
 
   private final double[] gAnaMagnitude;
 
+  private double[] envelope;
+
+  private double[] envelopeFreq;
+
+  private double[] envelopeCalc;
+
   private final FastFourierTransformer fft;
 
   private double pitchShift;
@@ -57,6 +60,7 @@ public class PitchShiftProcessor implements AudioProcessor {
     gAnaFreq = new double[size];
     gAnaMagnitude = new double[size];
     fft = new FastFourierTransformer(DftNormalization.STANDARD);
+    envelopeCalc = new double[size];
   }
 
   public PitchShiftProcessor(int semitones, int size) {
@@ -160,45 +164,7 @@ public class PitchShiftProcessor implements AudioProcessor {
           gAnaFreq[k] = tmp;
         }
 
-        gAnaMagnitude[0] = 0;
-        gAnaMagnitude[1] = 0;
-
-        /*ArrayList<Double> fundamental = new ArrayList<>();
-        double[] maxValues = new double[20];
-        double[] maxValueFrequency = new double[maxValues.length];
-        for (int k = 0; k < fftFrameSize2; k++) {
-          double freq = gAnaFreq[k];
-          if (Math.abs(freq - 180) < 15) {
-             fundamental.add(k);
-           }
-           if (Math.abs(freq - 370) < 15) {
-             fundamental.add(k);
-           }
-           if (Math.abs(freq - 278) < 15) {
-             fundamental.add(k);
-           }
-           if (Math.abs(freq - 466) < 15) {
-             fundamental.add(k);
-          }
-          // if (freq < 5000) {
-          // fundamental.add(k);
-          // }
-          if (freq > 10 && freq < 550 && gAnaMagnitude[k] > maxValues[maxValues.length - 1]) {
-            maxValues[maxValues.length - 1] = gAnaMagnitude[k];
-            maxValueFrequency[maxValues.length - 1] = gAnaFreq[k];
-            sortArrays(maxValues, maxValueFrequency);
-          }
-        }
-
-        for (int k = 0; k < maxValues.length; k++) {
-          double val = maxValueFrequency[k];
-          if (isFundamental(val, maxValueFrequency)) {
-            fundamental.add(maxValueFrequency[k]);
-          }
-        }
-
-        Log.d(TAG, "freq: " + Arrays.toString(maxValueFrequency));
-        Log.d(TAG, "fundamental: " + fundamental);*/
+        cepstralEnvelope(fftFrameSize);
 
         /* ***************** PROCESSING ******************* */
         /* this does the actual pitch shifting */
@@ -207,48 +173,37 @@ public class PitchShiftProcessor implements AudioProcessor {
 
         for (int k = 0; k < fftFrameSize2; k++) {
           index = (int) (k * pitchShift);
-          double val = gAnaFreq[k];
           if (index < fftFrameSize2) {
-            if (true) {
-              gSynMagnitude[index] += gAnaMagnitude[k];
-              gSynFreq[index] = gAnaFreq[k] * pitchShift;
-            } else {
-              //gSynMagnitude[k] += gAnaMagnitude[k];
-              //gSynFreq[k] = gAnaFreq[k];
-            }
+            gSynMagnitude[index] += gAnaMagnitude[k];
+            gSynFreq[index] = gAnaFreq[k] * pitchShift;
+          }
+        }
+        double max = 0;
+        for (int k = 2; k < fftFrameSize2; k++) {
+          if (gSynMagnitude[k] > max) {
+            max = gSynMagnitude[k];
           }
         }
 
-        double maxSignal = 0;
-        for (int k = 0; k < fftFrameSize2; k++) {
-          if (gSynMagnitude[k] > maxSignal) {
-            maxSignal = gSynMagnitude[k];
-          }
-          if (gAnaMagnitude[k] > maxSignal) {
-            maxSignal = gAnaMagnitude[k];
-          }
+        for (int k = 2; k < fftFrameSize2; k++) {
+          gSynMagnitude[k] /= max;
         }
 
-        for (int k = 0; k < fftFrameSize2; k++) {
-          //gSynMagnitude[k] /= maxSignal;
-          //gAnaMagnitude[k] /= maxSignal;
-          gSynMagnitude[k] *= gAnaMagnitude[k];
+        for (int k = 2; k < fftFrameSize2; k++) {
+          gSynMagnitude[k] *= getEnvelopeAtFreq(gSynFreq[k]);
         }
 
-        double newMaxSignal = 0;
+        /*String orig = "";
+        String env = "";
+        String after = "";
         for (int k = 0; k < fftFrameSize2; k++) {
-          if (gSynMagnitude[k] > newMaxSignal) {
-            newMaxSignal = gSynMagnitude[k];
-          }
+          orig += "(" + gAnaFreq[k] + "," + gAnaMagnitude[k] + ")";
+          //env += "(" + gAnaFreq[k] + "," + envelope[k] + ")";
+          after += "(" + gSynFreq[k] + "," + gSynMagnitude[k] + ")";
         }
-
-        for (int k = 0; k < fftFrameSize2; k++) {
-          gAnaMagnitude[k] *= maxSignal;
-          gSynMagnitude[k] = (gSynMagnitude[k] / newMaxSignal) * maxSignal;
-        }
-
-        Log.d(TAG, "magn: " + Arrays.toString(gAnaMagnitude));
-        Log.d(TAG, "new magn: " + Arrays.toString(gSynMagnitude));
+        Log.d(TAG, "Orig: " + orig);
+        //Log.d(TAG, "Env: " + env);
+        Log.d(TAG, "After: " + after);*/
 
         /* ***************** SYNTHESIS ******************* */
         /* this is the synthesis step */
@@ -301,43 +256,65 @@ public class PitchShiftProcessor implements AudioProcessor {
     }
   }
 
-  private boolean isFundamental(double val, double[] frequencyArray) {
-    for (double frequency : frequencyArray) {
-      for (int i = 3; i <= 8; i++) {
-        if (Math.abs(val / frequency - i) < 0.05) {
-          return false;
-        }
+  private void cepstralEnvelope(int fftFrameSize) {
+    int fftFrameSize2 = fftFrameSize / 2;
+
+    for (int k = 0; k < fftFrameSize2; k++) {
+      envelopeCalc[k] = 60 * Math.log(Math.abs(gAnaMagnitude[k]));
+    }
+
+    // String env = "";
+    Complex[] complex = fft.transform(envelopeCalc, TransformType.INVERSE);
+    for (int k = 0; k < fftFrameSize2; k++) {
+      envelopeCalc[k] = complex[k].getReal();
+    }
+
+    double min = Double.MAX_VALUE;
+    complex = fft.transform(envelopeCalc, TransformType.FORWARD);
+    for (int k = 0; k < fftFrameSize2; k++) {
+      envelopeCalc[k] = complex[k].getReal();
+      if (min > envelopeCalc[k]) {
+        min = envelopeCalc[k];
       }
     }
-    return true;
+    for (int k = 0; k < fftFrameSize2; k++) {
+      envelopeCalc[k] -= min;
+    }
+
+    int numberValuesCombine = 10;
+    envelope = new double[envelopeCalc.length / numberValuesCombine];
+    envelopeFreq = new double[envelopeCalc.length / numberValuesCombine];
+    for (int k = 0; k < fftFrameSize2 - numberValuesCombine; k += numberValuesCombine) {
+      double mean = 0;
+      for (int i = 0; i < numberValuesCombine; i++) {
+        mean += envelopeCalc[k + i];
+      }
+      mean /= numberValuesCombine;
+      envelope[k / numberValuesCombine] = mean;
+      envelopeFreq[k / numberValuesCombine] = gAnaFreq[k];
+    }
+
+    /*String env2 = "";
+    for (int k = 0; k < envelope.length; k++) {
+      env2 += "(" + envelopeFreq[k] + "," + envelope[k] + ")";
+    }
+    Log.d(TAG, "Env2: " + env2);*/
   }
 
-  private boolean isHarmonic(double val, List<Double> fundamentalList) {
-    for (double fundamental : fundamentalList) {
-      for (int i = 1; i <= 12; i++) {
-        if (Math.abs((val / fundamental) - i) < 0.01) {
-          return true;
-        }
+  private double getEnvelopeAtFreq(double freq) {
+    for (int i = 0; i < envelope.length - 1; i++) {
+      if (freq > envelopeFreq[i] && freq < envelopeFreq[i + 1]) {
+        return getEnvelopeAtId(i, freq);
       }
     }
-    return false;
+
+    return 0;
   }
 
-  private void sortArrays(double[] sortArray, double[] additionalArray) {
-    double temp;
-    double additionalTemp;
-    for (int i = 1; i < sortArray.length; i++) {
-      for (int j = i; j > 0; j--) {
-        if (sortArray[j] > sortArray[j - 1]) {
-          temp = sortArray[j];
-          sortArray[j] = sortArray[j - 1];
-          sortArray[j - 1] = temp;
+  private double getEnvelopeAtId(int i, double freq) {
+    double m = (envelope[i + 1] - envelope[i]) / (envelopeFreq[i + 1] - envelopeFreq[i]);
+    double b = envelope[i] - (m * envelopeFreq[i]);
 
-          additionalTemp = additionalArray[j];
-          additionalArray[j] = additionalArray[j - 1];
-          additionalArray[j - 1] = additionalTemp;
-        }
-      }
-    }
+    return m * freq + b;
   }
 }
