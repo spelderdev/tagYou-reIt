@@ -127,8 +127,10 @@ public class PitchButton extends AppCompatButton {
   @Override
   public boolean performClick() {
     super.performClick();
-    centerPitch.setBackgroundResource(centerPitchIcon);
-    centerPitch.setText(centerPitchLabel);
+    if (centerPitch != null) {
+      centerPitch.setBackgroundResource(centerPitchIcon);
+      centerPitch.setText(centerPitchLabel);
+    }
     return true;
   }
 }

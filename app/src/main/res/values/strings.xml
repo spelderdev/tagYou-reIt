@@ -9,9 +9,10 @@
   <string name="track_content_description">Track Identifier</string>
   <string name="video_content_description">Video Identifier</string>
   <string name="long_version">Long version</string>
-  <string name="by_arranger">by Arranger</string>
+  <string name="by_arranger">Arranger</string>
   <string name="tag_name">Tag Name</string>
-  <string name="separator">-</string>
+  <string name="separator">·</string>
+  <string name="rating_icon_description">Rating icon</string>
 
   <string name="nav_browse">Browse</string>
   <string name="nav_favorites">Favorites</string>
@@ -86,6 +87,7 @@
   <string name="tag_menu_video_more">More…</string>
   <string name="tag_menu_rate">Rate</string>
   <string name="tag_menu_share">Share</string>
+  <string name="tag_menu_favorite">Favorite</string>
 
   <string name="video_all">All Videos</string>
 

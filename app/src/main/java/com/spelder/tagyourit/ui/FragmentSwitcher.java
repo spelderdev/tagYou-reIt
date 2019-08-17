@@ -229,12 +229,12 @@ public class FragmentSwitcher {
 
   boolean isFavoriteVisible() {
     return currentFragment == FRAGMENT_DISPLAY_TAG
-        && ((DisplayTag) fragmentDisplay).getDisplayedTag().isFavorited();
+        && !((DisplayTag) fragmentDisplay).getDisplayedTag().isFavorited();
   }
 
   boolean isUnFavoriteVisible() {
     return currentFragment == FRAGMENT_DISPLAY_TAG
-        && !((DisplayTag) fragmentDisplay).getDisplayedTag().isFavorited();
+        && ((DisplayTag) fragmentDisplay).getDisplayedTag().isFavorited();
   }
 
   boolean isMenuVisible() {

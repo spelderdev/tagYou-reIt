@@ -1,8 +1,9 @@
 package com.spelder.tagyourit.ui.tag;
 
+import static com.spelder.tagyourit.ui.FragmentSwitcher.PAR_KEY;
+
 import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.graphics.BitmapFactory;
@@ -12,38 +13,27 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.LinearLayout;
-import android.widget.RatingBar;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
-import com.flipboard.bottomsheet.BottomSheetLayout;
-import com.flipboard.bottomsheet.commons.MenuSheetView;
+import androidx.fragment.app.FragmentActivity;
 import com.github.barteksc.pdfviewer.PDFView;
 import com.github.barteksc.pdfviewer.scroll.DefaultScrollHandle;
 import com.ortiz.touchview.TouchImageView;
 import com.spelder.tagyourit.R;
 import com.spelder.tagyourit.model.Tag;
-import com.spelder.tagyourit.model.TrackComponents;
-import com.spelder.tagyourit.model.TrackParts;
-import com.spelder.tagyourit.model.VideoComponents;
 import com.spelder.tagyourit.networking.DownloadFileTask;
 import com.spelder.tagyourit.networking.videos.YouTubeVideoInformation;
-import com.spelder.tagyourit.pitch.PitchPlayer;
-import com.spelder.tagyourit.ui.FragmentSwitcher;
 import com.spelder.tagyourit.ui.MainActivity;
-import com.spelder.tagyourit.ui.dialog.RateTagDialog;
 import java.io.File;
 import java.lang.ref.WeakReference;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Locale;
 
 /** The tag display view. This contains handling of the sheet music and the bottom sheet view. */
 public class DisplayTag extends Fragment {
@@ -52,8 +42,6 @@ public class DisplayTag extends Fragment {
   private static final int REQ_WIDTH = 1000;
 
   private static final int REQ_HEIGHT = 1000;
-
-  private static final int PITCH_DOWN_TIME_MILLIS = 500;
 
   private static final String TOUCH_ACTION_KEY_FULLSCREEN = "fullscreen";
 
@@ -79,11 +67,9 @@ public class DisplayTag extends Fragment {
 
   private View loading_layout;
 
-  private BottomSheetLayout bottomSheet;
+  private TagDetailsBottomSheet bottomSheet;
 
   private boolean fullscreenState = false;
-
-  private long keyDownTime = 0;
 
   public DisplayTag() {}
 
@@ -121,31 +107,33 @@ public class DisplayTag extends Fragment {
 
     view.setOnSystemUiVisibilityChangeListener(
         visibility -> {
+          MainActivity activity = (MainActivity) getActivity();
+          if (activity == null) {
+            return;
+          }
           if (visibility == 0) {
             showSystemUI();
-            ((MainActivity) getActivity()).getSupportActionBar().show();
+            if (activity.getSupportActionBar() != null) {
+              activity.getSupportActionBar().show();
+            }
             Log.d(TAG, "Vis=0: " + fullscreenState);
             fullscreenState = false;
           } else {
             Log.d(TAG, "Vis=1: " + fullscreenState);
-            ((MainActivity) getActivity()).getSupportActionBar().hide();
+            if (activity.getSupportActionBar() != null) {
+              activity.getSupportActionBar().hide();
+            }
             fullscreenState = true;
           }
         });
 
-    bottomSheet = view.findViewById(R.id.bottom_sheet);
+    bottomSheet = new TagDetailsBottomSheet();
 
     mImageView = view.findViewById(R.id.image);
-    mImageView.setOnClickListener(
-        v -> {
-          handleTouchView();
-        });
+    mImageView.setOnClickListener(v -> handleTouchView());
 
     mPdfView = view.findViewById(R.id.pdfView);
-    mPdfView.setOnClickListener(
-        v -> {
-          handleTouchView();
-        });
+    mPdfView.setOnClickListener(v -> handleTouchView());
 
     no_pdf_text = view.findViewById(R.id.no_pdf);
 
@@ -155,13 +143,18 @@ public class DisplayTag extends Fragment {
 
     error_button.setOnClickListener(
         v -> {
-          ConnectivityManager connMgr =
-              (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
-          NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
-          if (networkInfo != null && networkInfo.isConnected()) {
-            retrieveTagInfo(context);
-            unsetNetworkError();
-            showTag();
+          Activity activity = getActivity();
+          if (activity != null) {
+            ConnectivityManager connMgr =
+                (ConnectivityManager) activity.getSystemService(Context.CONNECTIVITY_SERVICE);
+            if (connMgr != null) {
+              NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+              if (networkInfo != null && networkInfo.isConnected()) {
+                retrieveTagInfo(context);
+                unsetNetworkError();
+                showTag();
+              }
+            }
           }
         });
 
@@ -205,210 +198,14 @@ public class DisplayTag extends Fragment {
   }
 
   public void showBottomMenu() {
-    if (!bottomSheet.isSheetShowing()) {
-      showMenuSheet();
+    if (!bottomSheet.isVisible()) {
+      FragmentActivity activity = getActivity();
+      if (activity != null) {
+        bottomSheet.show(activity.getSupportFragmentManager(), "Bottom sheet");
+      }
     } else {
-      bottomSheet.dismissSheet();
+      bottomSheet.dismiss();
     }
-  }
-
-  private void showMenuSheet() {
-    MenuSheetView menuSheetView =
-        new MenuSheetView(
-            getActivity(),
-            MenuSheetView.MenuType.LIST,
-            tag.getTitle(),
-            item -> {
-              TrackComponents track = null;
-              int videoId = -2;
-              if (item.getItemId() == R.id.menu_track_all) {
-                track = tag.getTrack(TrackParts.ALL.getKey());
-              } else if (item.getItemId() == R.id.menu_track_bass) {
-                track = tag.getTrack(TrackParts.BASS.getKey());
-              } else if (item.getItemId() == R.id.menu_track_bari) {
-                track = tag.getTrack(TrackParts.BARI.getKey());
-              } else if (item.getItemId() == R.id.menu_track_lead) {
-                track = tag.getTrack(TrackParts.LEAD.getKey());
-              } else if (item.getItemId() == R.id.menu_track_tenor) {
-                track = tag.getTrack(TrackParts.TENOR.getKey());
-              } else if (item.getItemId() == R.id.menu_track_other1) {
-                track = tag.getTrack(TrackParts.OTHER1.getKey());
-              } else if (item.getItemId() == R.id.menu_track_other2) {
-                track = tag.getTrack(TrackParts.OTHER2.getKey());
-              } else if (item.getItemId() == R.id.menu_track_other3) {
-                track = tag.getTrack(TrackParts.OTHER3.getKey());
-              } else if (item.getItemId() == R.id.menu_track_other4) {
-                track = tag.getTrack(TrackParts.OTHER4.getKey());
-              }
-
-              if (item.getItemId() == R.id.menu_video_1) {
-                videoId = 0;
-              } else if (item.getItemId() == R.id.menu_video_2) {
-                videoId = 1;
-              } else if (item.getItemId() == R.id.menu_video_3) {
-                videoId = 2;
-              } else if (item.getItemId() == R.id.menu_video_4) {
-                videoId = 3;
-              } else if (item.getItemId() == R.id.menu_video_more) {
-                videoId = -1;
-              }
-
-              if (track != null) {
-                if (getActivity() instanceof MainActivity) {
-                  MainActivity activity = (MainActivity) getActivity();
-                  activity.playTrack(track, tag);
-                }
-              } else if (videoId != -2) {
-                if (getActivity() instanceof MainActivity) {
-                  MainActivity activity = (MainActivity) getActivity();
-                  activity.openVideoPlayer(tag.getVideos(), videoId);
-                }
-              } else if (item.getItemId() == R.id.menu_share) {
-                String shareLink =
-                    "http://www.barbershoptags.com/tag-"
-                        + tag.getId()
-                        + "-"
-                        + tag.getTitle().replaceAll(" ", "-");
-                if (!tag.getVersion().isEmpty()) {
-                  shareLink += "-(" + tag.getVersion().replaceAll(" ", "-") + ")";
-                }
-
-                Log.d(TAG, shareLink);
-
-                Intent i = new Intent(Intent.ACTION_SEND);
-                i.setType("text/plain");
-                i.putExtra(Intent.EXTRA_SUBJECT, "Sharing URL");
-                i.putExtra(Intent.EXTRA_TEXT, shareLink);
-                startActivity(Intent.createChooser(i, "Share URL"));
-              } else if (item.getItemId() == R.id.menu_rate) {
-                createRatingDialog(tag);
-              }
-
-              if (bottomSheet.isSheetShowing()) {
-                bottomSheet.dismissSheet();
-              }
-              return true;
-            });
-    menuSheetView.inflateMenu(R.menu.tag_menu);
-    TextView arranger = menuSheetView.findViewById(R.id.tag_list_arranger);
-    if (tag.getArranger() != null && !tag.getArranger().isEmpty()) {
-      arranger.setText(tag.getArrangerDisplay());
-    } else {
-      arranger.setText("");
-    }
-    View keyView = menuSheetView.findViewById(R.id.tag_key_view);
-    TextView key = menuSheetView.findViewById(R.id.tag_list_key);
-    if (tag.getKey() == null || tag.getKey().isEmpty()) {
-      keyView.setVisibility(View.GONE);
-    } else {
-      key.setText(tag.getKey());
-    }
-
-    RatingBar rating = menuSheetView.findViewById(R.id.tag_list_ratingBar);
-    rating.setRating((float) tag.getRating());
-    TextView ratingText = menuSheetView.findViewById(R.id.tag_list_ratingText);
-    ratingText.setText(String.format(Locale.ENGLISH, "%.1f", tag.getRating()));
-    TextView version = menuSheetView.findViewById(R.id.tag_list_version);
-    version.setText(tag.getVersion());
-    TextView sep = menuSheetView.findViewById(R.id.tag_list_line_sep);
-    keyView.setOnTouchListener(
-        (View v, MotionEvent event) -> {
-          switch (event.getAction()) {
-            case MotionEvent.ACTION_DOWN:
-              keyDownTime = System.currentTimeMillis();
-              keyView.setSelected(true);
-              PitchPlayer.playPitch(getContext(), tag.getKey());
-              break;
-            case MotionEvent.ACTION_UP:
-              keyView.setSelected(false);
-              if (System.currentTimeMillis() - keyDownTime < PITCH_DOWN_TIME_MILLIS) {
-                // PitchPlayer.setLoop( false );
-                PitchPlayer.stopPitch();
-              } else {
-                PitchPlayer.stopPitch();
-              }
-              break;
-            case MotionEvent.ACTION_BUTTON_PRESS:
-              v.performClick();
-              break;
-          }
-          return true;
-        });
-    if (tag.getArranger().length() > 0 && tag.getVersion().length() > 0) {
-      sep.setVisibility(View.VISIBLE);
-    } else {
-      sep.setVisibility(View.GONE);
-    }
-
-    if (tag.getTrack(TrackParts.ALL.getKey()) == null) {
-      menuSheetView.getMenu().findItem(R.id.menu_track_all).setVisible(false);
-    }
-    if (tag.getTrack(TrackParts.BASS.getKey()) == null) {
-      menuSheetView.getMenu().findItem(R.id.menu_track_bass).setVisible(false);
-    }
-    if (tag.getTrack(TrackParts.BARI.getKey()) == null) {
-      menuSheetView.getMenu().findItem(R.id.menu_track_bari).setVisible(false);
-    }
-    if (tag.getTrack(TrackParts.LEAD.getKey()) == null) {
-      menuSheetView.getMenu().findItem(R.id.menu_track_lead).setVisible(false);
-    }
-    if (tag.getTrack(TrackParts.TENOR.getKey()) == null) {
-      menuSheetView.getMenu().findItem(R.id.menu_track_tenor).setVisible(false);
-    }
-    if (tag.getTrack(TrackParts.OTHER1.getKey()) == null) {
-      menuSheetView.getMenu().findItem(R.id.menu_track_other1).setVisible(false);
-    }
-    if (tag.getTrack(TrackParts.OTHER2.getKey()) == null) {
-      menuSheetView.getMenu().findItem(R.id.menu_track_other2).setVisible(false);
-    }
-    if (tag.getTrack(TrackParts.OTHER3.getKey()) == null) {
-      menuSheetView.getMenu().findItem(R.id.menu_track_other3).setVisible(false);
-    }
-    if (tag.getTrack(TrackParts.OTHER4.getKey()) == null) {
-      menuSheetView.getMenu().findItem(R.id.menu_track_other4).setVisible(false);
-    }
-
-    ArrayList<VideoComponents> videos = tag.getVideos();
-    if (videos.size() >= 1) {
-      menuSheetView.getMenu().findItem(R.id.menu_video_1).setTitle(getVideoTitle(videos.get(0)));
-    } else {
-      menuSheetView.getMenu().findItem(R.id.menu_video_1).setVisible(false);
-      menuSheetView.getMenu().findItem(R.id.menu_videos).setVisible(false);
-    }
-    if (videos.size() >= 2) {
-      menuSheetView.getMenu().findItem(R.id.menu_video_2).setTitle(getVideoTitle(videos.get(1)));
-    } else {
-      menuSheetView.getMenu().findItem(R.id.menu_video_2).setVisible(false);
-    }
-    if (videos.size() >= 3) {
-      menuSheetView.getMenu().findItem(R.id.menu_video_3).setTitle(getVideoTitle(videos.get(2)));
-    } else {
-      menuSheetView.getMenu().findItem(R.id.menu_video_3).setVisible(false);
-    }
-    if (videos.size() >= 4) {
-      menuSheetView.getMenu().findItem(R.id.menu_video_4).setTitle(getVideoTitle(videos.get(3)));
-    } else {
-      menuSheetView.getMenu().findItem(R.id.menu_video_4).setVisible(false);
-    }
-    if (videos.size() <= 4) {
-      menuSheetView.getMenu().findItem(R.id.menu_video_more).setVisible(false);
-    }
-
-    menuSheetView.updateMenu();
-
-    bottomSheet.showWithSheetView(menuSheetView);
-  }
-
-  private String getVideoTitle(VideoComponents video) {
-    if (video.getVideoTitle() != null && !video.getVideoTitle().replaceAll("\\s", "").isEmpty()) {
-      return video.getVideoTitle();
-    } else if (video.getDescription() != null
-        && !video.getDescription().replaceAll("\\s", "").isEmpty()) {
-      return video.getDescription();
-    } else if (video.getSungBy() != null && !video.getSungBy().replaceAll("\\s", "").isEmpty()) {
-      return video.getSungBy();
-    }
-    return video.getTagTitle();
   }
 
   private void showTag() {
@@ -451,10 +248,12 @@ public class DisplayTag extends Fragment {
       return;
     }
 
-    tag = bundle.getParcelable(FragmentSwitcher.PAR_KEY);
+    tag = bundle.getParcelable(PAR_KEY);
     if (tag == null) {
       return;
     }
+
+    bottomSheet.setArguments(bundle);
 
     Log.d(TAG, tag.getTitle());
     absoluteFilePath = tag.getSheetMusicPath(context);
@@ -488,9 +287,6 @@ public class DisplayTag extends Fragment {
 
   private boolean isOutdated(File file) {
     String updateDaysString = preferences.getString("pref_key_update_frequency", "14");
-    if (updateDaysString == null) {
-      return false;
-    }
     int updatedDays = Integer.valueOf(updateDaysString);
     Calendar baseDay = Calendar.getInstance();
     baseDay.add(Calendar.DAY_OF_YEAR, -updatedDays);
@@ -541,16 +337,6 @@ public class DisplayTag extends Fragment {
       mImageView.setImageBitmap(BitmapFactory.decodeFile(imgFile.getAbsolutePath(), options));
     } else {
       setNetworkError();
-    }
-  }
-
-  private void createRatingDialog(Tag tag) {
-    if (getActivity() != null) {
-      RateTagDialog dialog = new RateTagDialog();
-      Bundle bundle = new Bundle();
-      bundle.putParcelable(FragmentSwitcher.TAG_KEY, tag);
-      dialog.setArguments(bundle);
-      dialog.show(getActivity().getSupportFragmentManager(), "rate");
     }
   }
 

@@ -7,7 +7,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
-import android.widget.RatingBar;
 import android.widget.TextView;
 import com.spelder.tagyourit.R;
 import com.spelder.tagyourit.model.Tag;
@@ -61,7 +60,6 @@ class TagListAdapter extends BaseAdapter {
       holder.title = view.findViewById(R.id.tag_list_title);
       holder.arranger = view.findViewById(R.id.tag_list_arranger);
       holder.version = view.findViewById(R.id.tag_list_version);
-      holder.tagRating = view.findViewById(R.id.tag_list_ratingBar);
       holder.tagRatingText = view.findViewById(R.id.tag_list_ratingText);
       holder.sheet = view.findViewById(R.id.tag_list_sheet_music);
       holder.track = view.findViewById(R.id.tag_list_track);
@@ -91,7 +89,6 @@ class TagListAdapter extends BaseAdapter {
     } else {
       holder.separator.setVisibility(View.GONE);
     }
-    holder.tagRating.setRating((float) tag.getRating());
     holder.tagRatingText.setText(String.format(Locale.ENGLISH, "%.1f", tag.getRating()));
     if (tag.hasSheetMusic()) {
       holder.sheet.setVisibility(View.VISIBLE);
@@ -120,7 +117,5 @@ class TagListAdapter extends BaseAdapter {
   private class ViewHolder {
     ImageView sheet, track, video;
     TextView title, arranger, version, tagRatingText, separator;
-
-    RatingBar tagRating;
   }
 }

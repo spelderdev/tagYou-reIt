@@ -43,7 +43,6 @@ This project is licensed under the GPLv3 License - see the [LICENSE.md](https://
 
 ## Acknowledgments
 
-* [BottomSheet](https://github.com/Flipboard/bottomsheet)
 * [Android PdfViewer](https://github.com/barteksc/AndroidPdfViewer)
 * [TouchImageView](https://github.com/MikeOrtiz/TouchImageView)
 * [Pitch Shifting](http://blogs.zynaptiq.com/bernsee/pitch-shifting-using-the-ft/)

@@ -5,6 +5,7 @@
   <color name="colorAccent">#e48126</color>
   <color name="darkTitle">#212121</color>
   <color name="darkSecondaryTitle">#616161</color>
+  <color name="lightSecondaryTitle">#838383</color>
   <color name="lightText">#dbdbdb</color>
   <color name="text_gray">#8C000000</color>
   <color name="divider_gray">#AAe2e2e2</color>
