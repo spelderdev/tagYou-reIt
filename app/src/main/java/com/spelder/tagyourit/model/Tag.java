@@ -28,6 +28,7 @@ public class Tag implements Parcelable {
           tag.setSheetMusicLink(source.readString());
           tag.setSheetMusicType(source.readString());
           tag.setSheetMusicFile(source.readString());
+          tag.setDbId(source.readLong());
           int size = source.readInt();
           for (int i = 0; i < size; i++) {
             String part = source.readString();
@@ -112,7 +113,7 @@ public class Tag implements Parcelable {
   }
 
   public boolean isFavorited() {
-    return dbId == null;
+    return dbId != null;
   }
 
   public Long getDbId() {
@@ -305,6 +306,7 @@ public class Tag implements Parcelable {
     parcel.writeString(sheetMusicLink);
     parcel.writeString(sheetMusicType);
     parcel.writeString(sheetMusicFile);
+    parcel.writeLong(dbId);
     parcel.writeInt(tracks.size());
     for (Map.Entry<String, TrackComponents> entry : tracks.entrySet()) {
       parcel.writeString(entry.getKey());

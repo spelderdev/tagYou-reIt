@@ -1,13 +1,17 @@
 <resources>
 
   <!-- Base application theme. -->
-  <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+  <style name="AppTheme" parent="Theme.MaterialComponents.Light.DarkActionBar">
     <item name="colorPrimary">@color/colorPrimary</item>
     <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
     <item name="colorAccent">@color/colorAccent</item>
+
+    <item name="shapeAppearanceSmallComponent">@style/ShapeAppearance.MyApp.SmallComponent</item>
+    <item name="shapeAppearanceMediumComponent">@style/ShapeAppearance.MyApp.MediumComponent</item>
+    <item name="shapeAppearanceLargeComponent">@style/ShapeAppearance.MyApp.LargeComponent</item>
   </style>
 
-  <style name="AppTheme.NavBar" parent="ThemeOverlay.AppCompat.Dark">
+  <style name="AppTheme.NavBar" parent="ThemeOverlay.MaterialComponents.Light">
     <item name="android:windowBackground">@null</item>
   </style>
 
@@ -23,13 +27,33 @@
     <item name="android:windowContentOverlay">@null</item>
   </style>
 
-  <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar"/>
+  <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.MaterialComponents.Dark.ActionBar"/>
 
-  <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light"/>
+  <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.MaterialComponents.Light"/>
 
   <style name="starsRatingBar" parent="@android:style/Widget.RatingBar">
     <item name="android:progressDrawable">@drawable/orange_rating</item>
     <item name="android:minHeight">26dip</item>
     <item name="android:maxHeight">26dip</item>
+  </style>
+
+  <style name="ShapeAppearance.MyApp.SmallComponent" parent="ShapeAppearance.MaterialComponents.SmallComponent">
+    <item name="cornerFamily">cut</item>
+    <item name="cornerSize">4dp</item>
+  </style>
+
+  <style name="ShapeAppearance.MyApp.MediumComponent" parent="ShapeAppearance.MaterialComponents.MediumComponent">
+    <item name="cornerFamily">cut</item>
+    <item name="cornerSize">8dp</item>
+  </style>
+
+  <style name="ShapeAppearance.MyApp.LargeComponent" parent="ShapeAppearance.MaterialComponents.LargeComponent">
+    <item name="cornerFamily">rounded</item>
+    <item name="cornerSize">16dp</item>
+  </style>
+
+  <style name="PrimaryFlatButton" parent="Theme.MaterialComponents.Light">
+    <item name="android:buttonStyle">@style/Widget.AppCompat.Button.Borderless.Colored</item>
+    <item name="colorControlHighlight">@color/colorAccent</item>
   </style>
 </resources>
