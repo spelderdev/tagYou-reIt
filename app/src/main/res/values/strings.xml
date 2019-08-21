@@ -22,6 +22,7 @@
   <string name="action_favorite">Favorite</string>
   <string name="action_unfavorite">UnFavorite</string>
   <string name="action_search">Search</string>
+  <string name="action_sort">Sort</string>
   <string name="action_filter">Filter</string>
   <string name="action_menu">Menu</string>
 
@@ -98,4 +99,11 @@
   <string name="filter_key_key">filter_key</string>
   <string name="filter_type_key">filter_type</string>
   <string name="filter_rating_key">filter_rating</string>
+
+  <string name="sort_title">Sort by</string>
+  <string name="sort_by_latest">Latest</string>
+  <string name="sort_by_rating">Rating</string>
+  <string name="sort_by_downloads">Number of Downloads</string>
+  <string name="sort_by_title">Title</string>
+  <string name="sort_apply">Apply</string>
 </resources>

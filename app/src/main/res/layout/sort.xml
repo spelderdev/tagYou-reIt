@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+  android:layout_width="match_parent"
+  android:layout_height="match_parent"
+  android:paddingTop="15dp"
+  android:paddingBottom="15dp"
+  android:paddingStart="15dp"
+  android:paddingEnd="15dp"
+  android:orientation="vertical">
+
+  <TextView
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:text="@string/sort_title"
+    android:textColor="@color/darkTitle"
+    android:textSize="22sp"/>
+
+  <RadioGroup
+    android:id="@+id/sort_by_radio"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="10dp"
+    android:layout_marginBottom="10dp"
+    android:layout_marginStart="10dp">
+
+    <RadioButton
+      android:id="@+id/sort_title"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:text="@string/sort_by_title"/>
+
+    <RadioButton
+      android:id="@+id/sort_rating"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:text="@string/sort_by_rating"/>
+
+    <RadioButton
+      android:id="@+id/sort_downloads"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:text="@string/sort_by_downloads"/>
+
+    <RadioButton
+      android:id="@+id/sort_latest"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:text="@string/sort_by_latest"/>
+
+  </RadioGroup>
+
+  <androidx.appcompat.widget.AppCompatButton
+    android:id="@+id/sort_apply_button"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:text="@string/sort_apply"
+    android:theme="@style/AppTheme"/>
+
+</LinearLayout>

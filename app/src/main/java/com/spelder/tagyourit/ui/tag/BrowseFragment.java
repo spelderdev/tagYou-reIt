@@ -35,7 +35,7 @@ public class BrowseFragment extends Fragment {
     error_text = view.findViewById(R.id.browse_tab_view_error_text);
     Button error_button = view.findViewById(R.id.browse_tab_view_refresh_button);
     error_layout = view.findViewById(R.id.browse_tab_view_error);
-    mPager = view.findViewById(R.id.pager);
+    //mPager = view.findViewById(R.id.pager);
     error_button.setOnClickListener(
         v -> {
           Activity activity = getActivity();
