@@ -7,9 +7,15 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.preference.PreferenceManager;
 import android.util.Log;
+import com.spelder.tagyourit.db.TagContract.FavoritesEntry;
+import com.spelder.tagyourit.db.TagContract.LearningTracksEntry;
+import com.spelder.tagyourit.db.TagContract.RatingEntry;
+import com.spelder.tagyourit.db.TagContract.TagEntry;
+import com.spelder.tagyourit.db.TagContract.VideoEntry;
 import com.spelder.tagyourit.model.Tag;
 import com.spelder.tagyourit.model.TrackComponents;
 import com.spelder.tagyourit.model.VideoComponents;
+import com.spelder.tagyourit.networking.api.SortBy;
 import com.spelder.tagyourit.networking.api.filter.FilterBy;
 import com.spelder.tagyourit.pitch.Pitch;
 import java.math.BigInteger;
@@ -41,22 +47,25 @@ public class TagDb {
     SQLiteDatabase db = TagDbHelper.getInstance(context).getWritableDatabase();
     // Create a new map of values, where column names are the keys
     ContentValues values = new ContentValues();
-    values.put(TagContract.TagEntry.COLUMN_NAME_ID, tag.getId());
-    values.put(TagContract.TagEntry.COLUMN_NAME_TITLE, tag.getTitle());
-    values.put(TagContract.TagEntry.COLUMN_NAME_VERSION, tag.getVersion());
-    values.put(TagContract.TagEntry.COLUMN_NAME_ARRANGER, tag.getArranger());
-    values.put(TagContract.TagEntry.COLUMN_NAME_RATING, tag.getRating());
-    values.put(TagContract.TagEntry.COLUMN_NAME_KEY, tag.getKey());
-    values.put(TagContract.TagEntry.COLUMN_NAME_PARTS_NUMBER, tag.getNumberOfParts());
-    values.put(TagContract.TagEntry.COLUMN_NAME_LYRICS, tag.getLyrics());
-    values.put(TagContract.TagEntry.COLUMN_NAME_TYPE, tag.getType());
-    values.put(TagContract.TagEntry.COLUMN_NAME_SHEET_MUSIC_TYPE, tag.getSheetMusicType());
-    values.put(TagContract.TagEntry.COLUMN_NAME_SHEET_MUSIC_LINK, tag.getSheetMusicLink());
-    values.put(TagContract.TagEntry.COLUMN_NAME_SHEET_MUSIC_FILE, tag.getSheetMusicFile());
-    values.put(TagContract.TagEntry.COLUMN_NAME_LAST_MODIFIED_DATE, sdf.format(new Date()));
-    values.put(TagContract.TagEntry.COLUMN_NAME_TYPE, sdf.format(new Date()));
+    values.put(TagEntry.COLUMN_NAME_ID, tag.getId());
+    values.put(TagEntry.COLUMN_NAME_TITLE, tag.getTitle());
+    values.put(TagEntry.COLUMN_NAME_VERSION, tag.getVersion());
+    values.put(TagEntry.COLUMN_NAME_ARRANGER, tag.getArranger());
+    values.put(TagEntry.COLUMN_NAME_RATING, tag.getRating());
+    values.put(TagEntry.COLUMN_NAME_DOWNLOAD, tag.getDownloadCount());
+    values.put(TagEntry.COLUMN_NAME_POSTED, tag.getPostedDate().getTime());
+    values.put(TagEntry.COLUMN_NAME_CLASSIC_TAG_NUMBER, tag.getClassicTagNumber());
+    values.put(TagEntry.COLUMN_NAME_KEY, tag.getKey());
+    values.put(TagEntry.COLUMN_NAME_PARTS_NUMBER, tag.getNumberOfParts());
+    values.put(TagEntry.COLUMN_NAME_LYRICS, tag.getLyrics());
+    values.put(TagEntry.COLUMN_NAME_TYPE, tag.getType());
+    values.put(TagEntry.COLUMN_NAME_SHEET_MUSIC_TYPE, tag.getSheetMusicType());
+    values.put(TagEntry.COLUMN_NAME_SHEET_MUSIC_LINK, tag.getSheetMusicLink());
+    values.put(TagEntry.COLUMN_NAME_SHEET_MUSIC_FILE, tag.getSheetMusicFile());
+    values.put(TagEntry.COLUMN_NAME_LAST_MODIFIED_DATE, sdf.format(new Date()));
+    values.put(TagEntry.COLUMN_NAME_TYPE, sdf.format(new Date()));
     // Insert the new row, returning the primary key value of the new row
-    long newRowId = db.insert(TagContract.TagEntry.TABLE_NAME, null, values);
+    long newRowId = db.insert(TagEntry.TABLE_NAME, null, values);
     Log.d("TagDb,", "tagId: " + tag.getId());
     db.close();
 
@@ -97,21 +106,24 @@ public class TagDb {
   private void updateTag(Tag tag, SQLiteDatabase db) {
     // Create a new map of values, where column names are the keys
     ContentValues values = new ContentValues();
-    values.put(TagContract.TagEntry.COLUMN_NAME_TITLE, tag.getTitle());
-    values.put(TagContract.TagEntry.COLUMN_NAME_VERSION, tag.getVersion());
-    values.put(TagContract.TagEntry.COLUMN_NAME_ARRANGER, tag.getArranger());
-    values.put(TagContract.TagEntry.COLUMN_NAME_RATING, tag.getRating());
-    values.put(TagContract.TagEntry.COLUMN_NAME_KEY, tag.getKey());
-    values.put(TagContract.TagEntry.COLUMN_NAME_PARTS_NUMBER, tag.getNumberOfParts());
-    values.put(TagContract.TagEntry.COLUMN_NAME_LYRICS, tag.getLyrics());
-    values.put(TagContract.TagEntry.COLUMN_NAME_TYPE, tag.getType());
-    values.put(TagContract.TagEntry.COLUMN_NAME_SHEET_MUSIC_TYPE, tag.getSheetMusicType());
-    values.put(TagContract.TagEntry.COLUMN_NAME_SHEET_MUSIC_LINK, tag.getSheetMusicLink());
-    values.put(TagContract.TagEntry.COLUMN_NAME_SHEET_MUSIC_FILE, tag.getSheetMusicFile());
-    values.put(TagContract.TagEntry.COLUMN_NAME_LAST_MODIFIED_DATE, sdf.format(new Date()));
+    values.put(TagEntry.COLUMN_NAME_TITLE, tag.getTitle());
+    values.put(TagEntry.COLUMN_NAME_VERSION, tag.getVersion());
+    values.put(TagEntry.COLUMN_NAME_ARRANGER, tag.getArranger());
+    values.put(TagEntry.COLUMN_NAME_RATING, tag.getRating());
+    values.put(TagEntry.COLUMN_NAME_DOWNLOAD, tag.getDownloadCount());
+    values.put(TagEntry.COLUMN_NAME_POSTED, tag.getPostedDate().getTime());
+    values.put(TagEntry.COLUMN_NAME_CLASSIC_TAG_NUMBER, tag.getClassicTagNumber());
+    values.put(TagEntry.COLUMN_NAME_KEY, tag.getKey());
+    values.put(TagEntry.COLUMN_NAME_PARTS_NUMBER, tag.getNumberOfParts());
+    values.put(TagEntry.COLUMN_NAME_LYRICS, tag.getLyrics());
+    values.put(TagEntry.COLUMN_NAME_TYPE, tag.getType());
+    values.put(TagEntry.COLUMN_NAME_SHEET_MUSIC_TYPE, tag.getSheetMusicType());
+    values.put(TagEntry.COLUMN_NAME_SHEET_MUSIC_LINK, tag.getSheetMusicLink());
+    values.put(TagEntry.COLUMN_NAME_SHEET_MUSIC_FILE, tag.getSheetMusicFile());
+    values.put(TagEntry.COLUMN_NAME_LAST_MODIFIED_DATE, sdf.format(new Date()));
     // Insert the new row, returning the primary key value of the new row
-    String strFilter = TagContract.TagEntry.COLUMN_NAME_ID + "=" + tag.getId();
-    db.update(TagContract.TagEntry.TABLE_NAME, values, strFilter, null);
+    String strFilter = TagEntry.COLUMN_NAME_ID + "=" + tag.getId();
+    db.update(TagEntry.TABLE_NAME, values, strFilter, null);
     Log.d("TagDb,", "Updated tagId: " + tag.getId());
 
     long dbId = getDbIdFromTagId(tag.getId(), db);
@@ -126,33 +138,32 @@ public class TagDb {
 
   private void deleteVideos(long dbId, SQLiteDatabase db) {
     // Define 'where' part of query.
-    String selection = TagContract.VideoEntry.COLUMN_NAME_TAG_ID + " LIKE ?";
+    String selection = VideoEntry.COLUMN_NAME_TAG_ID + " LIKE ?";
     // Specify arguments in placeholder order.
     String[] selectionArgs4 = {"" + dbId};
     // Issue SQL statement.
-    int deletedRows = db.delete(TagContract.VideoEntry.TABLE_NAME, selection, selectionArgs4);
+    int deletedRows = db.delete(VideoEntry.TABLE_NAME, selection, selectionArgs4);
     Log.d("VideoDB", "Number of Deleted rows: " + deletedRows);
   }
 
   private void deleteTracks(long dbId, SQLiteDatabase db) {
     // Define 'where' part of query.
-    String selection = TagContract.LearningTracksEntry.COLUMN_NAME_TAG_ID + " LIKE ?";
+    String selection = LearningTracksEntry.COLUMN_NAME_TAG_ID + " LIKE ?";
     // Specify arguments in placeholder order.
     String[] selectionArgs3 = {"" + dbId};
     // Issue SQL statement.
-    int deletedRows =
-        db.delete(TagContract.LearningTracksEntry.TABLE_NAME, selection, selectionArgs3);
+    int deletedRows = db.delete(LearningTracksEntry.TABLE_NAME, selection, selectionArgs3);
     Log.d("LearningTrackDB", "Number of Deleted rows: " + deletedRows);
   }
 
   private long getDbIdFromTagId(int tagId, SQLiteDatabase db) {
     String sql =
         "SELECT "
-            + TagContract.TagEntry._ID
+            + TagEntry._ID
             + " FROM "
-            + TagContract.TagEntry.TABLE_NAME
+            + TagEntry.TABLE_NAME
             + " WHERE "
-            + TagContract.TagEntry.COLUMN_NAME_ID
+            + TagEntry.COLUMN_NAME_ID
             + " = "
             + tagId;
     Cursor c = db.rawQuery(sql, new String[] {});
@@ -163,7 +174,7 @@ public class TagDb {
 
     long dbId;
     do {
-      dbId = c.getLong(c.getColumnIndex(TagContract.TagEntry._ID));
+      dbId = c.getLong(c.getColumnIndex(TagEntry._ID));
     } while (c.moveToNext());
     c.close();
     return dbId;
@@ -174,13 +185,13 @@ public class TagDb {
     SQLiteDatabase db = TagDbHelper.getInstance(context).getWritableDatabase();
     String sql =
         "SELECT "
-            + TagContract.TagEntry.COLUMN_NAME_ID
+            + TagEntry.COLUMN_NAME_ID
             + " FROM "
-            + TagContract.TagEntry.TABLE_NAME
+            + TagEntry.TABLE_NAME
             + " WHERE "
-            + TagContract.TagEntry.COLUMN_NAME_LAST_MODIFIED_DATE
+            + TagEntry.COLUMN_NAME_LAST_MODIFIED_DATE
             + " IS NULL OR "
-            + TagContract.TagEntry.COLUMN_NAME_LAST_MODIFIED_DATE
+            + TagEntry.COLUMN_NAME_LAST_MODIFIED_DATE
             + " <= date('now','-"
             + updatedDays
             + " day')";
@@ -191,8 +202,8 @@ public class TagDb {
     c.moveToFirst();
 
     do {
-      outdatedTagIdList.add(c.getInt(c.getColumnIndex(TagContract.TagEntry.COLUMN_NAME_ID)));
-      Log.d("TagDb", "" + c.getInt(c.getColumnIndex(TagContract.TagEntry.COLUMN_NAME_ID)));
+      outdatedTagIdList.add(c.getInt(c.getColumnIndex(TagEntry.COLUMN_NAME_ID)));
+      Log.d("TagDb", "" + c.getInt(c.getColumnIndex(TagEntry.COLUMN_NAME_ID)));
     } while (c.moveToNext());
     c.close();
     db.close();
@@ -203,12 +214,12 @@ public class TagDb {
     SQLiteDatabase db = TagDbHelper.getInstance(context).getWritableDatabase();
     for (TrackComponents track : tracks) {
       ContentValues values = new ContentValues();
-      values.put(TagContract.LearningTracksEntry.COLUMN_NAME_TAG_ID, tagId);
-      values.put(TagContract.LearningTracksEntry.COLUMN_NAME_PART, track.getPart());
-      values.put(TagContract.LearningTracksEntry.COLUMN_NAME_LINK, track.getLink());
-      values.put(TagContract.LearningTracksEntry.COLUMN_NAME_FILE_TYPE, track.getType());
-      values.put(TagContract.LearningTracksEntry.COLUMN_NAME_FILE, "");
-      long newRowId = db.insert(TagContract.LearningTracksEntry.TABLE_NAME, null, values);
+      values.put(LearningTracksEntry.COLUMN_NAME_TAG_ID, tagId);
+      values.put(LearningTracksEntry.COLUMN_NAME_PART, track.getPart());
+      values.put(LearningTracksEntry.COLUMN_NAME_LINK, track.getLink());
+      values.put(LearningTracksEntry.COLUMN_NAME_FILE_TYPE, track.getType());
+      values.put(LearningTracksEntry.COLUMN_NAME_FILE, "");
+      long newRowId = db.insert(LearningTracksEntry.TABLE_NAME, null, values);
       Log.d("TrackDb,", "trackId: " + newRowId);
     }
     db.close();
@@ -218,34 +229,34 @@ public class TagDb {
     SQLiteDatabase db = TagDbHelper.getInstance(context).getWritableDatabase();
     for (VideoComponents video : videos) {
       ContentValues values = new ContentValues();
-      values.put(TagContract.VideoEntry.COLUMN_NAME_TAG_ID, tagId);
-      values.put(TagContract.VideoEntry.COLUMN_NAME_TITLE, video.getVideoTitle());
-      values.put(TagContract.VideoEntry.COLUMN_NAME_DESCRIPTION, video.getDescription());
+      values.put(VideoEntry.COLUMN_NAME_TAG_ID, tagId);
+      values.put(VideoEntry.COLUMN_NAME_TITLE, video.getVideoTitle());
+      values.put(VideoEntry.COLUMN_NAME_DESCRIPTION, video.getDescription());
       if (video.getSungKey() != null) {
-        values.put(TagContract.VideoEntry.COLUMN_NAME_KEY, video.getSungKey().name());
+        values.put(VideoEntry.COLUMN_NAME_KEY, video.getSungKey().name());
       }
-      values.put(TagContract.VideoEntry.COLUMN_NAME_MULTITRACK, video.isMultitrack() ? 1 : 0);
-      values.put(TagContract.VideoEntry.COLUMN_NAME_VIDEO_ID, video.getId());
-      values.put(TagContract.VideoEntry.COLUMN_NAME_VIDEO_CODE, video.getVideoCode());
-      values.put(TagContract.VideoEntry.COLUMN_NAME_SUNG_BY, video.getSungBy());
-      values.put(TagContract.VideoEntry.COLUMN_NAME_SUNG_WEBSITE, video.getSungWebsite());
-      values.put(TagContract.VideoEntry.COLUMN_NAME_POSTED_DATE, video.getPostedDate());
+      values.put(VideoEntry.COLUMN_NAME_MULTITRACK, video.isMultitrack() ? 1 : 0);
+      values.put(VideoEntry.COLUMN_NAME_VIDEO_ID, video.getId());
+      values.put(VideoEntry.COLUMN_NAME_VIDEO_CODE, video.getVideoCode());
+      values.put(VideoEntry.COLUMN_NAME_SUNG_BY, video.getSungBy());
+      values.put(VideoEntry.COLUMN_NAME_SUNG_WEBSITE, video.getSungWebsite());
+      values.put(VideoEntry.COLUMN_NAME_POSTED_DATE, video.getPostedDate());
       values.put(
-          TagContract.VideoEntry.COLUMN_NAME_VIEW_COUNT,
+          VideoEntry.COLUMN_NAME_VIEW_COUNT,
           video.getViewCount() != null ? video.getViewCount().toString() : "0");
       values.put(
-          TagContract.VideoEntry.COLUMN_NAME_LIKE_COUNT,
+          VideoEntry.COLUMN_NAME_LIKE_COUNT,
           video.getLikeCount() != null ? video.getLikeCount().toString() : "0");
       values.put(
-          TagContract.VideoEntry.COLUMN_NAME_DISLIKE_COUNT,
+          VideoEntry.COLUMN_NAME_DISLIKE_COUNT,
           video.getDislikeCount() != null ? video.getDislikeCount().toString() : "0");
       values.put(
-          TagContract.VideoEntry.COLUMN_NAME_FAVORITE_COUNT,
+          VideoEntry.COLUMN_NAME_FAVORITE_COUNT,
           video.getFavoriteCount() != null ? video.getFavoriteCount().toString() : "0");
       values.put(
-          TagContract.VideoEntry.COLUMN_NAME_COMMENT_COUNT,
+          VideoEntry.COLUMN_NAME_COMMENT_COUNT,
           video.getCommentCount() != null ? video.getCommentCount().toString() : "0");
-      long newRowId = db.insert(TagContract.VideoEntry.TABLE_NAME, null, values);
+      long newRowId = db.insert(VideoEntry.TABLE_NAME, null, values);
       Log.d("VideoDb,", "videoId: " + newRowId);
     }
     db.close();
@@ -256,9 +267,9 @@ public class TagDb {
     SQLiteDatabase db = TagDbHelper.getInstance(context).getWritableDatabase();
     // Create a new map of values, where column names are the keys
     ContentValues values = new ContentValues();
-    values.put(TagContract.FavoritesEntry.COLUMN_NAME_TAG_ID, tagId);
+    values.put(FavoritesEntry.COLUMN_NAME_TAG_ID, tagId);
     // Insert the new row, returning the primary key value of the new row
-    long newRowId = db.insert(TagContract.FavoritesEntry.TABLE_NAME, null, values);
+    long newRowId = db.insert(FavoritesEntry.TABLE_NAME, null, values);
     Log.d("FavoriteDb,", "tagId: " + newRowId);
     db.close();
   }
@@ -271,35 +282,35 @@ public class TagDb {
     // Gets the data repository in write mode
     SQLiteDatabase db = TagDbHelper.getInstance(context).getWritableDatabase();
     // Define 'where' part of query.
-    String selection = TagContract.FavoritesEntry.COLUMN_NAME_TAG_ID + " LIKE ?";
+    String selection = FavoritesEntry.COLUMN_NAME_TAG_ID + " LIKE ?";
     // Specify arguments in placeholder order.
     String[] selectionArgs = {"" + tag.getDbId()};
     // Issue SQL statement.
-    int deletedRows = db.delete(TagContract.FavoritesEntry.TABLE_NAME, selection, selectionArgs);
+    int deletedRows = db.delete(FavoritesEntry.TABLE_NAME, selection, selectionArgs);
     Log.d("FavoriteDB", "Number of Deleted rows: " + deletedRows);
 
     // Define 'where' part of query.
-    selection = TagContract.LearningTracksEntry.COLUMN_NAME_TAG_ID + " LIKE ?";
+    selection = LearningTracksEntry.COLUMN_NAME_TAG_ID + " LIKE ?";
     // Specify arguments in placeholder order.
     String[] selectionArgs3 = {"" + tag.getDbId()};
     // Issue SQL statement.
-    deletedRows = db.delete(TagContract.LearningTracksEntry.TABLE_NAME, selection, selectionArgs3);
+    deletedRows = db.delete(LearningTracksEntry.TABLE_NAME, selection, selectionArgs3);
     Log.d("LearningTrackDB", "Number of Deleted rows: " + deletedRows);
 
     // Define 'where' part of query.
-    selection = TagContract.VideoEntry.COLUMN_NAME_TAG_ID + " LIKE ?";
+    selection = VideoEntry.COLUMN_NAME_TAG_ID + " LIKE ?";
     // Specify arguments in placeholder order.
     String[] selectionArgs4 = {"" + tag.getDbId()};
     // Issue SQL statement.
-    deletedRows = db.delete(TagContract.VideoEntry.TABLE_NAME, selection, selectionArgs4);
+    deletedRows = db.delete(VideoEntry.TABLE_NAME, selection, selectionArgs4);
     Log.d("VideoDB", "Number of Deleted rows: " + deletedRows);
 
     // Define 'where' part of query.
-    selection = TagContract.TagEntry._ID + " LIKE ?";
+    selection = TagEntry._ID + " LIKE ?";
     // Specify arguments in placeholder order.
     String[] selectionArgs2 = {"" + tag.getDbId()};
     // Issue SQL statement.
-    deletedRows = db.delete(TagContract.TagEntry.TABLE_NAME, selection, selectionArgs2);
+    deletedRows = db.delete(TagEntry.TABLE_NAME, selection, selectionArgs2);
     Log.d("TagDB", "Number of Deleted rows: " + deletedRows);
 
     db.close();
@@ -309,28 +320,28 @@ public class TagDb {
     SQLiteDatabase db = TagDbHelper.getInstance(context).getWritableDatabase();
     String sql =
         "SELECT * FROM "
-            + TagContract.TagEntry.TABLE_NAME
+            + TagEntry.TABLE_NAME
             + ", "
-            + TagContract.FavoritesEntry.TABLE_NAME
+            + FavoritesEntry.TABLE_NAME
             + " WHERE "
-            + TagContract.TagEntry.TABLE_NAME
+            + TagEntry.TABLE_NAME
             + "."
-            + TagContract.TagEntry._ID
+            + TagEntry._ID
             + " = "
-            + TagContract.FavoritesEntry.TABLE_NAME
+            + FavoritesEntry.TABLE_NAME
             + "."
-            + TagContract.FavoritesEntry.COLUMN_NAME_TAG_ID
+            + FavoritesEntry.COLUMN_NAME_TAG_ID
             + " AND "
-            + TagContract.TagEntry.TABLE_NAME
+            + TagEntry.TABLE_NAME
             + "."
-            + TagContract.TagEntry.COLUMN_NAME_ID
+            + TagEntry.COLUMN_NAME_ID
             + " = "
             + tag.getId();
     Cursor c = db.rawQuery(sql, new String[] {});
     Long dbId = null;
     if (c.getCount() > 0) {
       c.moveToFirst();
-      dbId = c.getLong(c.getColumnIndex(TagContract.TagEntry.COLUMN_NAME_ID));
+      dbId = c.getLong(c.getColumnIndex(TagEntry.COLUMN_NAME_ID));
     }
     c.close();
     db.close();
@@ -344,25 +355,39 @@ public class TagDb {
     }
   }
 
-  public List<Tag> getFavorites(FilterBy filter) {
+  public List<Tag> getFavorites(FilterBy filter, SortBy sortBy) {
     String sql =
         "SELECT * FROM "
-            + TagContract.TagEntry.TABLE_NAME
+            + TagEntry.TABLE_NAME
             + ", "
-            + TagContract.FavoritesEntry.TABLE_NAME
+            + FavoritesEntry.TABLE_NAME
             + " WHERE "
-            + TagContract.TagEntry.TABLE_NAME
+            + TagEntry.TABLE_NAME
             + "."
-            + TagContract.TagEntry._ID
+            + TagEntry._ID
             + " = "
-            + TagContract.FavoritesEntry.TABLE_NAME
+            + FavoritesEntry.TABLE_NAME
             + "."
-            + TagContract.FavoritesEntry.COLUMN_NAME_TAG_ID
+            + FavoritesEntry.COLUMN_NAME_TAG_ID
             + filter.getDbFilter()
             + " ORDER BY "
-            + TagContract.TagEntry.COLUMN_NAME_TITLE;
+            + getSortColumnName(sortBy);
 
     return getFavorites(sql);
+  }
+
+  private String getSortColumnName(SortBy sortBy) {
+    switch (sortBy) {
+      case RATING:
+        return TagEntry.COLUMN_NAME_RATING + " DESC";
+      case DOWNLOAD:
+        return TagEntry.COLUMN_NAME_DOWNLOAD + " DESC";
+      case LATEST:
+        return TagEntry.COLUMN_NAME_POSTED + " DESC";
+      case TITLE:
+      default:
+        return TagEntry.COLUMN_NAME_TITLE;
+    }
   }
 
   private List<Tag> getFavorites(String sql) {
@@ -379,28 +404,27 @@ public class TagDb {
 
     do {
       Tag tag = new Tag();
-      tag.setDbId(c.getLong(c.getColumnIndex(TagContract.TagEntry._ID)));
-      tag.setId(c.getInt(c.getColumnIndex(TagContract.TagEntry.COLUMN_NAME_ID)));
-      tag.setTitle(c.getString(c.getColumnIndex(TagContract.TagEntry.COLUMN_NAME_TITLE)));
-      tag.setVersion(c.getString(c.getColumnIndex(TagContract.TagEntry.COLUMN_NAME_VERSION)));
-      tag.setArranger(c.getString(c.getColumnIndex(TagContract.TagEntry.COLUMN_NAME_ARRANGER)));
-      tag.setRating(c.getString(c.getColumnIndex(TagContract.TagEntry.COLUMN_NAME_RATING)));
-      tag.setKey(c.getString(c.getColumnIndex(TagContract.TagEntry.COLUMN_NAME_KEY)));
-      tag.setNumberOfParts(
-          c.getInt(c.getColumnIndex(TagContract.TagEntry.COLUMN_NAME_PARTS_NUMBER)));
-      tag.setLyrics(c.getString(c.getColumnIndex(TagContract.TagEntry.COLUMN_NAME_LYRICS)));
-      tag.setType(c.getString(c.getColumnIndex(TagContract.TagEntry.COLUMN_NAME_TYPE)));
-      tag.setSheetMusicType(
-          c.getString(c.getColumnIndex(TagContract.TagEntry.COLUMN_NAME_SHEET_MUSIC_TYPE)));
-      tag.setSheetMusicLink(
-          c.getString(c.getColumnIndex(TagContract.TagEntry.COLUMN_NAME_SHEET_MUSIC_LINK)));
-      tag.setSheetMusicFile(
-          c.getString(c.getColumnIndex(TagContract.TagEntry.COLUMN_NAME_SHEET_MUSIC_FILE)));
+      tag.setDbId(c.getLong(c.getColumnIndex(TagEntry._ID)));
+      tag.setId(c.getInt(c.getColumnIndex(TagEntry.COLUMN_NAME_ID)));
+      tag.setTitle(c.getString(c.getColumnIndex(TagEntry.COLUMN_NAME_TITLE)));
+      tag.setVersion(c.getString(c.getColumnIndex(TagEntry.COLUMN_NAME_VERSION)));
+      tag.setArranger(c.getString(c.getColumnIndex(TagEntry.COLUMN_NAME_ARRANGER)));
+      tag.setRating(c.getString(c.getColumnIndex(TagEntry.COLUMN_NAME_RATING)));
+      tag.setClassicTagNumber(c.getInt(c.getColumnIndex(TagEntry.COLUMN_NAME_CLASSIC_TAG_NUMBER)));
+      tag.setDownloadCount(c.getInt(c.getColumnIndex(TagEntry.COLUMN_NAME_DOWNLOAD)));
+      tag.setPostedDate(c.getLong(c.getColumnIndex(TagEntry.COLUMN_NAME_POSTED)));
+      tag.setKey(c.getString(c.getColumnIndex(TagEntry.COLUMN_NAME_KEY)));
+      tag.setNumberOfParts(c.getInt(c.getColumnIndex(TagEntry.COLUMN_NAME_PARTS_NUMBER)));
+      tag.setLyrics(c.getString(c.getColumnIndex(TagEntry.COLUMN_NAME_LYRICS)));
+      tag.setType(c.getString(c.getColumnIndex(TagEntry.COLUMN_NAME_TYPE)));
+      tag.setSheetMusicType(c.getString(c.getColumnIndex(TagEntry.COLUMN_NAME_SHEET_MUSIC_TYPE)));
+      tag.setSheetMusicLink(c.getString(c.getColumnIndex(TagEntry.COLUMN_NAME_SHEET_MUSIC_LINK)));
+      tag.setSheetMusicFile(c.getString(c.getColumnIndex(TagEntry.COLUMN_NAME_SHEET_MUSIC_FILE)));
       tag.setDownloaded(saveFavorites);
       addTracks(tag, db);
       addVideos(tag, db);
       tags.add(tag);
-      Log.d("TagDb", "" + c.getInt(c.getColumnIndex(TagContract.TagEntry.COLUMN_NAME_ID)));
+      Log.d("TagDb", "" + c.getInt(c.getColumnIndex(TagEntry.COLUMN_NAME_ID)));
     } while (c.moveToNext());
     c.close();
     db.close();
@@ -410,30 +434,30 @@ public class TagDb {
   public List<Tag> getFavorites() {
     String sql =
         "SELECT * FROM "
-            + TagContract.TagEntry.TABLE_NAME
+            + TagEntry.TABLE_NAME
             + ", "
-            + TagContract.FavoritesEntry.TABLE_NAME
+            + FavoritesEntry.TABLE_NAME
             + " WHERE "
-            + TagContract.TagEntry.TABLE_NAME
+            + TagEntry.TABLE_NAME
             + "."
-            + TagContract.TagEntry._ID
+            + TagEntry._ID
             + " = "
-            + TagContract.FavoritesEntry.TABLE_NAME
+            + FavoritesEntry.TABLE_NAME
             + "."
-            + TagContract.FavoritesEntry.COLUMN_NAME_TAG_ID
+            + FavoritesEntry.COLUMN_NAME_TAG_ID
             + " ORDER BY "
-            + TagContract.TagEntry.COLUMN_NAME_TITLE;
+            + TagEntry.COLUMN_NAME_TITLE;
     return getFavorites(sql);
   }
 
   private void addTracks(Tag tag, SQLiteDatabase db) {
     String sql =
         "SELECT * FROM "
-            + TagContract.LearningTracksEntry.TABLE_NAME
+            + LearningTracksEntry.TABLE_NAME
             + " WHERE "
-            + TagContract.LearningTracksEntry.TABLE_NAME
+            + LearningTracksEntry.TABLE_NAME
             + "."
-            + TagContract.LearningTracksEntry.COLUMN_NAME_TAG_ID
+            + LearningTracksEntry.COLUMN_NAME_TAG_ID
             + " = "
             + tag.getDbId();
     Cursor c = db.rawQuery(sql, new String[] {});
@@ -442,10 +466,9 @@ public class TagDb {
     }
     c.moveToFirst();
     do {
-      String type =
-          c.getString(c.getColumnIndex(TagContract.LearningTracksEntry.COLUMN_NAME_FILE_TYPE));
-      String part = c.getString(c.getColumnIndex(TagContract.LearningTracksEntry.COLUMN_NAME_PART));
-      String link = c.getString(c.getColumnIndex(TagContract.LearningTracksEntry.COLUMN_NAME_LINK));
+      String type = c.getString(c.getColumnIndex(LearningTracksEntry.COLUMN_NAME_FILE_TYPE));
+      String part = c.getString(c.getColumnIndex(LearningTracksEntry.COLUMN_NAME_PART));
+      String link = c.getString(c.getColumnIndex(LearningTracksEntry.COLUMN_NAME_LINK));
       tag.addTrack(part, link, type);
     } while (c.moveToNext());
 
@@ -455,11 +478,11 @@ public class TagDb {
   private void addVideos(Tag tag, SQLiteDatabase db) {
     String sql =
         "SELECT * FROM "
-            + TagContract.VideoEntry.TABLE_NAME
+            + VideoEntry.TABLE_NAME
             + " WHERE "
-            + TagContract.VideoEntry.TABLE_NAME
+            + VideoEntry.TABLE_NAME
             + "."
-            + TagContract.VideoEntry.COLUMN_NAME_TAG_ID
+            + VideoEntry.COLUMN_NAME_TAG_ID
             + " = "
             + tag.getDbId();
     Cursor c = db.rawQuery(sql, new String[] {});
@@ -470,38 +493,28 @@ public class TagDb {
     c.moveToFirst();
     do {
       VideoComponents video = new VideoComponents();
-      video.setId(c.getInt(c.getColumnIndex(TagContract.VideoEntry.COLUMN_NAME_VIDEO_ID)));
-      video.setMultitrack(
-          c.getInt(c.getColumnIndex(TagContract.VideoEntry.COLUMN_NAME_MULTITRACK)) != 0);
-      String sungKey = c.getString(c.getColumnIndex(TagContract.VideoEntry.COLUMN_NAME_KEY));
+      video.setId(c.getInt(c.getColumnIndex(VideoEntry.COLUMN_NAME_VIDEO_ID)));
+      video.setMultitrack(c.getInt(c.getColumnIndex(VideoEntry.COLUMN_NAME_MULTITRACK)) != 0);
+      String sungKey = c.getString(c.getColumnIndex(VideoEntry.COLUMN_NAME_KEY));
       if (sungKey != null && !sungKey.isEmpty()) {
         video.setSungKey(Pitch.valueOf(sungKey));
       }
-      video.setSungWebsite(
-          c.getString(c.getColumnIndex(TagContract.VideoEntry.COLUMN_NAME_SUNG_WEBSITE)));
-      video.setPostedDate(
-          c.getString(c.getColumnIndex(TagContract.VideoEntry.COLUMN_NAME_POSTED_DATE)));
-      video.setDescription(
-          c.getString(c.getColumnIndex(TagContract.VideoEntry.COLUMN_NAME_DESCRIPTION)));
-      video.setVideoTitle(c.getString(c.getColumnIndex(TagContract.VideoEntry.COLUMN_NAME_TITLE)));
-      video.setVideoCode(
-          c.getString(c.getColumnIndex(TagContract.VideoEntry.COLUMN_NAME_VIDEO_CODE)));
-      video.setSungBy(c.getString(c.getColumnIndex(TagContract.VideoEntry.COLUMN_NAME_SUNG_BY)));
+      video.setSungWebsite(c.getString(c.getColumnIndex(VideoEntry.COLUMN_NAME_SUNG_WEBSITE)));
+      video.setPostedDate(c.getString(c.getColumnIndex(VideoEntry.COLUMN_NAME_POSTED_DATE)));
+      video.setDescription(c.getString(c.getColumnIndex(VideoEntry.COLUMN_NAME_DESCRIPTION)));
+      video.setVideoTitle(c.getString(c.getColumnIndex(VideoEntry.COLUMN_NAME_TITLE)));
+      video.setVideoCode(c.getString(c.getColumnIndex(VideoEntry.COLUMN_NAME_VIDEO_CODE)));
+      video.setSungBy(c.getString(c.getColumnIndex(VideoEntry.COLUMN_NAME_SUNG_BY)));
       video.setViewCount(
-          new BigInteger(
-              c.getString(c.getColumnIndex(TagContract.VideoEntry.COLUMN_NAME_VIEW_COUNT))));
+          new BigInteger(c.getString(c.getColumnIndex(VideoEntry.COLUMN_NAME_VIEW_COUNT))));
       video.setLikeCount(
-          new BigInteger(
-              c.getString(c.getColumnIndex(TagContract.VideoEntry.COLUMN_NAME_LIKE_COUNT))));
+          new BigInteger(c.getString(c.getColumnIndex(VideoEntry.COLUMN_NAME_LIKE_COUNT))));
       video.setDislikeCount(
-          new BigInteger(
-              c.getString(c.getColumnIndex(TagContract.VideoEntry.COLUMN_NAME_DISLIKE_COUNT))));
+          new BigInteger(c.getString(c.getColumnIndex(VideoEntry.COLUMN_NAME_DISLIKE_COUNT))));
       video.setFavoriteCount(
-          new BigInteger(
-              c.getString(c.getColumnIndex(TagContract.VideoEntry.COLUMN_NAME_FAVORITE_COUNT))));
+          new BigInteger(c.getString(c.getColumnIndex(VideoEntry.COLUMN_NAME_FAVORITE_COUNT))));
       video.setCommentCount(
-          new BigInteger(
-              c.getString(c.getColumnIndex(TagContract.VideoEntry.COLUMN_NAME_COMMENT_COUNT))));
+          new BigInteger(c.getString(c.getColumnIndex(VideoEntry.COLUMN_NAME_COMMENT_COUNT))));
 
       tag.addVideo(video);
     } while (c.moveToNext());
@@ -512,7 +525,7 @@ public class TagDb {
   public boolean hasFavorites() {
     SQLiteDatabase db = TagDbHelper.getInstance(context).getWritableDatabase();
     // SELECT COUNT(column_name) FROM table_name;
-    String sql = "SELECT COUNT(*) AS favCount FROM " + TagContract.FavoritesEntry.TABLE_NAME;
+    String sql = "SELECT COUNT(*) AS favCount FROM " + FavoritesEntry.TABLE_NAME;
     Cursor c = db.rawQuery(sql, new String[] {});
     if (c.getCount() == 0) {
       return false;
@@ -527,24 +540,20 @@ public class TagDb {
   public void insertUserRating(long tagId, double rating) {
     // Create a new map of values, where column names are the keys
     ContentValues values = new ContentValues();
-    values.put(TagContract.RatingEntry.COLUMN_NAME_TAG_ID, tagId);
-    values.put(TagContract.RatingEntry.COLUMN_NAME_TAG_RATING, rating);
+    values.put(RatingEntry.COLUMN_NAME_TAG_ID, tagId);
+    values.put(RatingEntry.COLUMN_NAME_TAG_RATING, rating);
 
     if (getUserRating(tagId) < 0) {
       SQLiteDatabase db = TagDbHelper.getInstance(context).getWritableDatabase();
       // Insert the new row, returning the primary key value of the new row
-      long newRowId = db.insert(TagContract.RatingEntry.TABLE_NAME, null, values);
+      long newRowId = db.insert(RatingEntry.TABLE_NAME, null, values);
       Log.d("TagDb,", "Inserted ratingId: " + newRowId);
       db.close();
     } else {
       SQLiteDatabase db = TagDbHelper.getInstance(context).getWritableDatabase();
       String[] args = new String[] {"" + tagId};
       long newRowId =
-          db.update(
-              TagContract.RatingEntry.TABLE_NAME,
-              values,
-              TagContract.RatingEntry.COLUMN_NAME_TAG_ID + "=?",
-              args);
+          db.update(RatingEntry.TABLE_NAME, values, RatingEntry.COLUMN_NAME_TAG_ID + "=?", args);
       Log.d("TagDb,", "Updated ratingId: " + newRowId);
       db.close();
     }
@@ -554,11 +563,11 @@ public class TagDb {
     SQLiteDatabase db = TagDbHelper.getInstance(context).getWritableDatabase();
     String sql =
         "SELECT * FROM "
-            + TagContract.RatingEntry.TABLE_NAME
+            + RatingEntry.TABLE_NAME
             + " WHERE "
-            + TagContract.RatingEntry.TABLE_NAME
+            + RatingEntry.TABLE_NAME
             + "."
-            + TagContract.RatingEntry.COLUMN_NAME_TAG_ID
+            + RatingEntry.COLUMN_NAME_TAG_ID
             + " = "
             + tagId;
     Cursor c = db.rawQuery(sql, new String[] {});
@@ -566,8 +575,7 @@ public class TagDb {
     if (c.getCount() > 0) {
       c.moveToFirst();
       rating =
-          Double.parseDouble(
-              c.getString(c.getColumnIndex(TagContract.RatingEntry.COLUMN_NAME_TAG_RATING)));
+          Double.parseDouble(c.getString(c.getColumnIndex(RatingEntry.COLUMN_NAME_TAG_RATING)));
     }
     c.close();
     db.close();

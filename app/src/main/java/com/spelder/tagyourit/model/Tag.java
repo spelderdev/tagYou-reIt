@@ -6,6 +6,7 @@ import android.os.Parcelable;
 import androidx.annotation.NonNull;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -21,6 +22,9 @@ public class Tag implements Parcelable {
           tag.setVersion(source.readString());
           tag.setArranger(source.readString());
           tag.setRating(source.readDouble());
+          tag.setDownloadCount(source.readInt());
+          tag.setClassicTagNumber(source.readInt());
+          tag.setPostedDate(new Date(source.readLong()));
           tag.setKey(source.readString());
           tag.setNumberOfParts(source.readInt());
           tag.setLyrics(source.readString());
@@ -63,6 +67,12 @@ public class Tag implements Parcelable {
   private String arranger;
 
   private double rating;
+
+  private int classicTagNumber = -1;
+
+  private Date postedDate;
+
+  private int downloadCount;
 
   private String key;
 
@@ -167,6 +177,34 @@ public class Tag implements Parcelable {
 
   private void setRating(double rating) {
     this.rating = rating;
+  }
+
+  public int getClassicTagNumber() {
+    return classicTagNumber;
+  }
+
+  public void setClassicTagNumber(int classicTagNumber) {
+    this.classicTagNumber = classicTagNumber;
+  }
+
+  public Date getPostedDate() {
+    return postedDate;
+  }
+
+  public void setPostedDate(Date postedDate) {
+    this.postedDate = postedDate;
+  }
+
+  public void setPostedDate(long postedDate) {
+    this.postedDate = new Date(postedDate);
+  }
+
+  public int getDownloadCount() {
+    return downloadCount;
+  }
+
+  public void setDownloadCount(int downloadCount) {
+    this.downloadCount = downloadCount;
   }
 
   public String getKey() {
@@ -299,6 +337,9 @@ public class Tag implements Parcelable {
     parcel.writeString(version);
     parcel.writeString(arranger);
     parcel.writeDouble(rating);
+    parcel.writeInt(downloadCount);
+    parcel.writeInt(classicTagNumber);
+    parcel.writeLong(postedDate.getTime());
     parcel.writeString(key);
     parcel.writeInt(numberParts);
     parcel.writeString(lyrics);

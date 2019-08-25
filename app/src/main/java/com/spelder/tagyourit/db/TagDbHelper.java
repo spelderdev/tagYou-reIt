@@ -20,7 +20,7 @@ public class TagDbHelper extends SQLiteOpenHelper {
   public static final String DATABASE_NAME = "Tag.db";
 
   // If you change the database schema, you must increment the database version.
-  static final int DATABASE_VERSION = 5;
+  static final int DATABASE_VERSION = 6;
 
   private static final String TAG = TagDbHelper.class.getName();
 

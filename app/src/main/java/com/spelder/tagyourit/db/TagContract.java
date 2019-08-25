@@ -24,6 +24,12 @@ public class TagContract {
 
     public static final String COLUMN_NAME_RATING = "rating";
 
+    public static final String COLUMN_NAME_DOWNLOAD = "download";
+
+    public static final String COLUMN_NAME_POSTED = "posted";
+
+    public static final String COLUMN_NAME_CLASSIC_TAG_NUMBER = "classic_tag_number";
+
     public static final String COLUMN_NAME_KEY = "key";
 
     public static final String COLUMN_NAME_PARTS_NUMBER = "parts";
@@ -68,6 +74,15 @@ public class TagContract {
             + COMMA_SEP
             + COLUMN_NAME_RATING
             + TEXT_TYPE
+            + COMMA_SEP
+            + COLUMN_NAME_DOWNLOAD
+            + INT_TYPE
+            + COMMA_SEP
+            + COLUMN_NAME_POSTED
+            + INT_TYPE
+            + COMMA_SEP
+            + COLUMN_NAME_CLASSIC_TAG_NUMBER
+            + INT_TYPE
             + COMMA_SEP
             + COLUMN_NAME_KEY
             + TEXT_TYPE
