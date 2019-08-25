@@ -101,7 +101,7 @@
   <string name="filter_rating_key">filter_rating</string>
 
   <string name="sort_title">Sort by</string>
-  <string name="sort_by_latest">Latest</string>
+  <string name="sort_by_newest_posted">Posted Date (Newest)</string>
   <string name="sort_by_rating">Rating</string>
   <string name="sort_by_downloads">Number of Downloads</string>
   <string name="sort_by_title">Title</string>

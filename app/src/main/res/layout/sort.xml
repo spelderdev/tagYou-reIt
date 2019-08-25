@@ -42,10 +42,10 @@
       android:text="@string/sort_by_downloads"/>
 
     <RadioButton
-      android:id="@+id/sort_latest"
+      android:id="@+id/sort_newest_posted"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
-      android:text="@string/sort_by_latest"/>
+      android:text="@string/sort_by_newest_posted"/>
 
   </RadioGroup>
 

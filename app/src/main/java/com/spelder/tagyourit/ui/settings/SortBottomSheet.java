@@ -44,7 +44,7 @@ public class SortBottomSheet extends BottomSheetDialogFragment {
             case R.id.sort_downloads:
               sortBy = SortBy.DOWNLOAD;
               break;
-            case R.id.sort_latest:
+            case R.id.sort_newest_posted:
               sortBy = SortBy.LATEST;
               break;
             case R.id.sort_rating:
@@ -65,7 +65,7 @@ public class SortBottomSheet extends BottomSheetDialogFragment {
         currentRadioButton = view.findViewById(R.id.sort_downloads);
         break;
       case LATEST:
-        currentRadioButton = view.findViewById(R.id.sort_latest);
+        currentRadioButton = view.findViewById(R.id.sort_newest_posted);
         break;
       case RATING:
         currentRadioButton = view.findViewById(R.id.sort_rating);

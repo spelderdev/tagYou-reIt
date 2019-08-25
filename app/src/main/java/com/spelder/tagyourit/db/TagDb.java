@@ -379,14 +379,14 @@ public class TagDb {
   private String getSortColumnName(SortBy sortBy) {
     switch (sortBy) {
       case RATING:
-        return TagEntry.COLUMN_NAME_RATING + " DESC";
+        return TagEntry.COLUMN_NAME_RATING + " " + sortBy.getOrder().getLabel();
       case DOWNLOAD:
-        return TagEntry.COLUMN_NAME_DOWNLOAD + " DESC";
+        return TagEntry.COLUMN_NAME_DOWNLOAD + " " + sortBy.getOrder().getLabel();
       case LATEST:
-        return TagEntry.COLUMN_NAME_POSTED + " DESC";
+        return TagEntry.COLUMN_NAME_POSTED + " " + sortBy.getOrder().getLabel();
       case TITLE:
       default:
-        return TagEntry.COLUMN_NAME_TITLE;
+        return TagEntry.COLUMN_NAME_TITLE + " " + sortBy.getOrder().getLabel();
     }
   }
 

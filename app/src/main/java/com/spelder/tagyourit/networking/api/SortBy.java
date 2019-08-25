@@ -4,12 +4,10 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 public enum SortBy implements Parcelable {
-  LATEST("Posted"),
-  RATING("Rating"),
-  DOWNLOAD("Downloaded"),
-  TITLE("Title"),
-  CLASSIC("Collection=classic&Sortby=Classic"),
-  EASY("Collection=easytags");
+  LATEST("Posted", SortOrder.DESCENDING),
+  RATING("Rating", SortOrder.DESCENDING),
+  DOWNLOAD("Downloaded", SortOrder.DESCENDING),
+  TITLE("Title", SortOrder.ASCENDING);
 
   public static final Creator<SortBy> CREATOR =
       new Creator<SortBy>() {
@@ -27,13 +25,19 @@ public enum SortBy implements Parcelable {
   private static final String SORT_BY_LABEL = "Sortby=";
 
   private final String label;
+  private final SortOrder order;
 
-  SortBy(String label) {
+  SortBy(String label, SortOrder order) {
     this.label = label;
+    this.order = order;
   }
 
   public String getSortBy() {
     return SORT_BY_LABEL + label;
+  }
+
+  public SortOrder getOrder() {
+    return order;
   }
 
   @Override
