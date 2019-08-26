@@ -110,6 +110,8 @@ public class TagContract {
             + " )";
 
     static final String SQL_DELETE_ENTRIES = "DROP TABLE IF EXISTS " + TABLE_NAME;
+    static final String SQL_NULL_LAST_MODIFIED =
+        "UPDATE " + TABLE_NAME + " SET " + COLUMN_NAME_LAST_MODIFIED_DATE + " = null;";
   }
 
   public static class LearningTracksEntry implements BaseColumns {

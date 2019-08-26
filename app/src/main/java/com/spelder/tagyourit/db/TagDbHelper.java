@@ -6,6 +6,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.text.TextUtils;
 import android.util.Log;
+import com.spelder.tagyourit.db.TagContract.TagEntry;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -70,6 +71,8 @@ public class TagDbHelper extends SQLiteOpenHelper {
         readAndExecuteSQLScript(db, migrationName);
       }
     }
+
+    db.execSQL(TagEntry.SQL_NULL_LAST_MODIFIED);
   }
 
   @Override
