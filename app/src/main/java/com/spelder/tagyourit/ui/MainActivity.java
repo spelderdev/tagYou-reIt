@@ -15,6 +15,7 @@ import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
@@ -48,6 +49,7 @@ import com.spelder.tagyourit.networking.UpdateTagTask;
 import com.spelder.tagyourit.networking.api.filter.FilterBuilder;
 import com.spelder.tagyourit.ui.music.MusicPlayerActivity;
 import com.spelder.tagyourit.ui.settings.FilterFragment;
+import com.spelder.tagyourit.ui.settings.SortBottomSheet;
 import com.spelder.tagyourit.ui.video.VideoPlayerActivity;
 import java.util.ArrayList;
 import java.util.List;
@@ -94,6 +96,8 @@ public class MainActivity extends AppCompatActivity
   private Intent playIntent;
 
   private boolean musicBound = false;
+
+  private SortBottomSheet sortBottomSheet;
 
   private final ServiceConnection musicConnection =
       new ServiceConnection() {
@@ -267,6 +271,8 @@ public class MainActivity extends AppCompatActivity
 
     handleIntent();
 
+    sortBottomSheet = new SortBottomSheet();
+
     PreferenceManager.getDefaultSharedPreferences(this)
         .registerOnSharedPreferenceChangeListener(this);
   }
@@ -407,8 +413,8 @@ public class MainActivity extends AppCompatActivity
 
   @Override
   public boolean onCreateOptionsMenu(Menu menu) {
-    // Inflate the menu; this adds items to the action bar if it is present.
-    getMenuInflater().inflate(R.menu.main, menu);
+    MenuInflater inflater = getMenuInflater();
+    inflater.inflate(R.menu.main, menu);
 
     menu.findItem(R.id.action_favorite).setVisible(manager.isFavoriteVisible());
     menu.findItem(R.id.action_unfavorite).setVisible(manager.isUnFavoriteVisible());
@@ -418,6 +424,7 @@ public class MainActivity extends AppCompatActivity
         .setVisible(manager.isFilterVisible() && !filterBuilder.isFilterApplied());
     menu.findItem(R.id.action_filter_applied)
         .setVisible(manager.isFilterVisible() && filterBuilder.isFilterApplied());
+    menu.findItem(R.id.action_sort).setVisible(manager.isSortVisible());
 
     searchView = (SearchView) menu.findItem(R.id.action_search).getActionView();
     searchView.setOnQueryTextListener(this);
@@ -427,11 +434,12 @@ public class MainActivity extends AppCompatActivity
       searchView.setQuery(currentQuery, false);
     }
 
-    return true;
+    return super.onCreateOptionsMenu(menu);
   }
 
   @Override
-  public boolean onOptionsItemSelected(MenuItem item) {
+  public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+    Log.d(TAG, "Option selected");
     // Handle presses on the action bar items
     switch (item.getItemId()) {
       case R.id.action_favorite:
@@ -470,8 +478,20 @@ public class MainActivity extends AppCompatActivity
         toggleFilter();
         return true;
 
+      case R.id.action_sort:
+        toggleSort();
+        return true;
+
       default:
         return super.onOptionsItemSelected(item);
+    }
+  }
+
+  private void toggleSort() {
+    if (!sortBottomSheet.isVisible()) {
+      sortBottomSheet.show(getSupportFragmentManager(), "Bottom sheet");
+    } else {
+      sortBottomSheet.dismiss();
     }
   }
 

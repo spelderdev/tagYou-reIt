@@ -7,7 +7,11 @@ import com.spelder.tagyourit.model.VideoComponents;
 import com.spelder.tagyourit.pitch.Pitch;
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.Locale;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 
@@ -15,6 +19,8 @@ import org.xmlpull.v1.XmlPullParserException;
 class TagXmlParser {
   // We don't use namespaces
   private static final String ns = null;
+  private static final SimpleDateFormat postedDateFormatter =
+      new SimpleDateFormat("E, dd MMM yyyy", Locale.US);
 
   ArrayList<Tag> parse(InputStream in) throws XmlPullParserException, IOException {
     try {
@@ -78,6 +84,28 @@ class TagXmlParser {
           break;
         case "Rating":
           tag.setRating(readSimple(parser, "Rating"));
+          break;
+        case "Classic":
+          try {
+            tag.setClassicTagNumber(Integer.parseInt(readSimple(parser, "Classic")));
+          } catch (NumberFormatException e) {
+            tag.setNumberOfParts(-1);
+          }
+          break;
+        case "Downloaded":
+          try {
+            tag.setDownloadCount(Integer.parseInt(readSimple(parser, "Downloaded")));
+          } catch (NumberFormatException e) {
+            tag.setNumberOfParts(0);
+          }
+          break;
+        case "Posted":
+          try {
+            Date postedDate = postedDateFormatter.parse(readSimple(parser, "Posted"));
+            tag.setPostedDate(postedDate);
+          } catch (ParseException e) {
+            tag.setNumberOfParts(-1);
+          }
           break;
         case "SheetMusic":
           handleSheetMusic(parser, tag);

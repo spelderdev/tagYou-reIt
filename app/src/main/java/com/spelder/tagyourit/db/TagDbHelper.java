@@ -6,6 +6,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.text.TextUtils;
 import android.util.Log;
+import com.spelder.tagyourit.db.TagContract.TagEntry;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -20,7 +21,7 @@ public class TagDbHelper extends SQLiteOpenHelper {
   public static final String DATABASE_NAME = "Tag.db";
 
   // If you change the database schema, you must increment the database version.
-  static final int DATABASE_VERSION = 5;
+  static final int DATABASE_VERSION = 6;
 
   private static final String TAG = TagDbHelper.class.getName();
 
@@ -70,6 +71,8 @@ public class TagDbHelper extends SQLiteOpenHelper {
         readAndExecuteSQLScript(db, migrationName);
       }
     }
+
+    db.execSQL(TagEntry.SQL_NULL_LAST_MODIFIED);
   }
 
   @Override

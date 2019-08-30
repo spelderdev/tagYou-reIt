@@ -1,0 +1,3 @@
+ALTER TABLE tag ADD COLUMN download INT;
+ALTER TABLE tag ADD COLUMN posted INT;
+ALTER TABLE tag ADD COLUMN classic_tag_number INT;

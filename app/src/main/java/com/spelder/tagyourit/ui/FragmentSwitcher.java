@@ -14,7 +14,6 @@ import com.spelder.tagyourit.model.Tag;
 import com.spelder.tagyourit.ui.pitch.PitchPipeFragment;
 import com.spelder.tagyourit.ui.settings.PreferencesFragment;
 import com.spelder.tagyourit.ui.settings.PrivacyPolicyFragment;
-import com.spelder.tagyourit.ui.tag.BrowseFragment;
 import com.spelder.tagyourit.ui.tag.DisplayTag;
 import com.spelder.tagyourit.ui.tag.FavoritesFragment;
 import com.spelder.tagyourit.ui.tag.SearchListFragment;
@@ -84,7 +83,7 @@ public class FragmentSwitcher {
     switch (id) {
       case FRAGMENT_BROWSE:
         if (fragmentBrowse == null) {
-          fragmentBrowse = new BrowseFragment();
+          fragmentBrowse = new TagListFragment();
         }
         frag = fragmentBrowse;
         break;
@@ -180,7 +179,7 @@ public class FragmentSwitcher {
       return FRAGMENT_DISPLAY_TAG;
     } else if (fragment instanceof TagListFragment) {
       return FRAGMENT_SEARCH;
-    } else if (fragment instanceof BrowseFragment) {
+    } else if (fragment instanceof TagListFragment) {
       return FRAGMENT_BROWSE;
     } else if (fragment instanceof FavoritesFragment) {
       return FRAGMENT_FAVORITES;
@@ -253,6 +252,12 @@ public class FragmentSwitcher {
         || currentFragment == FRAGMENT_SEARCH;
   }
 
+  boolean isSortVisible() {
+    return currentFragment == FRAGMENT_BROWSE
+        || currentFragment == FRAGMENT_FAVORITES
+        || currentFragment == FRAGMENT_SEARCH;
+  }
+
   int getCurrentNavigationId() {
     return getNavigationId(currentFragment);
   }
@@ -278,7 +283,7 @@ public class FragmentSwitcher {
   private String getMenuTitle(int id) {
     Log.d("Title", "" + id);
     if (id == FRAGMENT_BROWSE) {
-      return "Tag You're It";
+      return "Discover";
     } else if (id == FRAGMENT_FAVORITES) {
       return "Favorites";
     } else if (id == FRAGMENT_PITCH_PIPE) {

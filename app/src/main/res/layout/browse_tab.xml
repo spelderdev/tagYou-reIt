@@ -5,11 +5,36 @@
   android:orientation="vertical"
   android:theme="@style/ThemeOverlay.AppCompat.Dark">
 
-  <androidx.viewpager.widget.ViewPager
-    android:id="@+id/pager"
+  <FrameLayout
+    android:id="@+id/browse_content"
     android:layout_width="match_parent"
     android:layout_height="0px"
-    android:layout_weight="1"/>
+    android:layout_weight="1">
+
+    <ListView
+      android:id="@android:id/list"
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      android:drawSelectorOnTop="true"/>
+
+    <!-- Here is the view to show if the list is empty -->
+
+    <ProgressBar
+      android:id="@+id/browse_tab_loading"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_gravity="center"
+      android:visibility="gone"/>
+
+    <TextView
+      android:id="@+id/browse_tab_no_results"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_gravity="center"
+      android:text="@string/no_results"
+      android:visibility="gone"/>
+
+  </FrameLayout>
 
   <LinearLayout
     android:id="@+id/browse_tab_view_error"

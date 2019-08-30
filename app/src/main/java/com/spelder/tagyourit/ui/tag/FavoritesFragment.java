@@ -13,8 +13,10 @@ import androidx.fragment.app.ListFragment;
 import com.spelder.tagyourit.R;
 import com.spelder.tagyourit.db.TagDb;
 import com.spelder.tagyourit.model.Tag;
+import com.spelder.tagyourit.networking.api.SortBy;
 import com.spelder.tagyourit.networking.api.filter.FilterBuilder;
 import com.spelder.tagyourit.ui.MainActivity;
+import com.spelder.tagyourit.ui.settings.SortBottomSheet;
 import java.util.List;
 
 /** The favorites tag list. */
@@ -41,7 +43,10 @@ public class FavoritesFragment extends ListFragment
   public View onCreateView(
       @NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
     TagDb db = new TagDb(getActivity());
-    List<Tag> tags = db.getFavorites(new FilterBuilder(getActivity()).build());
+    SharedPreferences preference = PreferenceManager.getDefaultSharedPreferences(getContext());
+    SortBy sortBy =
+        SortBy.valueOf(preference.getString(SortBottomSheet.SORT_BY_LABEL, SortBy.TITLE.name()));
+    List<Tag> tags = db.getFavorites(new FilterBuilder(getActivity()).build(), sortBy);
     listAdapter.clearTags();
     listAdapter.addTags(tags);
     listAdapter.notifyDataSetChanged();
@@ -71,10 +76,13 @@ public class FavoritesFragment extends ListFragment
 
   @Override
   public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-    if (key.startsWith("filter_")) {
+    if (key.startsWith("filter_") || key.equals(SortBottomSheet.SORT_BY_LABEL)) {
       Log.d("TagListFragment", "filterChanged");
       TagDb db = new TagDb(getActivity());
-      List<Tag> tags = db.getFavorites(new FilterBuilder(getActivity()).build());
+      SharedPreferences preference = PreferenceManager.getDefaultSharedPreferences(getContext());
+      SortBy sortBy =
+          SortBy.valueOf(preference.getString(SortBottomSheet.SORT_BY_LABEL, SortBy.TITLE.name()));
+      List<Tag> tags = db.getFavorites(new FilterBuilder(getActivity()).build(), sortBy);
       listAdapter.clearTags();
       listAdapter.addTags(tags);
       listAdapter.notifyDataSetChanged();
