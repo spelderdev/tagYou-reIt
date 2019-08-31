@@ -6,7 +6,7 @@
       android:id="@+id/nav_browse"
       android:checked="true"
       android:icon="@drawable/ic_folder"
-      android:title="@string/nav_browse"/>
+      android:title="@string/nav_discover"/>
     <item
       android:id="@+id/nav_favorite"
       android:icon="@drawable/ic_favorite_white_24dp"

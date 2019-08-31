@@ -26,18 +26,6 @@
     android:title="@string/action_sort"
     app:showAsAction="always"/>
   <item
-    android:id="@+id/action_filter"
-    android:icon="@drawable/ic_filter_variant_white_24dp"
-    android:orderInCategory="102"
-    android:title="@string/action_filter"
-    app:showAsAction="never"/>
-  <item
-    android:id="@+id/action_filter_applied"
-    android:icon="@drawable/ic_filter_variant_orange_24dp"
-    android:orderInCategory="102"
-    android:title="@string/action_filter"
-    app:showAsAction="never"/>
-  <item
     android:id="@+id/action_menu"
     android:icon="@drawable/chevron_down"
     android:orderInCategory="103"

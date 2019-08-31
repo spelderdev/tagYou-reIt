@@ -6,7 +6,8 @@
   android:paddingBottom="15dp"
   android:paddingStart="15dp"
   android:paddingEnd="15dp"
-  android:orientation="vertical">
+  android:orientation="vertical"
+  android:theme="@style/Widget.AppTheme.BottomSheet">
 
   <TextView
     android:layout_width="match_parent"

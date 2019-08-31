@@ -373,6 +373,8 @@ public class DisplayTag extends Fragment {
           .setFlags(
               WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
               WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
+
+      getActivity().findViewById(R.id.bottom_navigation).setVisibility(View.GONE);
     }
   }
 
@@ -386,6 +388,8 @@ public class DisplayTag extends Fragment {
                   | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
                   | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
       getActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
+
+      getActivity().findViewById(R.id.bottom_navigation).setVisibility(View.VISIBLE);
     }
   }
 

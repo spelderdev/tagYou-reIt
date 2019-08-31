@@ -1,7 +1,6 @@
 package com.spelder.tagyourit.ui.tag;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -92,24 +91,18 @@ class TagListAdapter extends BaseAdapter {
     holder.tagRatingText.setText(String.format(Locale.ENGLISH, "%.1f", tag.getRating()));
     if (tag.hasSheetMusic()) {
       holder.sheet.setVisibility(View.VISIBLE);
-      holder.sheet.setColorFilter(Color.parseColor("#55468B"));
     } else {
       holder.sheet.setVisibility(View.INVISIBLE);
-      holder.sheet.setColorFilter(Color.parseColor("#9E9E9E"));
     }
     if (tag.hasLearningTracks()) {
       holder.track.setVisibility(View.VISIBLE);
-      holder.track.setColorFilter(Color.parseColor("#55468B"));
     } else {
       holder.track.setVisibility(View.INVISIBLE);
-      holder.track.setColorFilter(Color.parseColor("#9E9E9E"));
     }
     if (tag.hasVideos()) {
       holder.video.setVisibility(View.VISIBLE);
-      holder.video.setColorFilter(Color.parseColor("#55468B"));
     } else {
       holder.video.setVisibility(View.INVISIBLE);
-      holder.video.setColorFilter(Color.parseColor("#9E9E9E"));
     }
     return view;
   }

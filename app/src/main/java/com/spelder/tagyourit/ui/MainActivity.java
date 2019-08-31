@@ -23,18 +23,15 @@ import android.widget.TextView;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.SearchView.OnQueryTextListener;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
-import androidx.core.view.GravityCompat;
-import androidx.drawerlayout.widget.DrawerLayout;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.tasks.Task;
-import com.google.android.material.navigation.NavigationView;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.spelder.tagyourit.R;
 import com.spelder.tagyourit.db.TagDb;
 import com.spelder.tagyourit.drive.FavoritesBackup;
@@ -48,7 +45,6 @@ import com.spelder.tagyourit.networking.TagListRetriever;
 import com.spelder.tagyourit.networking.UpdateTagTask;
 import com.spelder.tagyourit.networking.api.filter.FilterBuilder;
 import com.spelder.tagyourit.ui.music.MusicPlayerActivity;
-import com.spelder.tagyourit.ui.settings.FilterFragment;
 import com.spelder.tagyourit.ui.settings.SortBottomSheet;
 import com.spelder.tagyourit.ui.video.VideoPlayerActivity;
 import java.util.ArrayList;
@@ -60,7 +56,7 @@ import java.util.List;
  * menu, favorites button, and search.
  */
 public class MainActivity extends AppCompatActivity
-    implements NavigationView.OnNavigationItemSelectedListener,
+    implements BottomNavigationView.OnNavigationItemSelectedListener,
         OnQueryTextListener,
         SharedPreferences.OnSharedPreferenceChangeListener {
   private static final String TAG = MainActivity.class.getName();
@@ -74,12 +70,6 @@ public class MainActivity extends AppCompatActivity
   private Activity actionBar;
 
   private SearchView searchView;
-
-  private ActionBarDrawerToggle toggle;
-
-  private DrawerLayout drawer;
-
-  private View filterDrawer;
 
   private View trackToolbar;
 
@@ -184,37 +174,13 @@ public class MainActivity extends AppCompatActivity
       filterBuilder = new FilterBuilder(this);
     }
 
-    drawer = findViewById(R.id.drawer_layout);
-    toggle =
-        new ActionBarDrawerToggle(
-            this,
-            drawer,
-            toolbar,
-            R.string.navigation_drawer_open,
-            R.string.navigation_drawer_close);
-    drawer.addDrawerListener(toggle);
-    toggle.syncState();
-
-    filterDrawer = findViewById(R.id.filter_drawer);
-    getSupportFragmentManager()
-        .beginTransaction()
-        .replace(R.id.filter_drawer_content, new FilterFragment(), "filterDrawer")
-        .commit();
-
-    toggle.setToolbarNavigationClickListener(
-        v -> {
-          int backCount = getSupportFragmentManager().getBackStackEntryCount();
-          if (backCount > 0) {
-            onBackPressed();
-          }
-        });
-    final NavigationView navigationView = findViewById(R.id.nav_view);
-    navigationView.setNavigationItemSelectedListener(this);
+    BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
+    bottomNavigationView.setOnNavigationItemSelectedListener(this);
 
     int baseId = manager.getBaseFragmentId();
     manager.setBaseFragment(baseId);
     manager.displayFragment(baseId);
-    navigationView.setCheckedItem(manager.getCurrentNavigationId());
+    bottomNavigationView.setSelectedItemId(manager.getCurrentNavigationId());
 
     updateMenu();
 
@@ -233,19 +199,13 @@ public class MainActivity extends AppCompatActivity
                 if (ab != null) {
                   ab.setDisplayHomeAsUpEnabled(false);
                 }
-                toggle.setDrawerIndicatorEnabled(true);
-
-                setDrawerState(true);
               } else {
                 manager.getCurrentNavigationId();
 
                 // Displays back button
-                toggle.setDrawerIndicatorEnabled(false);
                 if (ab != null) {
                   ab.setDisplayHomeAsUpEnabled(true);
                 }
-
-                setDrawerState(false);
               }
 
               updateMenu();
@@ -346,28 +306,6 @@ public class MainActivity extends AppCompatActivity
         .unregisterOnSharedPreferenceChangeListener(this);
   }
 
-  private void setDrawerState(boolean isEnabled) {
-    if (isEnabled) {
-      drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
-      toggle.setDrawerIndicatorEnabled(true);
-    } else {
-      drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
-      toggle.setDrawerIndicatorEnabled(false);
-    }
-
-    toggle.syncState();
-  }
-
-  private void setFilterDrawerState() {
-    Log.d(TAG, "Filter Visible: " + manager.isFilterVisible());
-    if (manager.isFilterVisible()) {
-      drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED, findViewById(R.id.filter_drawer));
-    } else {
-      drawer.setDrawerLockMode(
-          DrawerLayout.LOCK_MODE_LOCKED_CLOSED, findViewById(R.id.filter_drawer));
-    }
-  }
-
   @Override
   public boolean onQueryTextChange(String query) {
     currentQuery = query;
@@ -399,12 +337,7 @@ public class MainActivity extends AppCompatActivity
       searchView.setIconified(true);
     }
 
-    DrawerLayout drawer = findViewById(R.id.drawer_layout);
-    if (drawer.isDrawerOpen(GravityCompat.START)) {
-      drawer.closeDrawer(GravityCompat.START);
-    } else {
-      super.onBackPressed();
-    }
+    super.onBackPressed();
 
     manager.onBackPressed();
 
@@ -420,10 +353,6 @@ public class MainActivity extends AppCompatActivity
     menu.findItem(R.id.action_unfavorite).setVisible(manager.isUnFavoriteVisible());
     menu.findItem(R.id.action_menu).setVisible(manager.isMenuVisible());
     menu.findItem(R.id.action_search).setVisible(manager.isSearchVisible());
-    menu.findItem(R.id.action_filter)
-        .setVisible(manager.isFilterVisible() && !filterBuilder.isFilterApplied());
-    menu.findItem(R.id.action_filter_applied)
-        .setVisible(manager.isFilterVisible() && filterBuilder.isFilterApplied());
     menu.findItem(R.id.action_sort).setVisible(manager.isSortVisible());
 
     searchView = (SearchView) menu.findItem(R.id.action_search).getActionView();
@@ -470,16 +399,12 @@ public class MainActivity extends AppCompatActivity
         manager.showBottomMenu();
         return true;
 
-      case R.id.action_filter:
-        toggleFilter();
-        return true;
-
-      case R.id.action_filter_applied:
-        toggleFilter();
-        return true;
-
       case R.id.action_sort:
         toggleSort();
+        return true;
+
+      case android.R.id.home:
+        onBackPressed();
         return true;
 
       default:
@@ -495,24 +420,12 @@ public class MainActivity extends AppCompatActivity
     }
   }
 
-  private void toggleFilter() {
-    Log.d("MainActivity", "Filter");
-    if (!drawer.isDrawerOpen(filterDrawer)) {
-      drawer.openDrawer(filterDrawer);
-    } else {
-      drawer.closeDrawer(filterDrawer);
-    }
-  }
-
   @Override
   public boolean onNavigationItemSelected(@NonNull MenuItem item) {
     // Handle navigation view item clicks here.
     int id = item.getItemId();
 
     manager.displayNavigationSelectedFragment(id);
-
-    DrawerLayout drawer = findViewById(R.id.drawer_layout);
-    drawer.closeDrawer(GravityCompat.START);
 
     updateMenu();
 
@@ -522,7 +435,6 @@ public class MainActivity extends AppCompatActivity
   private void updateMenu() {
     invalidateOptionsMenu();
     setCurrentMenuTitle();
-    setFilterDrawerState();
   }
 
   private void setCurrentMenuTitle() {

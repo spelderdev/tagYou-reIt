@@ -7,10 +7,9 @@
     <item name="colorAccent">@color/colorAccent</item>
     <item name="colorControlHighlight">@color/colorAccent</item>
     <item name="colorButtonNormal">@color/colorAccent</item>
+    <item name="android:navigationBarColor">@color/card_view_background</item>
 
-    <item name="shapeAppearanceSmallComponent">@style/ShapeAppearance.MyApp.SmallComponent</item>
-    <item name="shapeAppearanceMediumComponent">@style/ShapeAppearance.MyApp.MediumComponent</item>
-    <item name="shapeAppearanceLargeComponent">@style/ShapeAppearance.MyApp.LargeComponent</item>
+    <item name="bottomSheetDialogTheme">@style/Widget.AppTheme.BottomSheet</item>
   </style>
 
   <style name="AppTheme.NavBar" parent="ThemeOverlay.MaterialComponents.Light">
@@ -27,6 +26,38 @@
     <item name="colorAccent">@color/colorAccent</item>
     <item name="android:windowFullscreen">true</item>
     <item name="android:windowContentOverlay">@null</item>
+
+    <item name="bottomSheetDialogTheme">@style/Widget.AppTheme.BottomSheet</item>
+  </style>
+
+  <style name="AppTheme.NoActionBar.DarkNav" parent="AppTheme.NoActionBar">
+    <item name="android:navigationBarColor">@color/colorPrimaryDark</item>
+  </style>
+
+  <style name="AppTheme.DarkNav" parent="AppTheme">
+    <item name="android:navigationBarColor">@color/colorPrimaryDark</item>
+  </style>
+
+  <style name="Widget.AppTheme.BottomSheet" parent="Theme.MaterialComponents.Light.BottomSheetDialog">
+    <item name="android:windowIsFloating">false</item>
+    <item name="android:statusBarColor">@android:color/transparent</item>
+    <item name="android:navigationBarColor">@color/card_view_background</item>
+    <item name="android:colorBackground">@color/card_view_background</item>
+    <item name="bottomSheetStyle">@style/AppModalStyle</item>
+
+    <item name="colorPrimary">@color/colorPrimary</item>
+    <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+    <item name="colorAccent">@color/colorAccent</item>
+    <item name="colorControlHighlight">@color/colorAccent</item>
+    <item name="colorButtonNormal">@color/colorAccent</item>
+
+    <item name="shapeAppearanceSmallComponent">@style/ShapeAppearance.MyApp.SmallComponent</item>
+    <item name="shapeAppearanceMediumComponent">@style/ShapeAppearance.MyApp.MediumComponent</item>
+    <item name="shapeAppearanceLargeComponent">@style/ShapeAppearance.MyApp.LargeComponent</item>
+  </style>
+
+  <style name="AppModalStyle"
+    parent="Widget.MaterialComponents.BottomSheet.Modal">
   </style>
 
   <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.MaterialComponents.Dark.ActionBar"/>
