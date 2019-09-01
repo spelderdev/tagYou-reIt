@@ -2,8 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
   android:layout_width="match_parent"
   android:layout_height="match_parent"
-  android:orientation="vertical"
-  android:theme="@style/ThemeOverlay.AppCompat.Dark">
+  android:orientation="vertical">
 
   <FrameLayout
     android:id="@+id/browse_content"
@@ -15,7 +14,7 @@
       android:id="@android:id/list"
       android:layout_width="match_parent"
       android:layout_height="match_parent"
-      android:drawSelectorOnTop="true"/>
+      android:drawSelectorOnTop="true" />
 
     <!-- Here is the view to show if the list is empty -->
 
@@ -24,7 +23,7 @@
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
       android:layout_gravity="center"
-      android:visibility="gone"/>
+      android:visibility="gone" />
 
     <TextView
       android:id="@+id/browse_tab_no_results"
@@ -32,7 +31,7 @@
       android:layout_height="wrap_content"
       android:layout_gravity="center"
       android:text="@string/no_results"
-      android:visibility="gone"/>
+      android:visibility="gone" />
 
   </FrameLayout>
 
@@ -44,6 +43,13 @@
     android:orientation="vertical"
     android:visibility="gone">
 
+    <Button
+      android:id="@+id/browse_tab_view_refresh_button"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_gravity="center_horizontal"
+      android:text="@string/try_again" />
+
     <TextView
       android:id="@+id/browse_tab_view_error_text"
       android:layout_width="match_parent"
@@ -52,14 +58,7 @@
       android:gravity="center"
       android:text="@string/error_text"
       android:textColor="@color/darkTitle"
-      android:textSize="22sp"/>
-
-    <Button
-      android:id="@+id/browse_tab_view_refresh_button"
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:layout_gravity="center_horizontal"
-      android:text="@string/try_again"/>
+      android:textSize="22sp" />
   </LinearLayout>
 
 </LinearLayout>
