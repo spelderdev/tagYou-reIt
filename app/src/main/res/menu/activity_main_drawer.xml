@@ -3,14 +3,13 @@
 
   <group android:checkableBehavior="single">
     <item
-      android:id="@+id/nav_browse"
-      android:checked="true"
-      android:icon="@drawable/ic_folder"
-      android:title="@string/nav_discover"/>
-    <item
       android:id="@+id/nav_favorite"
       android:icon="@drawable/ic_favorite_white_24dp"
       android:title="@string/nav_favorites"/>
+    <item
+      android:id="@+id/nav_browse"
+      android:icon="@drawable/ic_action_search"
+      android:title="@string/nav_discover"/>
     <item
       android:id="@+id/nav_pitch_pipe"
       android:icon="@drawable/ic_music_note_quarter_black"

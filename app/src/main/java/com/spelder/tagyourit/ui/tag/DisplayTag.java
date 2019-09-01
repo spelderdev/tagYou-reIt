@@ -98,7 +98,7 @@ public class DisplayTag extends Fragment {
   public View onCreateView(
       @NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
     setHasOptionsMenu(true);
-    return inflater.inflate(R.layout.fragment_pdf_renderer_basic, container, false);
+    return inflater.inflate(R.layout.sheet_music_viewer, container, false);
   }
 
   @Override
