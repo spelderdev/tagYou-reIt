@@ -95,16 +95,16 @@
     <item name="android:paddingEnd">@dimen/filter_button_padding</item>
     <item name="android:textAllCaps">false</item>
     <item name="android:fontFamily">sans-serif</item>
-    <item name="android:layout_height">30dp</item>
+    <item name="android:layout_height">35dp</item>
   </style>
 
   <style name="AppTheme.RoundedCornerMaterialButtonFilled" parent="Widget.AppCompat.Button.Colored">
     <item name="android:background">@drawable/rounded_button_filled</item>
-    <item name="colorControlHighlight">@android:color/white</item>
+    <item name="android:textColor">@color/card_view_background</item>
     <item name="android:paddingStart">@dimen/filter_button_padding</item>
     <item name="android:paddingEnd">@dimen/filter_button_padding</item>
     <item name="android:textAllCaps">false</item>
     <item name="android:fontFamily">sans-serif</item>
-    <item name="android:layout_height">30dp</item>
+    <item name="android:layout_height">35dp</item>
   </style>
 </resources>

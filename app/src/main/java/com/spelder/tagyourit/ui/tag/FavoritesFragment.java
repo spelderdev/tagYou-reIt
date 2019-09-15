@@ -24,6 +24,8 @@ import java.util.List;
 public class FavoritesFragment extends ListFragment
     implements SharedPreferences.OnSharedPreferenceChangeListener {
   private TagListAdapter listAdapter;
+  private FilterBar filterBar;
+  private FilterBar filterBarEmpty;
 
   @Override
   public void onCreate(Bundle savedInstanceState) {
@@ -38,6 +40,14 @@ public class FavoritesFragment extends ListFragment
     super.onDestroy();
     PreferenceManager.getDefaultSharedPreferences(getActivity())
         .unregisterOnSharedPreferenceChangeListener(this);
+    if (filterBar != null) {
+      PreferenceManager.getDefaultSharedPreferences(getActivity())
+          .unregisterOnSharedPreferenceChangeListener(filterBar);
+    }
+    if (filterBarEmpty != null) {
+      PreferenceManager.getDefaultSharedPreferences(getActivity())
+          .unregisterOnSharedPreferenceChangeListener(filterBarEmpty);
+    }
   }
 
   @Override
@@ -64,8 +74,15 @@ public class FavoritesFragment extends ListFragment
     listView.setHeaderDividersEnabled(false);
 
     if (getActivity() != null) {
-      FilterBar.setupFilterBar(listView, getActivity().getSupportFragmentManager());
-      FilterBar.setupFilterBar(listView.getEmptyView(), getActivity().getSupportFragmentManager());
+      filterBar = new FilterBar(getActivity());
+      PreferenceManager.getDefaultSharedPreferences(getActivity())
+          .registerOnSharedPreferenceChangeListener(filterBar);
+      filterBar.setupFilterBar(listView, getActivity().getSupportFragmentManager());
+
+      filterBarEmpty = new FilterBar(getActivity());
+      PreferenceManager.getDefaultSharedPreferences(getActivity())
+          .registerOnSharedPreferenceChangeListener(filterBarEmpty);
+      filterBarEmpty.setupFilterBar(listView.getEmptyView(), getActivity().getSupportFragmentManager());
     }
 
     super.onActivityCreated(savedInstanceState);
@@ -73,7 +90,7 @@ public class FavoritesFragment extends ListFragment
 
   @Override
   public void onListItemClick(@NonNull ListView l, @NonNull View v, int position, long id) {
-    Tag clickedTag = (Tag) listAdapter.getItem(position);
+    Tag clickedTag = (Tag) getListView().getItemAtPosition(position);
     Log.i(
         "FragmentList",
         "Item clicked: " + clickedTag.getTitle() + " " + clickedTag.getSheetMusicType());

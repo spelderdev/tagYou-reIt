@@ -33,24 +33,6 @@ public class FilterBuilder {
     PARTS_NUMBER_KEY = context.getResources().getString(R.string.filter_part_key);
   }
 
-  public boolean isFilterApplied() {
-    boolean sheetMusic = !preferences.getBoolean(SHEET_MUSIC_KEY, false);
-    boolean learningTrack = !preferences.getBoolean(LEARNING_TRACK_KEY, false);
-    boolean ratingString = preferences.getString(RATING_KEY, "any").equals("any");
-    boolean partString = preferences.getString(PARTS_NUMBER_KEY, "any").equals("any");
-    boolean typeString = preferences.getString(TYPE_KEY, "any").equals("any");
-    boolean keyString = preferences.getString(KEY_KEY, "key_any").equals("key_any");
-
-    Log.d(TAG, "sheetMusic: " + sheetMusic);
-    Log.d(TAG, "learningTrack: " + learningTrack);
-    Log.d(TAG, "ratingString: " + ratingString);
-    Log.d(TAG, "partString: " + partString);
-    Log.d(TAG, "typeString: " + typeString);
-    Log.d(TAG, "keyString: " + preferences.getString(KEY_KEY, "any"));
-
-    return !(ratingString && partString && typeString && keyString && sheetMusic && learningTrack);
-  }
-
   public FilterBy build() {
     FilterBy filter = new FilterBy();
     boolean sheetMusic = preferences.getBoolean(SHEET_MUSIC_KEY, false);

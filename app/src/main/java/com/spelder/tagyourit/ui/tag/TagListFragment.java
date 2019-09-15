@@ -35,30 +35,20 @@ public class TagListFragment extends ListFragment
   private static final int LOADING_LEFT = 10;
 
   boolean finished = false;
-
   boolean created = false;
-
   private TagListAdapter listAdapter;
-
   private TagQueryTask currentDownloadTask;
-
   private SortBy sortBy;
-
   private boolean loading = false;
-
   private View footerView;
-
   private Context context;
-
   private View noResultsView;
-
   private View loadingView;
-
   private View browseContent;
-
   private TextView error_text;
-
   private View error_layout;
+  private FilterBar filterBar;
+  private FilterBar filterBarEmpty;
 
   static TagListFragment newInstance(SortBy sortBy) {
     TagListFragment f = new TagListFragment();
@@ -91,6 +81,14 @@ public class TagListFragment extends ListFragment
     super.onDestroy();
     PreferenceManager.getDefaultSharedPreferences(context)
         .unregisterOnSharedPreferenceChangeListener(this);
+    if (filterBar != null) {
+      PreferenceManager.getDefaultSharedPreferences(getActivity())
+          .unregisterOnSharedPreferenceChangeListener(filterBar);
+    }
+    if (filterBarEmpty != null) {
+      PreferenceManager.getDefaultSharedPreferences(getActivity())
+          .unregisterOnSharedPreferenceChangeListener(filterBarEmpty);
+    }
   }
 
   @Override
@@ -172,14 +170,21 @@ public class TagListFragment extends ListFragment
     listView.setHeaderDividersEnabled(false);
 
     if (getActivity() != null) {
-      FilterBar.setupFilterBar(listView, getActivity().getSupportFragmentManager());
-      FilterBar.setupFilterBar(noResultsView, getActivity().getSupportFragmentManager());
+      filterBar = new FilterBar(getActivity());
+      PreferenceManager.getDefaultSharedPreferences(getActivity())
+          .registerOnSharedPreferenceChangeListener(filterBar);
+      filterBar.setupFilterBar(listView, getActivity().getSupportFragmentManager());
+
+      filterBarEmpty = new FilterBar(getActivity());
+      PreferenceManager.getDefaultSharedPreferences(getActivity())
+          .registerOnSharedPreferenceChangeListener(filterBarEmpty);
+      filterBarEmpty.setupFilterBar(noResultsView, getActivity().getSupportFragmentManager());
     }
   }
 
   @Override
   public void onListItemClick(@NonNull ListView l, @NonNull View v, int position, long id) {
-    Tag clickedTag = (Tag) listAdapter.getItem(position);
+    Tag clickedTag = (Tag) getListView().getItemAtPosition(position);
     Log.i(
         "FragmentList",
         "Item clicked: " + clickedTag.getTitle() + " " + clickedTag.getSheetMusicType());
