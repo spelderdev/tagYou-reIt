@@ -27,6 +27,7 @@ import com.spelder.tagyourit.networking.api.filter.FilterBuilder;
 import com.spelder.tagyourit.networking.api.filter.FilterBy;
 import com.spelder.tagyourit.ui.MainActivity;
 import com.spelder.tagyourit.ui.settings.SortBottomSheet;
+import com.spelder.tagyourit.ui.settings.filter.FilterBar;
 import java.util.List;
 
 public class TagListFragment extends ListFragment
@@ -159,12 +160,21 @@ public class TagListFragment extends ListFragment
   public void onActivityCreated(Bundle savedInstanceState) {
     super.onActivityCreated(savedInstanceState);
     footerView = View.inflate(getContext(), R.layout.list_footer_view, null);
-    this.getListView().addFooterView(footerView);
+    getListView().addFooterView(footerView);
     setListAdapter(listAdapter);
     listAdapter.getCount();
     getListView().setOnScrollListener(this);
     created = true;
     setLoading(loading);
+
+    ListView listView = getListView();
+    listView.addHeaderView(getLayoutInflater().inflate(R.layout.filter, null));
+    listView.setHeaderDividersEnabled(false);
+
+    if (getActivity() != null) {
+      FilterBar.setupFilterBar(listView, getActivity().getSupportFragmentManager());
+      FilterBar.setupFilterBar(noResultsView, getActivity().getSupportFragmentManager());
+    }
   }
 
   @Override

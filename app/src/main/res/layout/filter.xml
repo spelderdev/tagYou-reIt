@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<HorizontalScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+  android:layout_width="wrap_content"
+  android:layout_height="wrap_content"
+  android:scrollbars="none">
+
+  <LinearLayout
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="15dp"
+    android:layout_marginBottom="2dp"
+    android:orientation="horizontal">
+
+    <androidx.appcompat.widget.AppCompatButton
+      android:id="@+id/filter_parts"
+      style="@style/AppTheme.RoundedCornerMaterialButton"
+      android:layout_width="wrap_content"
+      android:layout_marginStart="15dp"
+      android:layout_marginEnd="@dimen/filter_button_separator"
+      android:text="@string/filter_parts_title" />
+
+    <androidx.appcompat.widget.AppCompatButton
+      android:id="@+id/filter_sheet_music"
+      style="@style/AppTheme.RoundedCornerMaterialButtonFilled"
+      android:layout_width="wrap_content"
+      android:layout_marginStart="@dimen/filter_button_separator"
+      android:layout_marginEnd="@dimen/filter_button_separator"
+      android:text="@string/filter_sheet_music_title" />
+
+    <androidx.appcompat.widget.AppCompatButton
+      android:id="@+id/filter_learning_tracks"
+      style="@style/AppTheme.RoundedCornerMaterialButton"
+      android:layout_width="wrap_content"
+      android:layout_marginStart="@dimen/filter_button_separator"
+      android:layout_marginEnd="@dimen/filter_button_separator"
+      android:text="@string/filter_learning_tracks_title" />
+
+    <androidx.appcompat.widget.AppCompatButton
+      android:id="@+id/filter_key"
+      style="@style/AppTheme.RoundedCornerMaterialButton"
+      android:layout_width="wrap_content"
+      android:layout_marginStart="@dimen/filter_button_separator"
+      android:layout_marginEnd="@dimen/filter_button_separator"
+      android:text="@string/filter_key_title" />
+
+    <androidx.appcompat.widget.AppCompatButton
+      android:id="@+id/filter_type"
+      style="@style/AppTheme.RoundedCornerMaterialButton"
+      android:layout_width="wrap_content"
+      android:layout_marginStart="@dimen/filter_button_separator"
+      android:layout_marginEnd="@dimen/filter_button_separator"
+      android:text="@string/filter_type_title" />
+
+    <androidx.appcompat.widget.AppCompatButton
+      android:id="@+id/filter_rating"
+      style="@style/AppTheme.RoundedCornerMaterialButton"
+      android:layout_width="wrap_content"
+      android:layout_marginStart="@dimen/filter_button_separator"
+      android:layout_marginEnd="10dp"
+      android:text="@string/filter_rating_title" />
+
+  </LinearLayout>
+
+</HorizontalScrollView>

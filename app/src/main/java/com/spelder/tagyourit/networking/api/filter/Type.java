@@ -1,6 +1,7 @@
 package com.spelder.tagyourit.networking.api.filter;
 
 public enum Type {
+  ANY("any", "Any"),
   BARBERSHOP("bbs", "Barbershop"),
   SWEET_ADELINES("sai", "Female Barbershop"),
   SATB("satb", "SATB"),

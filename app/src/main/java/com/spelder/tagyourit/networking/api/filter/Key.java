@@ -1,6 +1,7 @@
 package com.spelder.tagyourit.networking.api.filter;
 
 public enum Key {
+  ANY("any","ANY"),
   A("A|Aminor|Adorian", "A"),
   B_FLAT("Bflat|Bflatminor|Bflatdorian|Asharp|Asharpminor|Asharpdorian", "Bb", "A#"),
   B("B|Bminor|Bdorian", "B"),

@@ -105,5 +105,37 @@
   <string name="sort_by_rating">Rating</string>
   <string name="sort_by_downloads">Number of Downloads</string>
   <string name="sort_by_title">Title</string>
-  <string name="sort_apply">Apply</string>
+  <string name="apply">Apply</string>
+
+  <string name="filter_any">Any</string>
+  <string name="filter_parts_title">Parts</string>
+  <string name="filter_sheet_music_title">Sheet Music</string>
+  <string name="filter_learning_tracks_title">Learning Tracks</string>
+  <string name="filter_key_title">Key</string>
+  <string name="filter_type_title">Type</string>
+  <string name="filter_rating_title">Minimum Rating</string>
+
+  <string name="filter_parts_four">4</string>
+  <string name="filter_parts_five">5</string>
+  <string name="filter_parts_six">6</string>
+  <string name="filter_parts_seven">7</string>
+  <string name="filter_parts_eight">8</string>
+
+  <string name="filter_type_barbershop">Barbershop</string>
+  <string name="filter_type_sweet_adelines">Sweet Adeline</string>
+  <string name="filter_type_satb">SATB</string>
+  <string name="filter_type_other_male">Other male</string>
+  <string name="filter_type_other_female">Other female</string>
+  <string name="filter_type_other_mixed">Other mixed</string>
+
+  <string name="filter_rating_0">0</string>
+  <string name="filter_rating_0_5">0.5</string>
+  <string name="filter_rating_1">1</string>
+  <string name="filter_rating_1_5">1.5</string>
+  <string name="filter_rating_2">2</string>
+  <string name="filter_rating_2_5">2.5</string>
+  <string name="filter_rating_3">3</string>
+  <string name="filter_rating_3_5">3.5</string>
+  <string name="filter_rating_4">4</string>
+  <string name="filter_rating_4_5">4.5</string>
 </resources>

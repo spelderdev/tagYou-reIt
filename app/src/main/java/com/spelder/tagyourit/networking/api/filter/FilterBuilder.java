@@ -75,7 +75,11 @@ public class FilterBuilder {
   private Double convertRating(String rating) {
     try {
       Log.d(TAG, rating);
-      return Double.parseDouble(rating);
+      Double d = Double.parseDouble(rating);
+      if (d < 0) {
+        return null;
+      }
+      return d;
     } catch (NumberFormatException e) {
       return null;
     }
@@ -83,7 +87,11 @@ public class FilterBuilder {
 
   private Integer convertPart(String part) {
     try {
-      return Integer.parseInt(part);
+      PartFilter p = PartFilter.valueOf(part);
+      if (p == PartFilter.ANY) {
+        return null;
+      }
+      return p.getNumberParts();
     } catch (NumberFormatException e) {
       return null;
     }
@@ -91,7 +99,11 @@ public class FilterBuilder {
 
   private Type convertType(String type) {
     try {
-      return Type.valueOf(type);
+      Type t = Type.valueOf(type);
+      if (t == Type.ANY) {
+        return null;
+      }
+      return t;
     } catch (IllegalArgumentException e) {
       return null;
     }
@@ -100,7 +112,11 @@ public class FilterBuilder {
   private Key convertKey(String key) {
     try {
       Log.d(TAG, key);
-      return Key.valueOf(key);
+      Key k = Key.valueOf(key);
+      if (k == Key.ANY) {
+        return null;
+      }
+      return k;
     } catch (IllegalArgumentException e) {
       return null;
     }

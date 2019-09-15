@@ -17,6 +17,7 @@ import com.spelder.tagyourit.networking.api.SortBy;
 import com.spelder.tagyourit.networking.api.filter.FilterBuilder;
 import com.spelder.tagyourit.ui.MainActivity;
 import com.spelder.tagyourit.ui.settings.SortBottomSheet;
+import com.spelder.tagyourit.ui.settings.filter.FilterBar;
 import java.util.List;
 
 /** The favorites tag list. */
@@ -57,6 +58,15 @@ public class FavoritesFragment extends ListFragment
   @Override
   public void onActivityCreated(Bundle savedInstanceState) {
     setListAdapter(listAdapter);
+
+    ListView listView = getListView();
+    listView.addHeaderView(getLayoutInflater().inflate(R.layout.filter, null));
+    listView.setHeaderDividersEnabled(false);
+
+    if (getActivity() != null) {
+      FilterBar.setupFilterBar(listView, getActivity().getSupportFragmentManager());
+      FilterBar.setupFilterBar(listView.getEmptyView(), getActivity().getSupportFragmentManager());
+    }
 
     super.onActivityCreated(savedInstanceState);
   }
