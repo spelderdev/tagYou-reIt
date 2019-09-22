@@ -1,8 +1,6 @@
 package com.spelder.tagyourit.ui.settings.filter;
 
-import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +11,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.spelder.tagyourit.R;
+import com.spelder.tagyourit.networking.api.filter.FilterBuilder;
+import com.spelder.tagyourit.networking.api.filter.Rating;
 
 public class FilterRatingBottomSheet extends BottomSheetDialogFragment {
   @Nullable
@@ -29,88 +29,89 @@ public class FilterRatingBottomSheet extends BottomSheetDialogFragment {
   }
 
   private void setupView(View view) {
-    SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getContext());
+    FilterBuilder filterBuilder = new FilterBuilder(getContext());
 
     RadioGroup filterPartsGroup = view.findViewById(R.id.filter_rating_radio);
 
     Button apply = view.findViewById(R.id.filter_rating_apply_button);
     apply.setOnClickListener(
         v -> {
-          double ratingFilter;
+          Rating ratingFilter;
           switch (filterPartsGroup.getCheckedRadioButtonId()) {
             case R.id.filter_rating_0:
-              ratingFilter = 0;
+              ratingFilter = Rating.ZERO;
               break;
             case R.id.filter_rating_0_5:
-              ratingFilter = 0.5;
+              ratingFilter = Rating.ZERO_5;
               break;
             case R.id.filter_rating_1:
-              ratingFilter = 1;
+              ratingFilter = Rating.ONE;
               break;
             case R.id.filter_rating_1_5:
-              ratingFilter = 1.5;
+              ratingFilter = Rating.ONE_5;
               break;
             case R.id.filter_rating_2:
-              ratingFilter = 2;
+              ratingFilter = Rating.TWO;
               break;
             case R.id.filter_rating_2_5:
-              ratingFilter = 2.5;
+              ratingFilter = Rating.TWO_5;
               break;
             case R.id.filter_rating_3:
-              ratingFilter = 3;
+              ratingFilter = Rating.THREE;
               break;
             case R.id.filter_rating_3_5:
-              ratingFilter = 3.5;
+              ratingFilter = Rating.THREE_5;
               break;
             case R.id.filter_rating_4:
-              ratingFilter = 4;
+              ratingFilter = Rating.FOUR;
               break;
             case R.id.filter_rating_4_5:
-              ratingFilter = 4.5;
+              ratingFilter = Rating.FOUR_5;
               break;
             case R.id.filter_parts_any:
             default:
-              ratingFilter = -1;
+              ratingFilter = Rating.ANY;
           }
-          settings
-              .edit()
-              .putString(getString(R.string.filter_rating_key), "" + ratingFilter)
-              .apply();
+          filterBuilder.setRating(ratingFilter);
           dismiss();
         });
 
-    double currentSortBy;
-    try {
-      currentSortBy =
-          Double.parseDouble(settings.getString(getString(R.string.filter_rating_key), "-1"));
-    } catch (IllegalArgumentException e) {
-      currentSortBy = -1;
-    }
+    Rating currentRating = filterBuilder.getRating();
     RadioButton currentRadioButton;
-    if (currentSortBy < 0) {
-      currentRadioButton = view.findViewById(R.id.filter_rating_any);
-    } else if (currentSortBy < 0.5) {
-      currentRadioButton = view.findViewById(R.id.filter_rating_0);
-    } else if (currentSortBy < 1) {
-      currentRadioButton = view.findViewById(R.id.filter_rating_0_5);
-    } else if (currentSortBy < 1.5) {
-      currentRadioButton = view.findViewById(R.id.filter_rating_1);
-    } else if (currentSortBy < 2) {
-      currentRadioButton = view.findViewById(R.id.filter_rating_1_5);
-    } else if (currentSortBy < 2.5) {
-      currentRadioButton = view.findViewById(R.id.filter_rating_2);
-    } else if (currentSortBy < 3) {
-      currentRadioButton = view.findViewById(R.id.filter_rating_2_5);
-    } else if (currentSortBy < 3.5) {
-      currentRadioButton = view.findViewById(R.id.filter_rating_3);
-    } else if (currentSortBy < 4) {
-      currentRadioButton = view.findViewById(R.id.filter_rating_3_5);
-    } else if (currentSortBy < 4.5) {
-      currentRadioButton = view.findViewById(R.id.filter_rating_4);
-    } else if (currentSortBy < 5) {
-      currentRadioButton = view.findViewById(R.id.filter_rating_4_5);
-    } else {
-      currentRadioButton = view.findViewById(R.id.filter_rating_any);
+    switch (currentRating) {
+      case ZERO:
+        currentRadioButton = view.findViewById(R.id.filter_rating_0);
+        break;
+      case ZERO_5:
+        currentRadioButton = view.findViewById(R.id.filter_rating_0_5);
+        break;
+      case ONE:
+        currentRadioButton = view.findViewById(R.id.filter_rating_1);
+        break;
+      case ONE_5:
+        currentRadioButton = view.findViewById(R.id.filter_rating_1_5);
+        break;
+      case TWO:
+        currentRadioButton = view.findViewById(R.id.filter_rating_2);
+        break;
+      case TWO_5:
+        currentRadioButton = view.findViewById(R.id.filter_rating_2_5);
+        break;
+      case THREE:
+        currentRadioButton = view.findViewById(R.id.filter_rating_3);
+        break;
+      case THREE_5:
+        currentRadioButton = view.findViewById(R.id.filter_rating_3_5);
+        break;
+      case FOUR:
+        currentRadioButton = view.findViewById(R.id.filter_rating_4);
+        break;
+      case FOUR_5:
+        currentRadioButton = view.findViewById(R.id.filter_rating_4_5);
+        break;
+      case ANY:
+      default:
+        currentRadioButton = view.findViewById(R.id.filter_rating_any);
     }
     currentRadioButton.setChecked(true);
   }

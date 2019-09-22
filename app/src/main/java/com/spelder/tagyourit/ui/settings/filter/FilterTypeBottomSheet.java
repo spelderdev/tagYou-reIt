@@ -1,8 +1,6 @@
 package com.spelder.tagyourit.ui.settings.filter;
 
-import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.spelder.tagyourit.R;
+import com.spelder.tagyourit.networking.api.filter.FilterBuilder;
 import com.spelder.tagyourit.networking.api.filter.Type;
 
 public class FilterTypeBottomSheet extends BottomSheetDialogFragment {
@@ -30,7 +29,7 @@ public class FilterTypeBottomSheet extends BottomSheetDialogFragment {
   }
 
   private void setupView(View view) {
-    SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getContext());
+    FilterBuilder filterBuilder = new FilterBuilder(getContext());
 
     RadioGroup filterPartsGroup = view.findViewById(R.id.filter_type_radio);
 
@@ -61,17 +60,11 @@ public class FilterTypeBottomSheet extends BottomSheetDialogFragment {
             default:
               typeFilter = Type.ANY;
           }
-          settings.edit().putString(getString(R.string.filter_type_key), typeFilter.name()).apply();
+          filterBuilder.setType(typeFilter);
           dismiss();
         });
 
-    Type currentSortBy;
-    try {
-      currentSortBy =
-          Type.valueOf(settings.getString(getString(R.string.filter_type_key), Type.ANY.name()));
-    } catch (IllegalArgumentException e) {
-      currentSortBy = Type.ANY;
-    }
+    Type currentSortBy = filterBuilder.getType();
     RadioButton currentRadioButton;
     switch (currentSortBy) {
       case BARBERSHOP:

@@ -1,8 +1,6 @@
 package com.spelder.tagyourit.ui.settings.filter;
 
-import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,7 +11,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.spelder.tagyourit.R;
-import com.spelder.tagyourit.networking.api.filter.PartFilter;
+import com.spelder.tagyourit.networking.api.filter.FilterBuilder;
+import com.spelder.tagyourit.networking.api.filter.Part;
 
 public class FilterPartsBottomSheet extends BottomSheetDialogFragment {
   @Nullable
@@ -30,46 +29,39 @@ public class FilterPartsBottomSheet extends BottomSheetDialogFragment {
   }
 
   private void setupView(View view) {
-    SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getContext());
+    FilterBuilder filterBuilder = new FilterBuilder(getContext());
 
     RadioGroup filterPartsGroup = view.findViewById(R.id.filter_parts_radio);
 
     Button apply = view.findViewById(R.id.filter_parts_apply_button);
     apply.setOnClickListener(
         v -> {
-          PartFilter partFilter;
+          Part partFilter;
           switch (filterPartsGroup.getCheckedRadioButtonId()) {
             case R.id.filter_parts_four:
-              partFilter = PartFilter.FOUR;
+              partFilter = Part.FOUR;
               break;
             case R.id.filter_parts_five:
-              partFilter = PartFilter.FIVE;
+              partFilter = Part.FIVE;
               break;
             case R.id.filter_parts_six:
-              partFilter = PartFilter.SIX;
+              partFilter = Part.SIX;
               break;
             case R.id.filter_parts_seven:
-              partFilter = PartFilter.SEVEN;
+              partFilter = Part.SEVEN;
               break;
             case R.id.filter_parts_eight:
-              partFilter = PartFilter.EIGHT;
+              partFilter = Part.EIGHT;
               break;
             case R.id.filter_parts_any:
             default:
-              partFilter = PartFilter.ANY;
+              partFilter = Part.ANY;
           }
-          settings.edit().putString(getString(R.string.filter_part_key), partFilter.name()).apply();
+          filterBuilder.setPart(partFilter);
           dismiss();
         });
 
-    PartFilter currentSortBy;
-    try {
-      currentSortBy =
-          PartFilter.valueOf(
-              settings.getString(getString(R.string.filter_part_key), PartFilter.ANY.name()));
-    } catch (IllegalArgumentException e) {
-      currentSortBy = PartFilter.ANY;
-    }
+    Part currentSortBy = filterBuilder.getPart();
     RadioButton currentRadioButton;
     switch (currentSortBy) {
       case FOUR:

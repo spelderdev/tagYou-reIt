@@ -11,7 +11,6 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.annotation.StyleRes;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.spelder.tagyourit.R;
 import com.spelder.tagyourit.networking.api.SortBy;

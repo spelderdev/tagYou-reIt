@@ -17,20 +17,14 @@ import javax.net.ssl.HttpsURLConnection;
 /** Queries the barbershop tag API and converts it into the internal model. */
 public class TagListRetriever {
   private static final String ID_LABEL = "id=";
-
   private static final String BASE_URL = "https://www.barbershoptags.com/api.php?";
-
-  private static final String DOWNLOAD_NUMBER_URL = "n=20";
-
+  private static final String DOWNLOAD_NUMBER_URL = "n=10";
   private static final String START_NUMBER_URL = "start=";
-
   private static final String SEARCH_URL = "q=";
 
   private final ExecutorService executor =
       Executors.newCachedThreadPool(Executors.defaultThreadFactory());
-
   private final String downloadUrl;
-
   private Future<List<Tag>> future;
 
   public TagListRetriever(int tagId) {

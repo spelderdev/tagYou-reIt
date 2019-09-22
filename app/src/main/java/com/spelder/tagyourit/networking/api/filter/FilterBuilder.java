@@ -8,19 +8,12 @@ import com.spelder.tagyourit.R;
 
 public class FilterBuilder {
   private static final String TAG = FilterBuilder.class.getName();
-
   private final String SHEET_MUSIC_KEY;
-
   private final String LEARNING_TRACK_KEY;
-
   private final String RATING_KEY;
-
   private final String TYPE_KEY;
-
   private final String KEY_KEY;
-
   private final String PARTS_NUMBER_KEY;
-
   private final SharedPreferences preferences;
 
   public FilterBuilder(Context context) {
@@ -35,72 +28,87 @@ public class FilterBuilder {
 
   public FilterBy build() {
     FilterBy filter = new FilterBy();
-    boolean sheetMusic = preferences.getBoolean(SHEET_MUSIC_KEY, false);
-    boolean learningTrack = preferences.getBoolean(LEARNING_TRACK_KEY, false);
-    String ratingString = preferences.getString(RATING_KEY, "any");
-    String partString = preferences.getString(PARTS_NUMBER_KEY, "any");
-    String typeString = preferences.getString(TYPE_KEY, "any");
-    String keyString = preferences.getString(KEY_KEY, "key_any");
-
-    filter.setHasSheetMusic(sheetMusic);
-    filter.setHasLearningTrack(learningTrack);
-    filter.setMinimumRating(convertRating(ratingString));
-    filter.setNumberOfParts(convertPart(partString));
-    filter.setType(convertType(typeString));
-    filter.setKey(convertKey(keyString));
+    filter.setHasSheetMusic(getSheetMusic());
+    filter.setHasLearningTrack(getLearningTrack());
+    filter.setMinimumRating(getRating());
+    filter.setNumberOfParts(getPart());
+    filter.setType(getType());
+    filter.setKey(getKey());
 
     Log.d(TAG, "Filter: " + filter);
 
     return filter;
   }
 
-  private Double convertRating(String rating) {
-    try {
-      Log.d(TAG, rating);
-      Double d = Double.parseDouble(rating);
-      if (d < 0) {
-        return null;
-      }
-      return d;
-    } catch (NumberFormatException e) {
-      return null;
-    }
+  public boolean getSheetMusic() {
+    return preferences.getBoolean(SHEET_MUSIC_KEY, false);
   }
 
-  private Integer convertPart(String part) {
-    try {
-      PartFilter p = PartFilter.valueOf(part);
-      if (p == PartFilter.ANY) {
-        return null;
-      }
-      return p.getNumberParts();
-    } catch (NumberFormatException e) {
-      return null;
-    }
+  public void setSheetMusic(boolean sheetMusic) {
+    preferences.edit().putBoolean(SHEET_MUSIC_KEY, sheetMusic).apply();
   }
 
-  private Type convertType(String type) {
+  public boolean getLearningTrack() {
+    return preferences.getBoolean(LEARNING_TRACK_KEY, false);
+  }
+
+  public void setLearningTrack(boolean learningTrack) {
+    preferences.edit().putBoolean(LEARNING_TRACK_KEY, learningTrack).apply();
+  }
+
+  public Rating getRating() {
     try {
-      Type t = Type.valueOf(type);
-      if (t == Type.ANY) {
-        return null;
-      }
-      return t;
+      String ratingString = preferences.getString(RATING_KEY, Rating.ANY.name());
+      Log.d(TAG, "Get rating: " + ratingString);
+      return Rating.valueOf(ratingString);
     } catch (IllegalArgumentException e) {
-      return null;
+      return Rating.ANY;
     }
   }
 
-  private Key convertKey(String key) {
+  public void setRating(Rating rating) {
+    preferences.edit().putString(RATING_KEY, rating.name()).apply();
+  }
+
+  public Part getPart() {
     try {
-      Log.d(TAG, key);
-      Key k = Key.valueOf(key);
-      if (k == Key.ANY) {
-        return null;
-      }
-      return k;
+      String partString = preferences.getString(PARTS_NUMBER_KEY, Part.ANY.name());
+      Log.d(TAG, "Get part: " + partString);
+      return Part.valueOf(partString);
     } catch (IllegalArgumentException e) {
-      return null;
+      return Part.ANY;
     }
+  }
+
+  public void setPart(Part part) {
+    preferences.edit().putString(PARTS_NUMBER_KEY, part.name()).apply();
+  }
+
+  public Type getType() {
+    try {
+      String typeString = preferences.getString(TYPE_KEY, Type.ANY.name());
+      Log.d(TAG, "Get type: " + typeString);
+      return Type.valueOf(typeString);
+    } catch (IllegalArgumentException e) {
+      return Type.ANY;
+    }
+  }
+
+  public void setType(Type type) {
+    preferences.edit().putString(TYPE_KEY, type.name()).apply();
+  }
+
+  public Key getKey() {
+    try {
+      String keyString = preferences.getString(KEY_KEY, Key.ANY.name());
+      Log.d(TAG, "Get key: " + keyString);
+      return Key.valueOf(keyString);
+    } catch (IllegalArgumentException e) {
+      return Key.ANY;
+    }
+  }
+
+  public void setKey(Key key) {
+    preferences.edit().putString(KEY_KEY, key.name()).apply();
   }
 }
