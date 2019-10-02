@@ -16,7 +16,6 @@ import static org.hamcrest.Matchers.anything;
 import android.os.SystemClock;
 import android.view.View;
 import android.widget.RatingBar;
-import androidx.test.espresso.NoMatchingViewException;
 import androidx.test.espresso.UiController;
 import androidx.test.espresso.ViewAction;
 import androidx.test.espresso.ViewAssertion;

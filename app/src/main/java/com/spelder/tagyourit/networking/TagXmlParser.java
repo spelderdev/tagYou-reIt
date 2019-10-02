@@ -89,14 +89,14 @@ class TagXmlParser {
           try {
             tag.setClassicTagNumber(Integer.parseInt(readSimple(parser, "Classic")));
           } catch (NumberFormatException e) {
-            tag.setNumberOfParts(-1);
+            tag.setClassicTagNumber(-1);
           }
           break;
         case "Downloaded":
           try {
             tag.setDownloadCount(Integer.parseInt(readSimple(parser, "Downloaded")));
           } catch (NumberFormatException e) {
-            tag.setNumberOfParts(0);
+            tag.setDownloadCount(0);
           }
           break;
         case "Posted":
@@ -104,7 +104,7 @@ class TagXmlParser {
             Date postedDate = postedDateFormatter.parse(readSimple(parser, "Posted"));
             tag.setPostedDate(postedDate);
           } catch (ParseException e) {
-            tag.setNumberOfParts(-1);
+            tag.setPostedDate(-1);
           }
           break;
         case "SheetMusic":

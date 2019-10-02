@@ -63,7 +63,6 @@ public class TagDb {
     values.put(TagEntry.COLUMN_NAME_SHEET_MUSIC_LINK, tag.getSheetMusicLink());
     values.put(TagEntry.COLUMN_NAME_SHEET_MUSIC_FILE, tag.getSheetMusicFile());
     values.put(TagEntry.COLUMN_NAME_LAST_MODIFIED_DATE, sdf.format(new Date()));
-    values.put(TagEntry.COLUMN_NAME_TYPE, sdf.format(new Date()));
     // Insert the new row, returning the primary key value of the new row
     long newRowId = db.insert(TagEntry.TABLE_NAME, null, values);
     Log.d("TagDb,", "tagId: " + tag.getId());
@@ -356,6 +355,8 @@ public class TagDb {
   }
 
   public List<Tag> getFavorites(FilterBy filter, SortBy sortBy) {
+    Log.d("TagDb", filter.getDbFilter());
+
     String sql =
         "SELECT * FROM "
             + TagEntry.TABLE_NAME
