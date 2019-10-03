@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import androidx.annotation.NonNull;
@@ -33,37 +32,6 @@ public class FilterTypeBottomSheet extends BottomSheetDialogFragment {
 
     RadioGroup filterPartsGroup = view.findViewById(R.id.filter_type_radio);
 
-    Button apply = view.findViewById(R.id.filter_type_apply_button);
-    apply.setOnClickListener(
-        v -> {
-          Type typeFilter;
-          switch (filterPartsGroup.getCheckedRadioButtonId()) {
-            case R.id.filter_type_barbershop:
-              typeFilter = Type.BARBERSHOP;
-              break;
-            case R.id.filter_type_sweet_adelines:
-              typeFilter = Type.SWEET_ADELINES;
-              break;
-            case R.id.filter_type_satb:
-              typeFilter = Type.SATB;
-              break;
-            case R.id.filter_type_other_male:
-              typeFilter = Type.OTHER_MALE;
-              break;
-            case R.id.filter_type_other_female:
-              typeFilter = Type.OTHER_FEMALE;
-              break;
-            case R.id.filter_type_other_mixed:
-              typeFilter = Type.OTHER_MIXED;
-              break;
-            case R.id.filter_parts_any:
-            default:
-              typeFilter = Type.ANY;
-          }
-          filterBuilder.setType(typeFilter);
-          dismiss();
-        });
-
     Type currentSortBy = filterBuilder.getType();
     RadioButton currentRadioButton;
     switch (currentSortBy) {
@@ -90,5 +58,36 @@ public class FilterTypeBottomSheet extends BottomSheetDialogFragment {
         currentRadioButton = view.findViewById(R.id.filter_type_any);
     }
     currentRadioButton.setChecked(true);
+
+    filterPartsGroup.setOnCheckedChangeListener((radioGroup, id) -> apply(filterBuilder, id));
+  }
+
+  private void apply(FilterBuilder filterBuilder, int selectedId) {
+    Type typeFilter;
+    switch (selectedId) {
+      case R.id.filter_type_barbershop:
+        typeFilter = Type.BARBERSHOP;
+        break;
+      case R.id.filter_type_sweet_adelines:
+        typeFilter = Type.SWEET_ADELINES;
+        break;
+      case R.id.filter_type_satb:
+        typeFilter = Type.SATB;
+        break;
+      case R.id.filter_type_other_male:
+        typeFilter = Type.OTHER_MALE;
+        break;
+      case R.id.filter_type_other_female:
+        typeFilter = Type.OTHER_FEMALE;
+        break;
+      case R.id.filter_type_other_mixed:
+        typeFilter = Type.OTHER_MIXED;
+        break;
+      case R.id.filter_parts_any:
+      default:
+        typeFilter = Type.ANY;
+    }
+    filterBuilder.setType(typeFilter);
+    dismiss();
   }
 }

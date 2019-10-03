@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import androidx.annotation.NonNull;
@@ -33,34 +32,6 @@ public class FilterPartsBottomSheet extends BottomSheetDialogFragment {
 
     RadioGroup filterPartsGroup = view.findViewById(R.id.filter_parts_radio);
 
-    Button apply = view.findViewById(R.id.filter_parts_apply_button);
-    apply.setOnClickListener(
-        v -> {
-          Part partFilter;
-          switch (filterPartsGroup.getCheckedRadioButtonId()) {
-            case R.id.filter_parts_four:
-              partFilter = Part.FOUR;
-              break;
-            case R.id.filter_parts_five:
-              partFilter = Part.FIVE;
-              break;
-            case R.id.filter_parts_six:
-              partFilter = Part.SIX;
-              break;
-            case R.id.filter_parts_seven:
-              partFilter = Part.SEVEN;
-              break;
-            case R.id.filter_parts_eight:
-              partFilter = Part.EIGHT;
-              break;
-            case R.id.filter_parts_any:
-            default:
-              partFilter = Part.ANY;
-          }
-          filterBuilder.setPart(partFilter);
-          dismiss();
-        });
-
     Part currentSortBy = filterBuilder.getPart();
     RadioButton currentRadioButton;
     switch (currentSortBy) {
@@ -84,5 +55,33 @@ public class FilterPartsBottomSheet extends BottomSheetDialogFragment {
         currentRadioButton = view.findViewById(R.id.filter_parts_any);
     }
     currentRadioButton.setChecked(true);
+
+    filterPartsGroup.setOnCheckedChangeListener((radioGroup, id) -> apply(filterBuilder, id));
+  }
+
+  private void apply(FilterBuilder filterBuilder, int selectedId) {
+    Part partFilter;
+    switch (selectedId) {
+      case R.id.filter_parts_four:
+        partFilter = Part.FOUR;
+        break;
+      case R.id.filter_parts_five:
+        partFilter = Part.FIVE;
+        break;
+      case R.id.filter_parts_six:
+        partFilter = Part.SIX;
+        break;
+      case R.id.filter_parts_seven:
+        partFilter = Part.SEVEN;
+        break;
+      case R.id.filter_parts_eight:
+        partFilter = Part.EIGHT;
+        break;
+      case R.id.filter_parts_any:
+      default:
+        partFilter = Part.ANY;
+    }
+    filterBuilder.setPart(partFilter);
+    dismiss();
   }
 }

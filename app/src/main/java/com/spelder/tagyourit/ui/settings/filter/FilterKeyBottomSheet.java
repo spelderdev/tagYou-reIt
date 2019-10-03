@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import androidx.annotation.NonNull;
@@ -32,54 +31,6 @@ public class FilterKeyBottomSheet extends BottomSheetDialogFragment {
     FilterBuilder filterBuilder = new FilterBuilder(getContext());
 
     RadioGroup filterPartsGroup = view.findViewById(R.id.filter_key_radio);
-    Button apply = view.findViewById(R.id.filter_key_apply_button);
-    apply.setOnClickListener(
-        v -> {
-          Key keyFilter;
-          switch (filterPartsGroup.getCheckedRadioButtonId()) {
-            case R.id.filter_key_a:
-              keyFilter = Key.A;
-              break;
-            case R.id.filter_key_ab:
-              keyFilter = Key.A_FLAT;
-              break;
-            case R.id.filter_key_b:
-              keyFilter = Key.B;
-              break;
-            case R.id.filter_key_bb:
-              keyFilter = Key.B_FLAT;
-              break;
-            case R.id.filter_key_c:
-              keyFilter = Key.C;
-              break;
-            case R.id.filter_key_d:
-              keyFilter = Key.D;
-              break;
-            case R.id.filter_key_db:
-              keyFilter = Key.D_FLAT;
-              break;
-            case R.id.filter_key_e:
-              keyFilter = Key.E;
-              break;
-            case R.id.filter_key_eb:
-              keyFilter = Key.E_FLAT;
-              break;
-            case R.id.filter_key_f:
-              keyFilter = Key.F;
-              break;
-            case R.id.filter_key_g:
-              keyFilter = Key.G;
-              break;
-            case R.id.filter_key_gb:
-              keyFilter = Key.G_FLAT;
-              break;
-            case R.id.filter_key_any:
-            default:
-              keyFilter = Key.ANY;
-          }
-          filterBuilder.setKey(keyFilter);
-          dismiss();
-        });
 
     Key currentSortBy = filterBuilder.getKey();
     RadioButton currentRadioButton;
@@ -125,5 +76,54 @@ public class FilterKeyBottomSheet extends BottomSheetDialogFragment {
         currentRadioButton = view.findViewById(R.id.filter_key_any);
     }
     currentRadioButton.setChecked(true);
+
+    filterPartsGroup.setOnCheckedChangeListener((radioGroup, id) -> apply(filterBuilder, id));
+  }
+
+  private void apply(FilterBuilder filterBuilder, int selectedId) {
+    Key keyFilter;
+    switch (selectedId) {
+      case R.id.filter_key_a:
+        keyFilter = Key.A;
+        break;
+      case R.id.filter_key_ab:
+        keyFilter = Key.A_FLAT;
+        break;
+      case R.id.filter_key_b:
+        keyFilter = Key.B;
+        break;
+      case R.id.filter_key_bb:
+        keyFilter = Key.B_FLAT;
+        break;
+      case R.id.filter_key_c:
+        keyFilter = Key.C;
+        break;
+      case R.id.filter_key_d:
+        keyFilter = Key.D;
+        break;
+      case R.id.filter_key_db:
+        keyFilter = Key.D_FLAT;
+        break;
+      case R.id.filter_key_e:
+        keyFilter = Key.E;
+        break;
+      case R.id.filter_key_eb:
+        keyFilter = Key.E_FLAT;
+        break;
+      case R.id.filter_key_f:
+        keyFilter = Key.F;
+        break;
+      case R.id.filter_key_g:
+        keyFilter = Key.G;
+        break;
+      case R.id.filter_key_gb:
+        keyFilter = Key.G_FLAT;
+        break;
+      case R.id.filter_key_any:
+      default:
+        keyFilter = Key.ANY;
+    }
+    filterBuilder.setKey(keyFilter);
+    dismiss();
   }
 }

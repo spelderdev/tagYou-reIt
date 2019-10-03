@@ -2,11 +2,11 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
   android:layout_width="match_parent"
   android:layout_height="match_parent"
-  android:paddingTop="15dp"
-  android:paddingBottom="15dp"
-  android:paddingStart="15dp"
-  android:paddingEnd="15dp"
   android:orientation="vertical"
+  android:paddingStart="30dp"
+  android:paddingTop="30dp"
+  android:paddingEnd="30dp"
+  android:paddingBottom="30dp"
   android:theme="@style/Widget.AppTheme.BottomSheet">
 
   <TextView
@@ -14,65 +14,64 @@
     android:layout_height="wrap_content"
     android:text="@string/filter_type_title"
     android:textColor="@color/darkTitle"
-    android:textSize="22sp"/>
+    android:textSize="22sp" />
 
-  <RadioGroup
-    android:id="@+id/filter_type_radio"
+  <androidx.core.widget.NestedScrollView
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginTop="10dp"
-    android:layout_marginBottom="10dp"
-    android:layout_marginStart="10dp">
+    android:layout_marginStart="10dp"
+    android:layout_marginTop="5dp"
+    android:fillViewport="false">
 
-    <RadioButton
-      android:id="@+id/filter_type_any"
+    <RadioGroup
+      android:id="@+id/filter_type_radio"
       android:layout_width="match_parent"
-      android:layout_height="wrap_content"
-      android:text="@string/filter_any"/>
+      android:layout_height="wrap_content">
 
-    <RadioButton
-      android:id="@+id/filter_type_barbershop"
-      android:layout_width="match_parent"
-      android:layout_height="wrap_content"
-      android:text="@string/filter_type_barbershop"/>
+      <RadioButton
+        android:id="@+id/filter_type_any"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/filter_any" />
 
-    <RadioButton
-      android:id="@+id/filter_type_sweet_adelines"
-      android:layout_width="match_parent"
-      android:layout_height="wrap_content"
-      android:text="@string/filter_type_sweet_adelines"/>
+      <RadioButton
+        android:id="@+id/filter_type_barbershop"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/filter_type_barbershop" />
 
-    <RadioButton
-      android:id="@+id/filter_type_satb"
-      android:layout_width="match_parent"
-      android:layout_height="wrap_content"
-      android:text="@string/filter_type_satb"/>
+      <RadioButton
+        android:id="@+id/filter_type_sweet_adelines"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/filter_type_sweet_adelines" />
 
-    <RadioButton
-      android:id="@+id/filter_type_other_male"
-      android:layout_width="match_parent"
-      android:layout_height="wrap_content"
-      android:text="@string/filter_type_other_male"/>
+      <RadioButton
+        android:id="@+id/filter_type_satb"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/filter_type_satb" />
 
-    <RadioButton
-      android:id="@+id/filter_type_other_female"
-      android:layout_width="match_parent"
-      android:layout_height="wrap_content"
-      android:text="@string/filter_type_other_female"/>
+      <RadioButton
+        android:id="@+id/filter_type_other_male"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/filter_type_other_male" />
 
-    <RadioButton
-      android:id="@+id/filter_type_other_mixed"
-      android:layout_width="match_parent"
-      android:layout_height="wrap_content"
-      android:text="@string/filter_type_other_mixed"/>
+      <RadioButton
+        android:id="@+id/filter_type_other_female"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/filter_type_other_female" />
 
-  </RadioGroup>
+      <RadioButton
+        android:id="@+id/filter_type_other_mixed"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/filter_type_other_mixed" />
 
-  <androidx.appcompat.widget.AppCompatButton
-    android:id="@+id/filter_type_apply_button"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:text="@string/apply"
-    android:theme="@style/AppTheme"/>
+    </RadioGroup>
+
+  </androidx.core.widget.NestedScrollView>
 
 </LinearLayout>

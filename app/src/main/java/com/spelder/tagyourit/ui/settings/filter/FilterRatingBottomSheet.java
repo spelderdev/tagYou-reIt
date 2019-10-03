@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import androidx.annotation.NonNull;
@@ -32,49 +31,6 @@ public class FilterRatingBottomSheet extends BottomSheetDialogFragment {
     FilterBuilder filterBuilder = new FilterBuilder(getContext());
 
     RadioGroup filterPartsGroup = view.findViewById(R.id.filter_rating_radio);
-
-    Button apply = view.findViewById(R.id.filter_rating_apply_button);
-    apply.setOnClickListener(
-        v -> {
-          Rating ratingFilter;
-          switch (filterPartsGroup.getCheckedRadioButtonId()) {
-            case R.id.filter_rating_0:
-              ratingFilter = Rating.ZERO;
-              break;
-            case R.id.filter_rating_0_5:
-              ratingFilter = Rating.ZERO_5;
-              break;
-            case R.id.filter_rating_1:
-              ratingFilter = Rating.ONE;
-              break;
-            case R.id.filter_rating_1_5:
-              ratingFilter = Rating.ONE_5;
-              break;
-            case R.id.filter_rating_2:
-              ratingFilter = Rating.TWO;
-              break;
-            case R.id.filter_rating_2_5:
-              ratingFilter = Rating.TWO_5;
-              break;
-            case R.id.filter_rating_3:
-              ratingFilter = Rating.THREE;
-              break;
-            case R.id.filter_rating_3_5:
-              ratingFilter = Rating.THREE_5;
-              break;
-            case R.id.filter_rating_4:
-              ratingFilter = Rating.FOUR;
-              break;
-            case R.id.filter_rating_4_5:
-              ratingFilter = Rating.FOUR_5;
-              break;
-            case R.id.filter_parts_any:
-            default:
-              ratingFilter = Rating.ANY;
-          }
-          filterBuilder.setRating(ratingFilter);
-          dismiss();
-        });
 
     Rating currentRating = filterBuilder.getRating();
     RadioButton currentRadioButton;
@@ -114,5 +70,48 @@ public class FilterRatingBottomSheet extends BottomSheetDialogFragment {
         currentRadioButton = view.findViewById(R.id.filter_rating_any);
     }
     currentRadioButton.setChecked(true);
+
+    filterPartsGroup.setOnCheckedChangeListener((radioGroup, id) -> apply(filterBuilder, id));
+  }
+
+  private void apply(FilterBuilder filterBuilder, int selectedId) {
+    Rating ratingFilter;
+    switch (selectedId) {
+      case R.id.filter_rating_0:
+        ratingFilter = Rating.ZERO;
+        break;
+      case R.id.filter_rating_0_5:
+        ratingFilter = Rating.ZERO_5;
+        break;
+      case R.id.filter_rating_1:
+        ratingFilter = Rating.ONE;
+        break;
+      case R.id.filter_rating_1_5:
+        ratingFilter = Rating.ONE_5;
+        break;
+      case R.id.filter_rating_2:
+        ratingFilter = Rating.TWO;
+        break;
+      case R.id.filter_rating_2_5:
+        ratingFilter = Rating.TWO_5;
+        break;
+      case R.id.filter_rating_3:
+        ratingFilter = Rating.THREE;
+        break;
+      case R.id.filter_rating_3_5:
+        ratingFilter = Rating.THREE_5;
+        break;
+      case R.id.filter_rating_4:
+        ratingFilter = Rating.FOUR;
+        break;
+      case R.id.filter_rating_4_5:
+        ratingFilter = Rating.FOUR_5;
+        break;
+      case R.id.filter_parts_any:
+      default:
+        ratingFilter = Rating.ANY;
+    }
+    filterBuilder.setRating(ratingFilter);
+    dismiss();
   }
 }
