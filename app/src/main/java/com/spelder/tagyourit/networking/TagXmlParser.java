@@ -143,6 +143,9 @@ class TagXmlParser {
         case "Type":
           tag.setType(readSimple(parser, "Type"));
           break;
+        case "Collection":
+          tag.setCollection(readSimple(parser, "Collection"));
+          break;
         case "videos":
           tag.setVideos(readVideos(parser, tag.getId(), tag.getTitle()));
           break;

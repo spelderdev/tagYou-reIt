@@ -59,6 +59,7 @@ public class TagDb {
     values.put(TagEntry.COLUMN_NAME_PARTS_NUMBER, tag.getNumberOfParts());
     values.put(TagEntry.COLUMN_NAME_LYRICS, tag.getLyrics());
     values.put(TagEntry.COLUMN_NAME_TYPE, tag.getType());
+    values.put(TagEntry.COLUMN_NAME_COLLECTION, tag.getCollection());
     values.put(TagEntry.COLUMN_NAME_SHEET_MUSIC_TYPE, tag.getSheetMusicType());
     values.put(TagEntry.COLUMN_NAME_SHEET_MUSIC_LINK, tag.getSheetMusicLink());
     values.put(TagEntry.COLUMN_NAME_SHEET_MUSIC_FILE, tag.getSheetMusicFile());
@@ -116,6 +117,7 @@ public class TagDb {
     values.put(TagEntry.COLUMN_NAME_PARTS_NUMBER, tag.getNumberOfParts());
     values.put(TagEntry.COLUMN_NAME_LYRICS, tag.getLyrics());
     values.put(TagEntry.COLUMN_NAME_TYPE, tag.getType());
+    values.put(TagEntry.COLUMN_NAME_COLLECTION, tag.getCollection());
     values.put(TagEntry.COLUMN_NAME_SHEET_MUSIC_TYPE, tag.getSheetMusicType());
     values.put(TagEntry.COLUMN_NAME_SHEET_MUSIC_LINK, tag.getSheetMusicLink());
     values.put(TagEntry.COLUMN_NAME_SHEET_MUSIC_FILE, tag.getSheetMusicFile());
@@ -418,6 +420,7 @@ public class TagDb {
       tag.setNumberOfParts(c.getInt(c.getColumnIndex(TagEntry.COLUMN_NAME_PARTS_NUMBER)));
       tag.setLyrics(c.getString(c.getColumnIndex(TagEntry.COLUMN_NAME_LYRICS)));
       tag.setType(c.getString(c.getColumnIndex(TagEntry.COLUMN_NAME_TYPE)));
+      tag.setCollection(c.getString(c.getColumnIndex(TagEntry.COLUMN_NAME_COLLECTION)));
       tag.setSheetMusicType(c.getString(c.getColumnIndex(TagEntry.COLUMN_NAME_SHEET_MUSIC_TYPE)));
       tag.setSheetMusicLink(c.getString(c.getColumnIndex(TagEntry.COLUMN_NAME_SHEET_MUSIC_LINK)));
       tag.setSheetMusicFile(c.getString(c.getColumnIndex(TagEntry.COLUMN_NAME_SHEET_MUSIC_FILE)));

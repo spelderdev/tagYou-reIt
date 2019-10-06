@@ -29,6 +29,7 @@ public class Tag implements Parcelable {
           tag.setNumberOfParts(source.readInt());
           tag.setLyrics(source.readString());
           tag.setType(source.readString());
+          tag.setCollection(source.readString());
           tag.setSheetMusicLink(source.readString());
           tag.setSheetMusicType(source.readString());
           tag.setSheetMusicFile(source.readString());
@@ -81,6 +82,8 @@ public class Tag implements Parcelable {
   private String lyrics;
 
   private String type;
+
+  private String collection;
 
   private String sheetMusicLink;
 
@@ -239,6 +242,14 @@ public class Tag implements Parcelable {
     this.type = type;
   }
 
+  public String getCollection() {
+    return collection;
+  }
+
+  public void setCollection(String collection) {
+    this.collection = collection;
+  }
+
   public String getSheetMusicLink() {
     return sheetMusicLink;
   }
@@ -344,6 +355,7 @@ public class Tag implements Parcelable {
     parcel.writeInt(numberParts);
     parcel.writeString(lyrics);
     parcel.writeString(type);
+    parcel.writeString(collection);
     parcel.writeString(sheetMusicLink);
     parcel.writeString(sheetMusicType);
     parcel.writeString(sheetMusicFile);

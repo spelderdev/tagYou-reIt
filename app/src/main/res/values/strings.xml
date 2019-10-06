@@ -99,6 +99,7 @@
   <string name="filter_key_key">filter_key</string>
   <string name="filter_type_key">filter_type</string>
   <string name="filter_rating_key">filter_rating</string>
+  <string name="filter_collection_key">filter_collection</string>
 
   <string name="sort_title">Sort by</string>
   <string name="sort_by_newest_posted">Posted Date (Newest)</string>
@@ -114,6 +115,7 @@
   <string name="filter_key_title">Key</string>
   <string name="filter_type_title">Type</string>
   <string name="filter_rating_title">Minimum Rating</string>
+  <string name="filter_collection_title">Collection</string>
 
   <string name="filter_parts_four">4</string>
   <string name="filter_parts_five">5</string>
@@ -138,4 +140,8 @@
   <string name="filter_rating_3_5">3.5</string>
   <string name="filter_rating_4">4</string>
   <string name="filter_rating_4_5">4.5</string>
+
+  <string name="filter_collection_classic">Classic</string>
+  <string name="filter_collection_easy">Easy</string>
+  <string name="filter_collection_100">100 Days</string>
 </resources>

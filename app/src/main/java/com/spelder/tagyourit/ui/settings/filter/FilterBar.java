@@ -14,6 +14,7 @@ public class FilterBar implements SharedPreferences.OnSharedPreferenceChangeList
   private Button keyButton;
   private Button typeButton;
   private Button ratingButton;
+  private Button collectionButton;
   private Button learningTracksButton;
   private Button sheetMusicButton;
   private Context context;
@@ -54,6 +55,13 @@ public class FilterBar implements SharedPreferences.OnSharedPreferenceChangeList
           bottomSheet.show(fragmentManager, "Filter Parts Bottom Sheet");
         });
 
+    collectionButton = view.findViewById(R.id.filter_collection);
+    collectionButton.setOnClickListener(
+        v -> {
+          FilterCollectionBottomSheet bottomSheet = new FilterCollectionBottomSheet();
+          bottomSheet.show(fragmentManager, "Filter Collection Bottom Sheet");
+        });
+
     learningTracksButton = view.findViewById(R.id.filter_learning_tracks);
     learningTracksButton.setOnClickListener(
         v -> filterBuilder.setLearningTrack(!filterBuilder.getLearningTrack()));
@@ -74,11 +82,13 @@ public class FilterBar implements SharedPreferences.OnSharedPreferenceChangeList
     setButtonStyle(partsButton, filter.isNumberOfPartsApplied(), context);
     setButtonStyle(typeButton, filter.isTypeApplied(), context);
     setButtonStyle(keyButton, filter.isKeyApplied(), context);
+    setButtonStyle(collectionButton, filter.isCollectionApplied(), context);
 
     ratingButton.setText(filter.getMinimumRatingDisplayName());
     partsButton.setText(filter.getNumberOfPartsDisplayName());
     typeButton.setText(filter.getTypeDisplayName());
     keyButton.setText(filter.getKeyDisplayName());
+    collectionButton.setText(filter.getCollectionDisplayName());
   }
 
   private void setButtonStyle(Button button, boolean filterApplied, Context context) {

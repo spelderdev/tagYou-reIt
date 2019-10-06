@@ -14,6 +14,7 @@ public class FilterBuilder {
   private final String TYPE_KEY;
   private final String KEY_KEY;
   private final String PARTS_NUMBER_KEY;
+  private final String COLLECTION_KEY;
   private final SharedPreferences preferences;
 
   public FilterBuilder(Context context) {
@@ -24,6 +25,7 @@ public class FilterBuilder {
     TYPE_KEY = context.getResources().getString(R.string.filter_type_key);
     KEY_KEY = context.getResources().getString(R.string.filter_key_key);
     PARTS_NUMBER_KEY = context.getResources().getString(R.string.filter_part_key);
+    COLLECTION_KEY = context.getResources().getString(R.string.filter_collection_key);
   }
 
   public FilterBy build() {
@@ -34,6 +36,7 @@ public class FilterBuilder {
     filter.setNumberOfParts(getPart());
     filter.setType(getType());
     filter.setKey(getKey());
+    filter.setCollection(getCollection());
 
     Log.d(TAG, "Filter: " + filter);
 
@@ -110,5 +113,19 @@ public class FilterBuilder {
 
   public void setKey(Key key) {
     preferences.edit().putString(KEY_KEY, key.name()).apply();
+  }
+
+  public Collection getCollection() {
+    try {
+      String collectionString = preferences.getString(COLLECTION_KEY, Collection.ANY.name());
+      Log.d(TAG, "Get collection: " + collectionString);
+      return Collection.valueOf(collectionString);
+    } catch (IllegalArgumentException e) {
+      return Collection.ANY;
+    }
+  }
+
+  public void setCollection(Collection collection) {
+    preferences.edit().putString(COLLECTION_KEY, collection.name()).apply();
   }
 }

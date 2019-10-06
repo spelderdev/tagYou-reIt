@@ -56,8 +56,16 @@
       style="@style/AppTheme.RoundedCornerMaterialButton"
       android:layout_width="wrap_content"
       android:layout_marginStart="@dimen/filter_button_separator"
-      android:layout_marginEnd="10dp"
+      android:layout_marginEnd="3dp"
       android:text="@string/filter_rating_title" />
+
+    <androidx.appcompat.widget.AppCompatButton
+      android:id="@+id/filter_collection"
+      style="@style/AppTheme.RoundedCornerMaterialButton"
+      android:layout_width="wrap_content"
+      android:layout_marginStart="@dimen/filter_button_separator"
+      android:layout_marginEnd="10dp"
+      android:text="@string/filter_collection_title" />
 
   </LinearLayout>
 

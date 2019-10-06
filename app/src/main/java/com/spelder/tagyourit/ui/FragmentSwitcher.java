@@ -327,7 +327,7 @@ public class FragmentSwitcher {
     activity
         .getSupportFragmentManager()
         .beginTransaction()
-        .replace(R.id.fragment_container, getFragment(id), Integer.toString(getFragmentCount()))
+        .replace(R.id.fragment_container, getFragment(id), getFragment(id).getClass().getName())
         .commit();
   }
 
