@@ -128,4 +128,14 @@ public class FilterBuilder {
   public void setCollection(Collection collection) {
     preferences.edit().putString(COLLECTION_KEY, collection.name()).apply();
   }
+
+  public void applyDefaultFilter() {
+    setCollection(Collection.ANY);
+    setLearningTrack(false);
+    setSheetMusic(false);
+    setType(Type.ANY);
+    setPart(Part.ANY);
+    setKey(Key.ANY);
+    setRating(Rating.ANY);
+  }
 }

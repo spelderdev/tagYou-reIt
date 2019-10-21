@@ -83,24 +83,20 @@ public class TestTrackPlayer {
 
     onView(ViewMatchers.withId(R.id.action_search)).perform(click());
 
-    onView(withId(com.google.android.material.R.id.search_src_text)).perform(replaceText("smile"));
+    onView(withId(com.google.android.material.R.id.search_src_text))
+        .perform(replaceText("Smile Bobby Gray"));
 
-    onData(anything()).inAdapterView(withId(android.R.id.list)).atPosition(0).perform(click());
+    onData(anything()).inAdapterView(withId(android.R.id.list)).atPosition(1).perform(click());
 
     onView(allOf(withId(R.id.action_menu), withContentDescription("Menu"))).perform(click());
 
-    onData(anything()).inAdapterView(withId(R.id.list)).atPosition(3).perform(click());
+    onView(withId(R.id.tag_detail_track_all)).perform(click());
 
     onView(allOf(withId(R.id.track_toolbar), isDisplayed())).perform(click());
 
     assertTrue(musicService.isPlaying());
 
-    onView(
-            allOf(
-                withId(R.id.music_player_play_pause),
-                withContentDescription("Playback Control"),
-                isDisplayed()))
-        .perform(click());
+    onView(withId(R.id.music_player_play_pause)).perform(click());
 
     assertFalse(musicService.isPlaying());
 
@@ -180,19 +176,19 @@ public class TestTrackPlayer {
     onView(ViewMatchers.withId(R.id.action_search)).perform(click());
 
     onView(withId(com.google.android.material.R.id.search_src_text))
-        .perform(replaceText("smile"), closeSoftKeyboard());
+        .perform(replaceText("Smile Bobby Gray"), closeSoftKeyboard());
 
-    onData(anything()).inAdapterView(withId(android.R.id.list)).atPosition(0).perform(click());
+    onData(anything()).inAdapterView(withId(android.R.id.list)).atPosition(1).perform(click());
 
     onView(allOf(withId(R.id.action_menu), withContentDescription("Menu"))).perform(click());
 
     SystemClock.sleep(500);
 
-    onView(withId(R.id.bottom_sheet)).perform(swipeUp());
+    onView(withId(R.id.tag_detail_title)).perform(swipeUp());
 
     SystemClock.sleep(500);
 
-    onData(anything()).inAdapterView(withId(R.id.list)).atPosition(3).perform(click());
+    onView(withId(R.id.tag_detail_track_all)).perform(click());
 
     onView(allOf(withId(R.id.track_toolbar), isDisplayed())).perform(click());
 
@@ -284,15 +280,15 @@ public class TestTrackPlayer {
     onView(ViewMatchers.withId(R.id.action_search)).perform(click());
 
     onView(withId(com.google.android.material.R.id.search_src_text))
-        .perform(replaceText("like leaves"), closeSoftKeyboard());
+        .perform(replaceText("Through the Eyes of Love"), closeSoftKeyboard());
 
-    onData(anything()).inAdapterView(withId(android.R.id.list)).atPosition(0).perform(click());
+    onData(anything()).inAdapterView(withId(android.R.id.list)).atPosition(1).perform(click());
 
     onView(allOf(withId(R.id.action_menu), withContentDescription("Menu"))).perform(click());
 
     SystemClock.sleep(500);
 
-    onData(anything()).inAdapterView(withId(R.id.list)).atPosition(3).perform(click());
+    onView(withId(R.id.tag_detail_track_all)).perform(click());
 
     SystemClock.sleep(1000);
 
@@ -306,8 +302,8 @@ public class TestTrackPlayer {
     assertFalse(musicService.isPlaying());
 
     ViewInteraction title = onView(allOf(withId(R.id.music_player_title), isDisplayed()));
-    title.check(matches(withText("Like Leaves will Fall")));
-    assertEquals(musicService.getTrack().getTagTitle(), "Like Leaves will Fall");
+    title.check(matches(withText("Through the Eyes of Love")));
+    assertEquals(musicService.getTrack().getTagTitle(), "Through the Eyes of Love");
 
     ViewInteraction part = onView(allOf(withId(R.id.music_player_part), isDisplayed()));
     part.check(matches(withText("AllParts")));
@@ -416,22 +412,25 @@ public class TestTrackPlayer {
     onView(withId(com.google.android.material.R.id.search_src_text))
         .perform(replaceText("ebb tide"), closeSoftKeyboard());
 
-    onData(anything()).inAdapterView(withId(android.R.id.list)).atPosition(0).perform(click());
+    onData(anything()).inAdapterView(withId(android.R.id.list)).atPosition(1).perform(click());
 
-    selectTrackAtPosition(2, "AllParts");
-    selectTrackAtPosition(3, "Tenor");
-    selectTrackAtPosition(4, "Lead");
-    selectTrackAtPosition(5, "Bass");
-    selectTrackAtPosition(6, "Bari");
-    selectTrackAtPosition(7, "Other1");
+    selectTrackAtPosition(R.id.tag_detail_track_all, "AllParts");
+    selectTrackAtPosition(R.id.tag_detail_track_tenor, "Tenor");
+    selectTrackAtPosition(R.id.tag_detail_track_lead, "Lead");
+    selectTrackAtPosition(R.id.tag_detail_track_bass, "Bass");
+    selectTrackAtPosition(R.id.tag_detail_track_bari, "Bari");
+    selectTrackAtPosition(R.id.tag_detail_track_other1, "Other1");
 
     onView(allOf(withId(R.id.player_close), withContentDescription("Close"))).perform(click());
   }
 
-  private void selectTrackAtPosition(int position, String trackName) {
+  private void selectTrackAtPosition(int id, String trackName) {
     onView(allOf(withId(R.id.action_menu), withContentDescription("Menu"))).perform(click());
 
-    onData(anything()).inAdapterView(withId(R.id.list)).atPosition(position).perform(click());
+    onView(withId(R.id.tag_detail_title)).perform(swipeUp());
+    SystemClock.sleep(1000);
+
+    onView(withId(id)).perform(click());
 
     SystemClock.sleep(1000);
 

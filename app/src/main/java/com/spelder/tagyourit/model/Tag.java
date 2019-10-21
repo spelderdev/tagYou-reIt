@@ -134,7 +134,11 @@ public class Tag implements Parcelable {
   }
 
   public void setDbId(Long dbId) {
-    this.dbId = dbId;
+    if (dbId != null && dbId == -1) {
+      this.dbId = null;
+    } else {
+      this.dbId = dbId;
+    }
   }
 
   public String getTitle() {
@@ -359,7 +363,11 @@ public class Tag implements Parcelable {
     parcel.writeString(sheetMusicLink);
     parcel.writeString(sheetMusicType);
     parcel.writeString(sheetMusicFile);
-    parcel.writeLong(dbId);
+    if (dbId != null) {
+      parcel.writeLong(dbId);
+    } else {
+      parcel.writeLong(-1);
+    }
     parcel.writeInt(tracks.size());
     for (Map.Entry<String, TrackComponents> entry : tracks.entrySet()) {
       parcel.writeString(entry.getKey());

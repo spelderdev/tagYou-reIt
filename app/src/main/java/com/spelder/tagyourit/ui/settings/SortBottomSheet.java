@@ -1,8 +1,6 @@
 package com.spelder.tagyourit.ui.settings;
 
-import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,10 +10,10 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.spelder.tagyourit.R;
+import com.spelder.tagyourit.networking.api.SortBuilder;
 import com.spelder.tagyourit.networking.api.SortBy;
 
 public class SortBottomSheet extends BottomSheetDialogFragment {
-  public static final String SORT_BY_LABEL = "SORT_BY";
 
   @Nullable
   @Override
@@ -31,11 +29,11 @@ public class SortBottomSheet extends BottomSheetDialogFragment {
   }
 
   private void setupView(View view) {
-    SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getContext());
+    SortBuilder builder = new SortBuilder(view.getContext());
 
     RadioGroup sortByGroup = view.findViewById(R.id.sort_by_radio);
 
-    SortBy currentSortBy = SortBy.valueOf(settings.getString(SORT_BY_LABEL, SortBy.TITLE.name()));
+    SortBy currentSortBy = builder.build();
     RadioButton currentRadioButton;
     switch (currentSortBy) {
       case DOWNLOAD:
@@ -53,10 +51,10 @@ public class SortBottomSheet extends BottomSheetDialogFragment {
     }
     currentRadioButton.setChecked(true);
 
-    sortByGroup.setOnCheckedChangeListener((radioGroup, id) -> apply(settings, id));
+    sortByGroup.setOnCheckedChangeListener((radioGroup, id) -> apply(builder, id));
   }
 
-  private void apply(SharedPreferences settings, int selectedId) {
+  private void apply(SortBuilder builder, int selectedId) {
     SortBy sortBy;
     switch (selectedId) {
       case R.id.sort_downloads:
@@ -72,7 +70,7 @@ public class SortBottomSheet extends BottomSheetDialogFragment {
       default:
         sortBy = SortBy.TITLE;
     }
-    settings.edit().putString(SORT_BY_LABEL, sortBy.name()).apply();
+    builder.setSortBy(sortBy);
     dismiss();
   }
 }

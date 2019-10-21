@@ -249,7 +249,7 @@ public class TagDetailsBottomSheet extends BottomSheetDialogFragment {
     if (videos.size() <= 4) {
       videoMore.setVisibility(View.GONE);
     } else {
-      videoMore.setOnClickListener(v -> playVideo(0));
+      videoMore.setOnClickListener(v -> playVideo(-1));
     }
   }
 

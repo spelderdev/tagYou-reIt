@@ -22,11 +22,11 @@ import com.spelder.tagyourit.db.TagDb;
 import com.spelder.tagyourit.model.Tag;
 import com.spelder.tagyourit.networking.ResultAction;
 import com.spelder.tagyourit.networking.TagQueryTask;
+import com.spelder.tagyourit.networking.api.SortBuilder;
 import com.spelder.tagyourit.networking.api.SortBy;
 import com.spelder.tagyourit.networking.api.filter.FilterBuilder;
 import com.spelder.tagyourit.networking.api.filter.FilterBy;
 import com.spelder.tagyourit.ui.MainActivity;
-import com.spelder.tagyourit.ui.settings.SortBottomSheet;
 import com.spelder.tagyourit.ui.settings.filter.FilterBar;
 import java.util.List;
 
@@ -50,14 +50,6 @@ public class TagListFragment extends ListFragment
   private FilterBar filterBar;
   private FilterBar filterBarEmpty;
 
-  static TagListFragment newInstance(SortBy sortBy) {
-    TagListFragment f = new TagListFragment();
-    Bundle args = new Bundle();
-    args.putParcelable("sortBy", sortBy);
-    f.setArguments(args);
-    return f;
-  }
-
   @Override
   public void onAttach(@NonNull Context context) {
     super.onAttach(context);
@@ -68,9 +60,9 @@ public class TagListFragment extends ListFragment
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     Log.d("TagListFragment", "onCreate");
+    SortBuilder sort = new SortBuilder(context);
     SharedPreferences preference = PreferenceManager.getDefaultSharedPreferences(context);
-    sortBy =
-        SortBy.valueOf(preference.getString(SortBottomSheet.SORT_BY_LABEL, SortBy.TITLE.name()));
+    sortBy = sort.build();
     listAdapter = new TagListAdapter(getActivity());
     finished = false;
     preference.registerOnSharedPreferenceChangeListener(this);
@@ -114,10 +106,12 @@ public class TagListFragment extends ListFragment
           }
           ConnectivityManager connMgr =
               (ConnectivityManager) activity.getSystemService(Context.CONNECTIVITY_SERVICE);
-          NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
-          if (networkInfo != null && networkInfo.isConnected()) {
-            getAndCancelDownloadTask(true);
-            unsetNetworkError();
+          if (connMgr != null) {
+            NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+            if (networkInfo != null && networkInfo.isConnected()) {
+              getAndCancelDownloadTask(true);
+              unsetNetworkError();
+            }
           }
         });
 
@@ -128,10 +122,12 @@ public class TagListFragment extends ListFragment
     }
     ConnectivityManager connMgr =
         (ConnectivityManager) activity.getSystemService(Context.CONNECTIVITY_SERVICE);
-    NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
-    if (networkInfo == null || !networkInfo.isConnected()) {
-      setNetworkError();
-      return content;
+    if (connMgr != null) {
+      NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+      if (networkInfo == null || !networkInfo.isConnected()) {
+        setNetworkError();
+        return content;
+      }
     }
 
     return content;
@@ -190,7 +186,10 @@ public class TagListFragment extends ListFragment
         "Item clicked: " + clickedTag.getTitle() + " " + clickedTag.getSheetMusicType());
     TagDb db = new TagDb(context);
     clickedTag.setDbId(db.isFavorite(clickedTag));
-    ((MainActivity) getActivity()).getManager().displayTag(clickedTag);
+    MainActivity activity = (MainActivity) getActivity();
+    if (activity != null) {
+      activity.getManager().displayTag(clickedTag);
+    }
   }
 
   void addTags(List<Tag> result) {
@@ -287,13 +286,12 @@ public class TagListFragment extends ListFragment
 
   @Override
   public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-    if (key.startsWith("filter_") || key.equals(SortBottomSheet.SORT_BY_LABEL)) {
+    if (key.startsWith("filter_") || SortBuilder.isSortKey(key)) {
       finished = false;
       Log.d("TagListFragment", "filterChanged");
 
-      SharedPreferences preference = PreferenceManager.getDefaultSharedPreferences(context);
-      sortBy =
-          SortBy.valueOf(preference.getString(SortBottomSheet.SORT_BY_LABEL, SortBy.TITLE.name()));
+      SortBuilder builder = new SortBuilder(context);
+      sortBy = builder.build();
 
       getAndCancelDownloadTask(true).execute();
     }

@@ -6,7 +6,6 @@ import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.action.ViewActions.replaceText;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
-import static androidx.test.espresso.matcher.ViewMatchers.withContentDescription;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import static org.hamcrest.Matchers.allOf;
@@ -41,9 +40,7 @@ public class TestPitchPipe {
 
   @Test
   public void pitchPipeView() {
-    onView(withContentDescription("Open navigation drawer")).perform(click());
-
-    onView(withText("Pitch Pipe")).perform(click());
+    onView(withId(R.id.nav_pitch_pipe)).perform(click());
 
     centerButton = onView(allOf(withId(R.id.pitch_pipe_center), isDisplayed()));
     assertFalse(PitchPlayer.isPlaying());
@@ -105,15 +102,15 @@ public class TestPitchPipe {
     onView(ViewMatchers.withId(R.id.action_search)).perform(click());
 
     onView(withId(com.google.android.material.R.id.search_src_text))
-        .perform(replaceText("like leaves"));
+        .perform(replaceText("like leaves tickner"));
 
-    onData(anything()).inAdapterView(withId(android.R.id.list)).atPosition(0).perform(click());
+    onData(anything()).inAdapterView(withId(android.R.id.list)).atPosition(1).perform(click());
 
     onView(withId(R.id.action_menu)).perform(click());
 
     assertFalse(PitchPlayer.isPlaying());
 
-    onView(allOf(withId(R.id.label), withText("Major:Ab"))).perform(click());
+    onView(allOf(withId(R.id.tag_detail_key_button), withText("Major:Ab"))).perform(click());
 
     SystemClock.sleep(2000);
 

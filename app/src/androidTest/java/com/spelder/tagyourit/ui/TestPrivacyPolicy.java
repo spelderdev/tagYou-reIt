@@ -26,9 +26,7 @@ public class TestPrivacyPolicy {
 
   @Test
   public void testPrivacyPolicy() {
-    onView(withContentDescription("Open navigation drawer")).perform(click());
-
-    onView(withText("Settings")).perform(click());
+    onView(withId(R.id.nav_settings)).perform(click());
 
     onView(withId(R.id.recycler_view)).perform(swipeUp());
 

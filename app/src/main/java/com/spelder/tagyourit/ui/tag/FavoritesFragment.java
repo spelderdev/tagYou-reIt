@@ -13,10 +13,9 @@ import androidx.fragment.app.ListFragment;
 import com.spelder.tagyourit.R;
 import com.spelder.tagyourit.db.TagDb;
 import com.spelder.tagyourit.model.Tag;
-import com.spelder.tagyourit.networking.api.SortBy;
+import com.spelder.tagyourit.networking.api.SortBuilder;
 import com.spelder.tagyourit.networking.api.filter.FilterBuilder;
 import com.spelder.tagyourit.ui.MainActivity;
-import com.spelder.tagyourit.ui.settings.SortBottomSheet;
 import com.spelder.tagyourit.ui.settings.filter.FilterBar;
 import java.util.List;
 
@@ -54,10 +53,8 @@ public class FavoritesFragment extends ListFragment
   public View onCreateView(
       @NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
     TagDb db = new TagDb(getActivity());
-    SharedPreferences preference = PreferenceManager.getDefaultSharedPreferences(getContext());
-    SortBy sortBy =
-        SortBy.valueOf(preference.getString(SortBottomSheet.SORT_BY_LABEL, SortBy.TITLE.name()));
-    List<Tag> tags = db.getFavorites(new FilterBuilder(getActivity()).build(), sortBy);
+    SortBuilder sort = new SortBuilder(getContext());
+    List<Tag> tags = db.getFavorites(new FilterBuilder(getActivity()).build(), sort.build());
     listAdapter.clearTags();
     listAdapter.addTags(tags);
     listAdapter.notifyDataSetChanged();
@@ -82,7 +79,8 @@ public class FavoritesFragment extends ListFragment
       filterBarEmpty = new FilterBar(getActivity());
       PreferenceManager.getDefaultSharedPreferences(getActivity())
           .registerOnSharedPreferenceChangeListener(filterBarEmpty);
-      filterBarEmpty.setupFilterBar(listView.getEmptyView(), getActivity().getSupportFragmentManager());
+      filterBarEmpty.setupFilterBar(
+          listView.getEmptyView(), getActivity().getSupportFragmentManager());
     }
 
     super.onActivityCreated(savedInstanceState);
@@ -103,13 +101,11 @@ public class FavoritesFragment extends ListFragment
 
   @Override
   public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-    if (key.startsWith("filter_") || key.equals(SortBottomSheet.SORT_BY_LABEL)) {
+    if (key.startsWith("filter_") || SortBuilder.isSortKey(key)) {
       Log.d("TagListFragment", "filterChanged");
       TagDb db = new TagDb(getActivity());
-      SharedPreferences preference = PreferenceManager.getDefaultSharedPreferences(getContext());
-      SortBy sortBy =
-          SortBy.valueOf(preference.getString(SortBottomSheet.SORT_BY_LABEL, SortBy.TITLE.name()));
-      List<Tag> tags = db.getFavorites(new FilterBuilder(getActivity()).build(), sortBy);
+      SortBuilder sort = new SortBuilder(getContext());
+      List<Tag> tags = db.getFavorites(new FilterBuilder(getActivity()).build(), sort.build());
       listAdapter.clearTags();
       listAdapter.addTags(tags);
       listAdapter.notifyDataSetChanged();

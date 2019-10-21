@@ -89,62 +89,65 @@ public class MainActivity extends AppCompatActivity
 
   private SortBottomSheet sortBottomSheet;
 
+  private final MusicNotifier musicNotifier =
+      new MusicNotifier() {
+        @Override
+        public void done() {
+          trackToolbar.setVisibility(View.GONE);
+        }
+
+        @Override
+        public void play(String title, String part) {
+          trackTitle.setText(title);
+          trackPart.setText(part);
+
+          trackLoading.setVisibility(View.GONE);
+          trackPlayPause.setVisibility(View.VISIBLE);
+          trackToolbar.setVisibility(View.VISIBLE);
+          trackPlayPause.setImageResource(R.drawable.ic_pause_white_24dp);
+        }
+
+        @Override
+        public void pause() {
+          trackLoading.setVisibility(View.GONE);
+          trackPlayPause.setVisibility(View.VISIBLE);
+          trackToolbar.setVisibility(View.VISIBLE);
+          trackPlayPause.setImageResource(R.drawable.ic_play_arrow_white_24dp);
+        }
+
+        @Override
+        public void speedChanged(Speed speed) {}
+
+        @Override
+        public void pitchChanged(int semitones) {}
+
+        @Override
+        public void loading(String title, String part) {
+          trackTitle.setText(title);
+          trackPart.setText(part);
+
+          trackPlayPause.setVisibility(View.GONE);
+          trackLoading.setVisibility(View.VISIBLE);
+          trackToolbar.setVisibility(View.VISIBLE);
+        }
+      };
+
   private final ServiceConnection musicConnection =
       new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
           MusicService.MusicBinder binder = (MusicService.MusicBinder) service;
           musicSrv = binder.getService();
-          musicSrv.addNotification(
-              new MusicNotifier() {
-                @Override
-                public void done() {
-                  trackToolbar.setVisibility(View.GONE);
-                }
+          musicSrv.addNotification(musicNotifier);
 
-                @Override
-                public void play(String title, String part) {
-                  trackTitle.setText(title);
-                  trackPart.setText(part);
-
-                  trackLoading.setVisibility(View.GONE);
-                  trackPlayPause.setVisibility(View.VISIBLE);
-                  trackToolbar.setVisibility(View.VISIBLE);
-                  trackPlayPause.setImageResource(R.drawable.ic_pause_white_24dp);
-                }
-
-                @Override
-                public void pause() {
-                  trackLoading.setVisibility(View.GONE);
-                  trackPlayPause.setVisibility(View.VISIBLE);
-                  trackToolbar.setVisibility(View.VISIBLE);
-                  trackPlayPause.setImageResource(R.drawable.ic_play_arrow_white_24dp);
-                }
-
-                @Override
-                public void speedChanged(Speed speed) {}
-
-                @Override
-                public void pitchChanged(int semitones) {}
-
-                @Override
-                public void loading(String title, String part) {
-                  trackTitle.setText(title);
-                  trackPart.setText(part);
-
-                  trackPlayPause.setVisibility(View.GONE);
-                  trackLoading.setVisibility(View.VISIBLE);
-                  trackToolbar.setVisibility(View.VISIBLE);
-                }
-              });
           musicBound = true;
-          if (musicSrv.isPlaying()) {
-            trackPlayPause.setImageResource(R.drawable.ic_pause_white_24dp);
-          } else {
-            trackPlayPause.setImageResource(R.drawable.ic_play_arrow_white_24dp);
-          }
-
           if (musicSrv.getTrack() != null) {
+            if (musicSrv.isPlaying()) {
+              musicNotifier.play(musicSrv.getTrack().getTagTitle(), musicSrv.getTrack().getPart());
+            } else {
+              musicNotifier.pause();
+            }
+
             trackTitle.setText(musicSrv.getTrack().getTagTitle());
             trackPart.setText(musicSrv.getTrack().getPart());
           }

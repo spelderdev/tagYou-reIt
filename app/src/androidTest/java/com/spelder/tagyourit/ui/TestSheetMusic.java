@@ -26,6 +26,11 @@ import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.filters.LargeTest;
 import androidx.test.rule.ActivityTestRule;
 import com.spelder.tagyourit.R;
+import com.spelder.tagyourit.db.TagDb;
+import com.spelder.tagyourit.networking.api.SortBuilder;
+import com.spelder.tagyourit.networking.api.SortBy;
+import com.spelder.tagyourit.networking.api.filter.FilterBuilder;
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -37,14 +42,26 @@ public class TestSheetMusic {
   public ActivityTestRule<MainActivity> mActivityTestRule =
       new ActivityTestRule<>(MainActivity.class);
 
+  @Before
+  public void init() {
+    TagDb db = new TagDb(mActivityTestRule.getActivity());
+    db.deleteAllFavorites();
+
+    FilterBuilder filter = new FilterBuilder(mActivityTestRule.getActivity());
+    filter.applyDefaultFilter();
+
+    SortBuilder sort = new SortBuilder(mActivityTestRule.getActivity());
+    sort.setSortBy(SortBy.TITLE);
+  }
+
   @Test
   public void pdfViewTest() {
     onView(ViewMatchers.withId(R.id.action_search)).perform(click());
 
     onView(withId(com.google.android.material.R.id.search_src_text))
-        .perform(replaceText("like leaves"));
+        .perform(replaceText("like leaves tickner"));
 
-    onData(anything()).inAdapterView(withId(android.R.id.list)).atPosition(0).perform(click());
+    onData(anything()).inAdapterView(withId(android.R.id.list)).atPosition(1).perform(click());
 
     ViewInteraction actionMenuItemView =
         onView(allOf(withId(R.id.action_menu), withContentDescription("Menu")));
@@ -93,9 +110,9 @@ public class TestSheetMusic {
   public void imageViewTest() {
     onView(ViewMatchers.withId(R.id.action_search)).perform(click());
 
-    onView(withId(com.google.android.material.R.id.search_src_text)).perform(replaceText("smile"));
+    onView(withId(com.google.android.material.R.id.search_src_text)).perform(replaceText("Smile Bobby Gray"));
 
-    onData(anything()).inAdapterView(withId(android.R.id.list)).atPosition(0).perform(click());
+    onData(anything()).inAdapterView(withId(android.R.id.list)).atPosition(1).perform(click());
 
     ViewInteraction actionMenuItemView =
         onView(allOf(withId(R.id.action_menu), withContentDescription("Menu")));
@@ -147,7 +164,7 @@ public class TestSheetMusic {
     onView(withId(com.google.android.material.R.id.search_src_text))
         .perform(replaceText("ricola!"));
 
-    onData(anything()).inAdapterView(withId(android.R.id.list)).atPosition(0).perform(click());
+    onData(anything()).inAdapterView(withId(android.R.id.list)).atPosition(1).perform(click());
 
     ViewInteraction textView = onView(allOf(withText("No Sheet Music Available"), isDisplayed()));
     textView.check(matches(withText("No Sheet Music Available")));
