@@ -1,18 +1,12 @@
 package com.spelder.tagyourit.ui;
 
-import static androidx.test.espresso.Espresso.onData;
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
-import static androidx.test.espresso.action.ViewActions.closeSoftKeyboard;
-import static androidx.test.espresso.action.ViewActions.replaceText;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
-import static androidx.test.espresso.matcher.ViewMatchers.isCompletelyDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
-import static androidx.test.espresso.matcher.ViewMatchers.withContentDescription;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import static org.hamcrest.Matchers.allOf;
-import static org.hamcrest.Matchers.anything;
 import static org.junit.Assert.assertEquals;
 
 import android.os.SystemClock;
@@ -90,7 +84,7 @@ public class TestAddFavorite {
 
     onView(withId(R.id.nav_favorite)).perform(click());
 
-    unFavoriteTag(tag_title);
+    TestUtility.unFavoriteTag(tag_title);
   }
 
   @Test
@@ -99,15 +93,15 @@ public class TestAddFavorite {
     String tagTitle2 = "Love Me and the World is Mine";
     String tagTitle3 = "Tonight, Tonight";
 
-    favoriteTag(tagTitle1 + " Soren");
-    favoriteTag(tagTitle2 + " David");
-    favoriteTag(tagTitle3 + " Island Boys");
+    TestUtility.favoriteTag(tagTitle1 + " Soren");
+    TestUtility.favoriteTag(tagTitle2 + " David");
+    TestUtility.favoriteTag(tagTitle3 + " Island Boys");
 
     onView(withId(R.id.nav_favorite)).perform(click());
 
-    unFavoriteTag(tagTitle1);
-    unFavoriteTag(tagTitle2);
-    unFavoriteTag(tagTitle3);
+    TestUtility.unFavoriteTag(tagTitle1);
+    TestUtility.unFavoriteTag(tagTitle2);
+    TestUtility.unFavoriteTag(tagTitle3);
   }
 
   @Test
@@ -115,8 +109,8 @@ public class TestAddFavorite {
     String tagTitle1 = "Lost";
     String tagTitle2 = "Like Leaves will Fall";
 
-    favoriteTag(tagTitle1 + " Soren");
-    favoriteTag(tagTitle2 + " Tickner");
+    TestUtility.favoriteTag(tagTitle1 + " Soren");
+    TestUtility.favoriteTag(tagTitle2 + " Tickner");
 
     onView(withId(R.id.nav_settings)).perform(click());
 
@@ -143,33 +137,10 @@ public class TestAddFavorite {
 
     onView(withId(R.id.nav_favorite)).perform(click());
 
-    unFavoriteTag(tagTitle1);
-    unFavoriteTag(tagTitle2);
+    TestUtility.unFavoriteTag(tagTitle1);
+    TestUtility.unFavoriteTag(tagTitle2);
 
     ViewInteraction progressBar = onView(allOf(withId(android.R.id.empty), isDisplayed()));
     progressBar.check(matches(isDisplayed()));
-  }
-
-  private void favoriteTag(String tagTitle) {
-    onView(withId(R.id.search_button)).perform(click());
-
-    onView(withId(R.id.search_src_text)).perform(replaceText(tagTitle), closeSoftKeyboard());
-
-    onData(anything()).inAdapterView(withId(android.R.id.list)).atPosition(1).perform(click());
-
-    onView(withId(R.id.action_favorite)).perform(click());
-
-    onView(allOf(withContentDescription("Navigate up"), isDisplayed())).perform(click());
-  }
-
-  private void unFavoriteTag(String tagTitle) {
-    onView(allOf(withId(R.id.tag_list_title), withText(tagTitle)))
-        .check(matches(isCompletelyDisplayed()))
-        .perform(click());
-
-    onView(withId(R.id.action_unfavorite)).perform(click());
-
-    ViewInteraction navUp = onView(allOf(withContentDescription("Navigate up"), isDisplayed()));
-    navUp.perform(click());
   }
 }
