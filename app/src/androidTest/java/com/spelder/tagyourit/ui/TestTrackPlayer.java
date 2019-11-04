@@ -46,6 +46,10 @@ import com.spelder.tagyourit.cache.CacheManager;
 import com.spelder.tagyourit.model.Tag;
 import com.spelder.tagyourit.model.TrackComponents;
 import com.spelder.tagyourit.music.MusicService;
+import com.spelder.tagyourit.networking.api.SortBuilder;
+import com.spelder.tagyourit.networking.api.SortBy;
+import com.spelder.tagyourit.networking.api.filter.FilterBuilder;
+import com.spelder.tagyourit.networking.api.filter.Part;
 import java.io.File;
 import org.junit.Rule;
 import org.junit.Test;
@@ -275,6 +279,9 @@ public class TestTrackPlayer {
 
   @Test
   public void testMediaPlayerLimitedTracks() {
+    SortBuilder sort = new SortBuilder(mActivityTestRule.getActivity());
+    sort.setSortBy(SortBy.DOWNLOAD);
+
     MusicService musicService = mActivityTestRule.getActivity().getMusicSrv();
 
     onView(ViewMatchers.withId(R.id.action_search)).perform(click());
@@ -407,6 +414,10 @@ public class TestTrackPlayer {
 
   @Test
   public void testTrackMenu() {
+    FilterBuilder filter = new FilterBuilder(mActivityTestRule.getActivity());
+    filter.applyDefaultFilter();
+    filter.setPart(Part.FIVE);
+
     onView(ViewMatchers.withId(R.id.action_search)).perform(click());
 
     onView(withId(com.google.android.material.R.id.search_src_text))

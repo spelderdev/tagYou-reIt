@@ -91,12 +91,24 @@ public class TestFilter {
 
     resetFilter();
 
+    onView(allOf(withId(R.id.filter_sheet_music), isDisplayed())).perform(swipeLeft());
+    SystemClock.sleep(1000);
+
     onView(allOf(withId(R.id.filter_key), isDisplayed())).perform(scrollTo(), click());
 
     onView(allOf(withId(R.id.filter_key_any), isDisplayed())).perform(swipeUp());
     SystemClock.sleep(1000);
 
     onView(allOf(withId(R.id.filter_key_d), isDisplayed())).perform(swipeUp());
+    SystemClock.sleep(1000);
+
+    onView(allOf(withId(R.id.filter_key_e), isDisplayed())).perform(swipeUp());
+    SystemClock.sleep(1000);
+
+    onView(allOf(withId(R.id.filter_key_f), isDisplayed())).perform(swipeUp());
+    SystemClock.sleep(1000);
+
+    onView(allOf(withId(R.id.filter_key_gb), isDisplayed())).perform(swipeUp());
     SystemClock.sleep(1000);
 
     onView(withId(R.id.filter_key_g)).perform(click());
@@ -122,6 +134,12 @@ public class TestFilter {
     onView(allOf(withId(R.id.filter_rating), isDisplayed())).perform(scrollTo(), click());
 
     onView(allOf(withId(R.id.filter_rating_any), isDisplayed())).perform(swipeUp());
+    SystemClock.sleep(1000);
+
+    onView(allOf(withId(R.id.filter_rating_3), isDisplayed())).perform(swipeUp());
+    SystemClock.sleep(1000);
+
+    onView(allOf(withId(R.id.filter_rating_3_5), isDisplayed())).perform(swipeUp());
     SystemClock.sleep(1000);
 
     onView(withId(R.id.filter_rating_4)).perform(click());

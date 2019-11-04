@@ -5,6 +5,7 @@ import static org.junit.Assert.assertTrue;
 
 import android.os.Parcel;
 import com.spelder.tagyourit.pitch.Pitch;
+import java.util.Date;
 import org.junit.Test;
 
 public class TestTagModel {
@@ -21,6 +22,7 @@ public class TestTagModel {
     tag.setSheetMusicLink("http://barbershoptags.org");
     tag.setSheetMusicType("mp3");
     tag.setSheetMusicFile("file");
+    tag.setPostedDate(new Date());
     tag.addTrack("Bass", "http://barbershoptags.org", "pdf");
     tag.addTrack("Bari", "http://barbershoptags.org", "pdf");
     tag.addTrack("Lead", "http://barbershoptags.org", "pdf");
