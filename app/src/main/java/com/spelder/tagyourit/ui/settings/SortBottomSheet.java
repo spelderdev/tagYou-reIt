@@ -1,23 +1,19 @@
 package com.spelder.tagyourit.ui.settings;
 
-import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.annotation.StyleRes;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.spelder.tagyourit.R;
+import com.spelder.tagyourit.networking.api.SortBuilder;
 import com.spelder.tagyourit.networking.api.SortBy;
 
 public class SortBottomSheet extends BottomSheetDialogFragment {
-  public static final String SORT_BY_LABEL = "SORT_BY";
 
   @Nullable
   @Override
@@ -33,33 +29,11 @@ public class SortBottomSheet extends BottomSheetDialogFragment {
   }
 
   private void setupView(View view) {
-    SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getContext());
+    SortBuilder builder = new SortBuilder(view.getContext());
 
     RadioGroup sortByGroup = view.findViewById(R.id.sort_by_radio);
 
-    Button apply = view.findViewById(R.id.sort_apply_button);
-    apply.setOnClickListener(
-        v -> {
-          SortBy sortBy;
-          switch (sortByGroup.getCheckedRadioButtonId()) {
-            case R.id.sort_downloads:
-              sortBy = SortBy.DOWNLOAD;
-              break;
-            case R.id.sort_newest_posted:
-              sortBy = SortBy.LATEST;
-              break;
-            case R.id.sort_rating:
-              sortBy = SortBy.RATING;
-              break;
-            case R.id.sort_title:
-            default:
-              sortBy = SortBy.TITLE;
-          }
-          settings.edit().putString(SORT_BY_LABEL, sortBy.name()).apply();
-          dismiss();
-        });
-
-    SortBy currentSortBy = SortBy.valueOf(settings.getString(SORT_BY_LABEL, SortBy.TITLE.name()));
+    SortBy currentSortBy = builder.build();
     RadioButton currentRadioButton;
     switch (currentSortBy) {
       case DOWNLOAD:
@@ -76,5 +50,27 @@ public class SortBottomSheet extends BottomSheetDialogFragment {
         currentRadioButton = view.findViewById(R.id.sort_title);
     }
     currentRadioButton.setChecked(true);
+
+    sortByGroup.setOnCheckedChangeListener((radioGroup, id) -> apply(builder, id));
+  }
+
+  private void apply(SortBuilder builder, int selectedId) {
+    SortBy sortBy;
+    switch (selectedId) {
+      case R.id.sort_downloads:
+        sortBy = SortBy.DOWNLOAD;
+        break;
+      case R.id.sort_newest_posted:
+        sortBy = SortBy.LATEST;
+        break;
+      case R.id.sort_rating:
+        sortBy = SortBy.RATING;
+        break;
+      case R.id.sort_title:
+      default:
+        sortBy = SortBy.TITLE;
+    }
+    builder.setSortBy(sortBy);
+    dismiss();
   }
 }

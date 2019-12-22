@@ -59,11 +59,11 @@ public class TagDb {
     values.put(TagEntry.COLUMN_NAME_PARTS_NUMBER, tag.getNumberOfParts());
     values.put(TagEntry.COLUMN_NAME_LYRICS, tag.getLyrics());
     values.put(TagEntry.COLUMN_NAME_TYPE, tag.getType());
+    values.put(TagEntry.COLUMN_NAME_COLLECTION, tag.getCollection());
     values.put(TagEntry.COLUMN_NAME_SHEET_MUSIC_TYPE, tag.getSheetMusicType());
     values.put(TagEntry.COLUMN_NAME_SHEET_MUSIC_LINK, tag.getSheetMusicLink());
     values.put(TagEntry.COLUMN_NAME_SHEET_MUSIC_FILE, tag.getSheetMusicFile());
     values.put(TagEntry.COLUMN_NAME_LAST_MODIFIED_DATE, sdf.format(new Date()));
-    values.put(TagEntry.COLUMN_NAME_TYPE, sdf.format(new Date()));
     // Insert the new row, returning the primary key value of the new row
     long newRowId = db.insert(TagEntry.TABLE_NAME, null, values);
     Log.d("TagDb,", "tagId: " + tag.getId());
@@ -117,6 +117,7 @@ public class TagDb {
     values.put(TagEntry.COLUMN_NAME_PARTS_NUMBER, tag.getNumberOfParts());
     values.put(TagEntry.COLUMN_NAME_LYRICS, tag.getLyrics());
     values.put(TagEntry.COLUMN_NAME_TYPE, tag.getType());
+    values.put(TagEntry.COLUMN_NAME_COLLECTION, tag.getCollection());
     values.put(TagEntry.COLUMN_NAME_SHEET_MUSIC_TYPE, tag.getSheetMusicType());
     values.put(TagEntry.COLUMN_NAME_SHEET_MUSIC_LINK, tag.getSheetMusicLink());
     values.put(TagEntry.COLUMN_NAME_SHEET_MUSIC_FILE, tag.getSheetMusicFile());
@@ -356,6 +357,8 @@ public class TagDb {
   }
 
   public List<Tag> getFavorites(FilterBy filter, SortBy sortBy) {
+    Log.d("TagDb", filter.getDbFilter());
+
     String sql =
         "SELECT * FROM "
             + TagEntry.TABLE_NAME
@@ -417,6 +420,7 @@ public class TagDb {
       tag.setNumberOfParts(c.getInt(c.getColumnIndex(TagEntry.COLUMN_NAME_PARTS_NUMBER)));
       tag.setLyrics(c.getString(c.getColumnIndex(TagEntry.COLUMN_NAME_LYRICS)));
       tag.setType(c.getString(c.getColumnIndex(TagEntry.COLUMN_NAME_TYPE)));
+      tag.setCollection(c.getString(c.getColumnIndex(TagEntry.COLUMN_NAME_COLLECTION)));
       tag.setSheetMusicType(c.getString(c.getColumnIndex(TagEntry.COLUMN_NAME_SHEET_MUSIC_TYPE)));
       tag.setSheetMusicLink(c.getString(c.getColumnIndex(TagEntry.COLUMN_NAME_SHEET_MUSIC_LINK)));
       tag.setSheetMusicFile(c.getString(c.getColumnIndex(TagEntry.COLUMN_NAME_SHEET_MUSIC_FILE)));

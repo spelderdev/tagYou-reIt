@@ -22,11 +22,12 @@ import com.spelder.tagyourit.db.TagDb;
 import com.spelder.tagyourit.model.Tag;
 import com.spelder.tagyourit.networking.ResultAction;
 import com.spelder.tagyourit.networking.TagQueryTask;
+import com.spelder.tagyourit.networking.api.SortBuilder;
 import com.spelder.tagyourit.networking.api.SortBy;
 import com.spelder.tagyourit.networking.api.filter.FilterBuilder;
 import com.spelder.tagyourit.networking.api.filter.FilterBy;
 import com.spelder.tagyourit.ui.MainActivity;
-import com.spelder.tagyourit.ui.settings.SortBottomSheet;
+import com.spelder.tagyourit.ui.settings.filter.FilterBar;
 import java.util.List;
 
 public class TagListFragment extends ListFragment
@@ -34,38 +35,20 @@ public class TagListFragment extends ListFragment
   private static final int LOADING_LEFT = 10;
 
   boolean finished = false;
-
   boolean created = false;
-
   private TagListAdapter listAdapter;
-
   private TagQueryTask currentDownloadTask;
-
   private SortBy sortBy;
-
   private boolean loading = false;
-
   private View footerView;
-
   private Context context;
-
   private View noResultsView;
-
   private View loadingView;
-
   private View browseContent;
-
   private TextView error_text;
-
   private View error_layout;
-
-  static TagListFragment newInstance(SortBy sortBy) {
-    TagListFragment f = new TagListFragment();
-    Bundle args = new Bundle();
-    args.putParcelable("sortBy", sortBy);
-    f.setArguments(args);
-    return f;
-  }
+  private FilterBar filterBar;
+  private FilterBar filterBarEmpty;
 
   @Override
   public void onAttach(@NonNull Context context) {
@@ -77,9 +60,9 @@ public class TagListFragment extends ListFragment
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     Log.d("TagListFragment", "onCreate");
+    SortBuilder sort = new SortBuilder(context);
     SharedPreferences preference = PreferenceManager.getDefaultSharedPreferences(context);
-    sortBy =
-        SortBy.valueOf(preference.getString(SortBottomSheet.SORT_BY_LABEL, SortBy.TITLE.name()));
+    sortBy = sort.build();
     listAdapter = new TagListAdapter(getActivity());
     finished = false;
     preference.registerOnSharedPreferenceChangeListener(this);
@@ -90,6 +73,14 @@ public class TagListFragment extends ListFragment
     super.onDestroy();
     PreferenceManager.getDefaultSharedPreferences(context)
         .unregisterOnSharedPreferenceChangeListener(this);
+    if (filterBar != null) {
+      PreferenceManager.getDefaultSharedPreferences(getActivity())
+          .unregisterOnSharedPreferenceChangeListener(filterBar);
+    }
+    if (filterBarEmpty != null) {
+      PreferenceManager.getDefaultSharedPreferences(getActivity())
+          .unregisterOnSharedPreferenceChangeListener(filterBarEmpty);
+    }
   }
 
   @Override
@@ -115,10 +106,12 @@ public class TagListFragment extends ListFragment
           }
           ConnectivityManager connMgr =
               (ConnectivityManager) activity.getSystemService(Context.CONNECTIVITY_SERVICE);
-          NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
-          if (networkInfo != null && networkInfo.isConnected()) {
-            getAndCancelDownloadTask(true);
-            unsetNetworkError();
+          if (connMgr != null) {
+            NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+            if (networkInfo != null && networkInfo.isConnected()) {
+              getAndCancelDownloadTask(true);
+              unsetNetworkError();
+            }
           }
         });
 
@@ -129,10 +122,12 @@ public class TagListFragment extends ListFragment
     }
     ConnectivityManager connMgr =
         (ConnectivityManager) activity.getSystemService(Context.CONNECTIVITY_SERVICE);
-    NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
-    if (networkInfo == null || !networkInfo.isConnected()) {
-      setNetworkError();
-      return content;
+    if (connMgr != null) {
+      NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+      if (networkInfo == null || !networkInfo.isConnected()) {
+        setNetworkError();
+        return content;
+      }
     }
 
     return content;
@@ -159,23 +154,42 @@ public class TagListFragment extends ListFragment
   public void onActivityCreated(Bundle savedInstanceState) {
     super.onActivityCreated(savedInstanceState);
     footerView = View.inflate(getContext(), R.layout.list_footer_view, null);
-    this.getListView().addFooterView(footerView);
+    getListView().addFooterView(footerView);
     setListAdapter(listAdapter);
     listAdapter.getCount();
     getListView().setOnScrollListener(this);
     created = true;
     setLoading(loading);
+
+    ListView listView = getListView();
+    listView.addHeaderView(getLayoutInflater().inflate(R.layout.filter, null));
+    listView.setHeaderDividersEnabled(false);
+
+    if (getActivity() != null) {
+      filterBar = new FilterBar(getActivity());
+      PreferenceManager.getDefaultSharedPreferences(getActivity())
+          .registerOnSharedPreferenceChangeListener(filterBar);
+      filterBar.setupFilterBar(listView, getActivity().getSupportFragmentManager());
+
+      filterBarEmpty = new FilterBar(getActivity());
+      PreferenceManager.getDefaultSharedPreferences(getActivity())
+          .registerOnSharedPreferenceChangeListener(filterBarEmpty);
+      filterBarEmpty.setupFilterBar(noResultsView, getActivity().getSupportFragmentManager());
+    }
   }
 
   @Override
   public void onListItemClick(@NonNull ListView l, @NonNull View v, int position, long id) {
-    Tag clickedTag = (Tag) listAdapter.getItem(position);
+    Tag clickedTag = (Tag) getListView().getItemAtPosition(position);
     Log.i(
         "FragmentList",
         "Item clicked: " + clickedTag.getTitle() + " " + clickedTag.getSheetMusicType());
     TagDb db = new TagDb(context);
     clickedTag.setDbId(db.isFavorite(clickedTag));
-    ((MainActivity) getActivity()).getManager().displayTag(clickedTag);
+    MainActivity activity = (MainActivity) getActivity();
+    if (activity != null) {
+      activity.getManager().displayTag(clickedTag);
+    }
   }
 
   void addTags(List<Tag> result) {
@@ -272,13 +286,12 @@ public class TagListFragment extends ListFragment
 
   @Override
   public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-    if (key.startsWith("filter_") || key.equals(SortBottomSheet.SORT_BY_LABEL)) {
+    if (key.startsWith("filter_") || SortBuilder.isSortKey(key)) {
       finished = false;
       Log.d("TagListFragment", "filterChanged");
 
-      SharedPreferences preference = PreferenceManager.getDefaultSharedPreferences(context);
-      sortBy =
-          SortBy.valueOf(preference.getString(SortBottomSheet.SORT_BY_LABEL, SortBy.TITLE.name()));
+      SortBuilder builder = new SortBuilder(context);
+      sortBy = builder.build();
 
       getAndCancelDownloadTask(true).execute();
     }

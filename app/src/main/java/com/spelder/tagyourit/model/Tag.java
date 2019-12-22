@@ -29,6 +29,7 @@ public class Tag implements Parcelable {
           tag.setNumberOfParts(source.readInt());
           tag.setLyrics(source.readString());
           tag.setType(source.readString());
+          tag.setCollection(source.readString());
           tag.setSheetMusicLink(source.readString());
           tag.setSheetMusicType(source.readString());
           tag.setSheetMusicFile(source.readString());
@@ -82,6 +83,8 @@ public class Tag implements Parcelable {
 
   private String type;
 
+  private String collection;
+
   private String sheetMusicLink;
 
   private String sheetMusicType;
@@ -131,7 +134,11 @@ public class Tag implements Parcelable {
   }
 
   public void setDbId(Long dbId) {
-    this.dbId = dbId;
+    if (dbId != null && dbId == -1) {
+      this.dbId = null;
+    } else {
+      this.dbId = dbId;
+    }
   }
 
   public String getTitle() {
@@ -239,6 +246,14 @@ public class Tag implements Parcelable {
     this.type = type;
   }
 
+  public String getCollection() {
+    return collection;
+  }
+
+  public void setCollection(String collection) {
+    this.collection = collection;
+  }
+
   public String getSheetMusicLink() {
     return sheetMusicLink;
   }
@@ -344,10 +359,15 @@ public class Tag implements Parcelable {
     parcel.writeInt(numberParts);
     parcel.writeString(lyrics);
     parcel.writeString(type);
+    parcel.writeString(collection);
     parcel.writeString(sheetMusicLink);
     parcel.writeString(sheetMusicType);
     parcel.writeString(sheetMusicFile);
-    parcel.writeLong(dbId);
+    if (dbId != null) {
+      parcel.writeLong(dbId);
+    } else {
+      parcel.writeLong(-1);
+    }
     parcel.writeInt(tracks.size());
     for (Map.Entry<String, TrackComponents> entry : tracks.entrySet()) {
       parcel.writeString(entry.getKey());

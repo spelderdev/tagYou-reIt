@@ -209,6 +209,8 @@ public class DisplayTag extends Fragment {
   }
 
   private void showTag() {
+    Log.d(TAG, "Tag type: " + tag.getNumberOfParts());
+
     if (tag.getSheetMusicType() == null) {
       no_pdf_text.setVisibility(View.VISIBLE);
       mPdfView.setVisibility(View.GONE);

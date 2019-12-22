@@ -3,7 +3,8 @@ package com.spelder.tagyourit.ui;
 import static androidx.test.espresso.Espresso.onData;
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
-import static androidx.test.espresso.action.ViewActions.typeText;
+import static androidx.test.espresso.action.ViewActions.closeSoftKeyboard;
+import static androidx.test.espresso.action.ViewActions.replaceText;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
@@ -32,20 +33,15 @@ public class TestSearch {
 
     onView(ViewMatchers.withId(R.id.action_search)).perform(click());
 
-    onView(withId(com.google.android.material.R.id.search_src_text))
-        .perform(typeText("like leaves"));
+    onView(withId(R.id.search_src_text)).perform(replaceText(title + " Tickner"), closeSoftKeyboard());
 
-    onData(anything()).inAdapterView(withId(android.R.id.list)).atPosition(0).perform(click());
+    onData(anything()).inAdapterView(withId(android.R.id.list)).atPosition(1).perform(click());
 
     onView(withId(R.id.action_menu)).perform(click());
 
-    onView(withId(R.id.title)).check(matches(withText(title)));
+    onView(withId(R.id.tag_detail_title)).check(matches(withText(title)));
 
-    SystemClock.sleep(500);
-
-    onView(allOf(withId(R.id.label), withText("All Parts"))).perform(click());
-
-    SystemClock.sleep(2000);
+    onView(allOf(withId(R.id.tag_detail_track_all), withText("All Parts"))).perform(click());
 
     onView(withId(R.id.player_control)).perform(click());
     onView(withId(R.id.player_close)).perform(click());

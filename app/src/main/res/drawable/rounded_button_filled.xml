@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+  <item android:state_pressed="true">
+    <ripple android:color="@android:color/darker_gray">
+      <item android:drawable="@drawable/rounded_shape_filled" />
+    </ripple>
+  </item>
+  <item android:drawable="@drawable/rounded_shape_filled" />
+</selector>

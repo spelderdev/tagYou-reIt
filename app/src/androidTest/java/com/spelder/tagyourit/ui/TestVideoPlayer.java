@@ -36,44 +36,52 @@ public class TestVideoPlayer {
     onView(ViewMatchers.withId(R.id.action_search)).perform(click());
 
     onView(withId(com.google.android.material.R.id.search_src_text))
-        .perform(replaceText("like leaves"));
+        .perform(replaceText("like leaves Tickner"));
 
-    onData(anything()).inAdapterView(withId(android.R.id.list)).atPosition(0).perform(click());
+    onData(anything()).inAdapterView(withId(android.R.id.list)).atPosition(1).perform(click());
 
     onView(allOf(withId(R.id.action_menu), withContentDescription("Menu"))).perform(click());
 
+    onView(withId(R.id.tag_detail_title)).perform(swipeUp());
+
     SystemClock.sleep(500);
 
-    onData(anything()).inAdapterView(withId(R.id.list)).atPosition(7).perform(click());
+    onView(withId(R.id.tag_detail_video_1)).perform(click());
 
     SystemClock.sleep(7000);
-
-    onView(withId(R.id.panel)).perform(click());
-
-    SystemClock.sleep(1000);
-
-    onView(withId(R.id.panel)).perform(click());
-
-    onView(allOf(withId(R.id.play_pause_button), withContentDescription("Play button")))
-        .perform(click());
 
     onData(anything()).inAdapterView(withId(R.id.video_player_list)).atPosition(2).perform(click());
 
     onView(allOf(withContentDescription("Navigate up"), isDisplayed())).perform(click());
+  }
+
+  @Test
+  public void videoPlayerMoreTest() {
+    onView(ViewMatchers.withId(R.id.action_search)).perform(click());
+
+    onView(withId(com.google.android.material.R.id.search_src_text))
+        .perform(replaceText("like leaves Tickner"));
+
+    onData(anything()).inAdapterView(withId(android.R.id.list)).atPosition(1).perform(click());
 
     onView(allOf(withId(R.id.action_menu), withContentDescription("Menu"))).perform(click());
 
     SystemClock.sleep(500);
-    onView(withId(R.id.bottom_sheet)).perform(swipeUp());
+    onView(withId(R.id.tag_detail_title)).perform(swipeUp());
+    SystemClock.sleep(500);
+    onView(withId(R.id.tag_detail_video_1)).perform(swipeUp());
+    onView(withId(R.id.tag_detail_video_1)).perform(swipeUp());
+    onView(withId(R.id.tag_detail_video_1)).perform(swipeUp());
+    SystemClock.sleep(500);
 
-    onData(anything()).inAdapterView(withId(R.id.list)).atPosition(11).perform(click());
+    onView(withId(R.id.tag_detail_video_more)).perform(click());
 
     onView(withId(R.id.youtube_view)).check(matches(not(isDisplayed())));
 
     onView(
-            allOf(
-                withId(R.id.video_list_title),
-                withText("Chanticleer Tag Time - Like Leaves Will Fall")))
+        allOf(
+            withId(R.id.video_list_title),
+            withText("Chanticleer Tag Time - Like Leaves Will Fall")))
         .check(matches(isDisplayed()));
 
     onView(allOf(withId(R.id.video_list_posted_by), withText("Chanticleer et al")))

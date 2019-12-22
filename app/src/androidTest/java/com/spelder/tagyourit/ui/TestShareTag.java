@@ -44,21 +44,18 @@ public class TestShareTag {
   public void openShareIntent() {
     onView(ViewMatchers.withId(R.id.action_search)).perform(click());
 
-    onView(withId(R.id.search_src_text)).perform(replaceText("like leaves"), closeSoftKeyboard());
+    onView(withId(R.id.search_src_text)).perform(replaceText("like leaves tickner"), closeSoftKeyboard());
 
-    onData(anything()).inAdapterView(withId(android.R.id.list)).atPosition(0).perform(click());
+    onData(anything()).inAdapterView(withId(android.R.id.list)).atPosition(1).perform(click());
 
     onView(withId(R.id.action_menu)).perform(click());
-
-    onView(withId(R.id.bottom_sheet)).perform(swipeUp());
-    SystemClock.sleep(200);
 
     Instrumentation.ActivityResult intentResult =
         new Instrumentation.ActivityResult(Activity.RESULT_OK, new Intent());
 
     intending(anyIntent()).respondWith(intentResult);
 
-    onView(allOf(withId(R.id.label), withText("Share"))).perform(click());
+    onView(allOf(withId(R.id.tag_detail_share_button), withText("Share"))).perform(click());
 
     intended(
         chooser(

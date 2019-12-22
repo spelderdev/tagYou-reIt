@@ -2,7 +2,26 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
   android:layout_width="match_parent"
   android:layout_height="match_parent"
-  android:layout_weight="1">
+  android:layout_alignParentBottom="true">
+
+  <LinearLayout
+    android:id="@android:id/empty"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:visibility="gone">
+
+    <include layout="@layout/filter" />
+
+    <TextView
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      android:layout_gravity="center"
+      android:gravity="center"
+      android:text="@string/no_favorites"
+      android:textSize="16sp" />
+
+  </LinearLayout>
 
   <ListView
     android:id="@android:id/list"
@@ -10,16 +29,5 @@
     android:layout_height="match_parent"
     android:dividerHeight="1dp"
     android:drawSelectorOnTop="true" />
-
-  <!-- Here is the view to show if the list is empty -->
-
-  <TextView
-    android:id="@android:id/empty"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:layout_gravity="center"
-    android:text="@string/no_favorites"
-    android:textSize="16sp"
-    android:visibility="gone" />
 
 </FrameLayout>

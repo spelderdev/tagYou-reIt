@@ -1,31 +1,27 @@
 package com.spelder.tagyourit.networking.api.filter;
 
 import androidx.annotation.NonNull;
-import com.spelder.tagyourit.db.TagContract;
+import com.spelder.tagyourit.db.TagContract.LearningTracksEntry;
+import com.spelder.tagyourit.db.TagContract.TagEntry;
 
 public class FilterBy {
   private static final String SHEET_MUSIC_LABEL = "SheetMusic=";
-
   private static final String LEARNING_TRACK_LABEL = "Learning=";
 
-  private static final String PARTS_LABEL = "Parts=";
-
-  private static final String RATING_LABEL = "MinRating=";
-
-  private boolean hasSheetMusic;
-
-  private boolean hasLearningTrack;
-
-  private Integer numberOfParts = null;
-
-  private Double minimumRating = null;
-
-  private Type type = null;
-
-  private Key key = null;
+  private boolean hasSheetMusic = false;
+  private boolean hasLearningTrack = false;
+  private Part numberOfParts = Part.ANY;
+  private Rating minimumRating = Rating.ANY;
+  private Type type = Type.ANY;
+  private Key key = Key.ANY;
+  private Collection collection = Collection.ANY;
 
   void setHasSheetMusic(boolean hasSheetMusic) {
     this.hasSheetMusic = hasSheetMusic;
+  }
+
+  public boolean isSheetMusicApplied() {
+    return hasSheetMusic;
   }
 
   private String getSheetMusicFilter() {
@@ -37,11 +33,7 @@ public class FilterBy {
 
   private String getSheetMusicDbFilter() {
     if (hasSheetMusic) {
-      return " AND "
-          + TagContract.TagEntry.TABLE_NAME
-          + "."
-          + TagContract.TagEntry.COLUMN_NAME_SHEET_MUSIC_LINK
-          + " != ''";
+      return " AND " + TagEntry.TABLE_NAME + "." + TagEntry.COLUMN_NAME_SHEET_MUSIC_LINK + " != ''";
     }
     return "";
   }
@@ -56,15 +48,15 @@ public class FilterBy {
   private String getLearningTrackDbFilter() {
     if (hasLearningTrack) {
       return " AND "
-          + TagContract.TagEntry.TABLE_NAME
+          + TagEntry.TABLE_NAME
           + "."
-          + TagContract.TagEntry._ID
+          + TagEntry._ID
           + " IN (SELECT "
-          + TagContract.LearningTracksEntry.TABLE_NAME
+          + LearningTracksEntry.TABLE_NAME
           + "."
-          + TagContract.LearningTracksEntry.COLUMN_NAME_TAG_ID
+          + LearningTracksEntry.COLUMN_NAME_TAG_ID
           + " FROM "
-          + TagContract.LearningTracksEntry.TABLE_NAME
+          + LearningTracksEntry.TABLE_NAME
           + ")";
     }
     return "";
@@ -74,69 +66,103 @@ public class FilterBy {
     this.hasLearningTrack = hasLearningTrack;
   }
 
-  void setNumberOfParts(Integer numberOfParts) {
-    this.numberOfParts = numberOfParts;
+  public boolean isLearningTrackApplied() {
+    return hasLearningTrack;
+  }
+
+  void setNumberOfParts(Part numberOfParts) {
+    if (numberOfParts != null) {
+      this.numberOfParts = numberOfParts;
+    }
+  }
+
+  public String getNumberOfPartsDisplayName() {
+    return numberOfParts.getDisplayName();
+  }
+
+  public boolean isNumberOfPartsApplied() {
+    return numberOfParts != Part.ANY;
   }
 
   private String getNumberOfPartsFilter() {
-    if (numberOfParts != null) {
-      return "&" + PARTS_LABEL + numberOfParts;
+    if (numberOfParts != Part.ANY) {
+      return "&" + numberOfParts.getFilter();
     }
     return "";
   }
 
   private String getNumberOfPartsDbFilter() {
-    if (numberOfParts != null) {
+    if (numberOfParts != Part.ANY) {
       return " AND "
-          + TagContract.TagEntry.TABLE_NAME
+          + TagEntry.TABLE_NAME
           + "."
-          + TagContract.TagEntry.COLUMN_NAME_PARTS_NUMBER
+          + TagEntry.COLUMN_NAME_PARTS_NUMBER
           + " = "
-          + numberOfParts;
+          + numberOfParts.getNumberParts();
     }
     return "";
   }
 
-  void setMinimumRating(Double minimumRating) {
-    this.minimumRating = minimumRating;
+  void setMinimumRating(Rating minimumRating) {
+    if (minimumRating != null) {
+      this.minimumRating = minimumRating;
+    }
+  }
+
+  public String getMinimumRatingDisplayName() {
+    return minimumRating.getDisplayName();
+  }
+
+  public boolean isMinimumRatingApplied() {
+    return minimumRating != Rating.ANY;
   }
 
   private String getMinimumRatingFilter() {
-    if (minimumRating != null) {
-      return "&" + RATING_LABEL + minimumRating;
+    if (minimumRating != Rating.ANY) {
+      return "&" + minimumRating.getFilter();
     }
     return "";
   }
 
   private String getMinimumRatingDbFilter() {
-    if (minimumRating != null) {
+    if (minimumRating != Rating.ANY) {
       return " AND "
-          + TagContract.TagEntry.TABLE_NAME
+          + TagEntry.TABLE_NAME
           + "."
-          + TagContract.TagEntry.COLUMN_NAME_RATING
+          + TagEntry.COLUMN_NAME_RATING
           + " > "
-          + minimumRating;
+          + minimumRating.getRating();
     }
     return "";
   }
 
   void setType(Type type) {
-    this.type = type;
+    if (type != null) {
+      this.type = type;
+    }
+  }
+
+  public String getTypeDisplayName() {
+    return type.getDisplayName();
+  }
+
+  public boolean isTypeApplied() {
+    return type != Type.ANY;
   }
 
   private String getTypeFilter() {
-    if (type != null) {
+    if (type != Type.ANY) {
       return "&" + type.getFilter();
     }
     return "";
   }
 
   private String getTypeDbFilter() {
-    if (type != null) {
+    if (type != Type.ANY) {
       return " AND "
-          + TagContract.TagEntry.TABLE_NAME
+          + TagEntry.TABLE_NAME
           + "."
-          + TagContract.TagEntry.COLUMN_NAME_TYPE
+          + TagEntry.COLUMN_NAME_TYPE
           + " LIKE '"
           + type.getDbFilter()
           + "'";
@@ -145,27 +171,37 @@ public class FilterBy {
   }
 
   void setKey(Key key) {
-    this.key = key;
+    if (key != null) {
+      this.key = key;
+    }
+  }
+
+  public String getKeyDisplayName() {
+    return key.getDisplayName();
+  }
+
+  public boolean isKeyApplied() {
+    return key != Key.ANY;
   }
 
   private String getKeyFilter() {
-    if (key != null) {
+    if (key != Key.ANY) {
       return "&" + key.getFilter();
     }
     return "";
   }
 
   private String getKeyDbFilter() {
-    if (key != null) {
+    if (key != Key.ANY) {
       StringBuilder filter = new StringBuilder(" AND ( ");
       String[] dbKeys = key.getDbKeys();
       for (int i = 0; i < dbKeys.length; i++) {
         if (i != 0) {
           filter.append(" OR ");
         }
-        filter.append(TagContract.TagEntry.TABLE_NAME);
+        filter.append(TagEntry.TABLE_NAME);
         filter.append(".");
-        filter.append(TagContract.TagEntry.COLUMN_NAME_KEY);
+        filter.append(TagEntry.COLUMN_NAME_KEY);
         filter.append(" LIKE '%");
         filter.append(dbKeys[i]);
         filter.append("'");
@@ -177,13 +213,48 @@ public class FilterBy {
     return "";
   }
 
+  void setCollection(Collection collection) {
+    if (collection != null) {
+      this.collection = collection;
+    }
+  }
+
+  public String getCollectionDisplayName() {
+    return collection.getDisplayName();
+  }
+
+  public boolean isCollectionApplied() {
+    return collection != Collection.ANY;
+  }
+
+  private String getCollectionFilter() {
+    if (collection != Collection.ANY) {
+      return "&" + collection.getFilter();
+    }
+    return "";
+  }
+
+  private String getCollectionDbFilter() {
+    if (collection != Collection.ANY) {
+      return " AND "
+          + TagEntry.TABLE_NAME
+          + "."
+          + TagEntry.COLUMN_NAME_COLLECTION
+          + " LIKE '"
+          + collection.getDbFilter()
+          + "'";
+    }
+    return "";
+  }
+
   public String getFilter() {
     return getSheetMusicFilter()
         + getLearningTrackFilter()
         + getNumberOfPartsFilter()
         + getMinimumRatingFilter()
         + getTypeFilter()
-        + getKeyFilter();
+        + getKeyFilter()
+        + getCollectionFilter();
   }
 
   public String getDbFilter() {
@@ -192,7 +263,8 @@ public class FilterBy {
         + getSheetMusicDbFilter()
         + getKeyDbFilter()
         + getLearningTrackDbFilter()
-        + getTypeDbFilter();
+        + getTypeDbFilter()
+        + getCollectionDbFilter();
   }
 
   @Override
@@ -211,6 +283,8 @@ public class FilterBy {
         + type
         + ", key="
         + key
+        + ", collection="
+        + collection
         + '}';
   }
 }

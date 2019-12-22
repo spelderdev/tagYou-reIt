@@ -25,8 +25,8 @@ import java.util.concurrent.ExecutionException;
 public class DownloadFavoritesDialog extends DialogFragment {
   private static final String TAG = "PreferencesFragment";
 
+  private Thread thread;
   private ProgressBar progress;
-
   private boolean shouldStopThread = false;
 
   @Override
@@ -41,7 +41,6 @@ public class DownloadFavoritesDialog extends DialogFragment {
     AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
     View view = View.inflate(getContext(), R.layout.dialog_download_favorites, null);
 
-    final Thread thread;
     if (download) {
       builder.setTitle("Downloading Favorites");
       thread =
@@ -75,9 +74,14 @@ public class DownloadFavoritesDialog extends DialogFragment {
     progress = view.findViewById(R.id.progressBar2);
     this.setCancelable(false);
 
-    thread.start();
-
     return builder.create();
+  }
+
+  @Override
+  public void onStart() {
+    super.onStart();
+
+    thread.start();
   }
 
   private void downloadTags() {

@@ -12,7 +12,7 @@
   <TextView
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:text="@string/sort_title"
+    android:text="@string/filter_type_title"
     android:textColor="@color/darkTitle"
     android:textSize="22sp" />
 
@@ -24,33 +24,51 @@
     android:fillViewport="false">
 
     <RadioGroup
-      android:id="@+id/sort_by_radio"
+      android:id="@+id/filter_type_radio"
       android:layout_width="match_parent"
       android:layout_height="wrap_content">
 
       <RadioButton
-        android:id="@+id/sort_title"
+        android:id="@+id/filter_type_any"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/sort_by_title" />
+        android:text="@string/filter_any" />
 
       <RadioButton
-        android:id="@+id/sort_rating"
+        android:id="@+id/filter_type_barbershop"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/sort_by_rating" />
+        android:text="@string/filter_type_barbershop" />
 
       <RadioButton
-        android:id="@+id/sort_downloads"
+        android:id="@+id/filter_type_sweet_adelines"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/sort_by_downloads" />
+        android:text="@string/filter_type_sweet_adelines" />
 
       <RadioButton
-        android:id="@+id/sort_newest_posted"
+        android:id="@+id/filter_type_satb"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/sort_by_newest_posted" />
+        android:text="@string/filter_type_satb" />
+
+      <RadioButton
+        android:id="@+id/filter_type_other_male"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/filter_type_other_male" />
+
+      <RadioButton
+        android:id="@+id/filter_type_other_female"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/filter_type_other_female" />
+
+      <RadioButton
+        android:id="@+id/filter_type_other_mixed"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/filter_type_other_mixed" />
 
     </RadioGroup>
 

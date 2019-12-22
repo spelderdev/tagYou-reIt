@@ -10,4 +10,7 @@
   <dimen name="media_player_close_top">10dp</dimen>
   <dimen name="media_player_speed_bottom">10dp</dimen>
   <dimen name="media_player_balance_bottom">5dp</dimen>
+
+  <dimen name="filter_button_separator">3dp</dimen>
+  <dimen name="filter_button_padding">10dp</dimen>
 </resources>

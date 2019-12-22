@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.FragmentManager;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.spelder.tagyourit.R;
 import com.spelder.tagyourit.db.TagDb;
@@ -171,13 +172,15 @@ public class FragmentSwitcher {
     if (view == null) {
       view = new View(activity);
     }
-    imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+    if (imm != null) {
+      imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+    }
   }
 
   private int getCurrentIdFromFragment(Fragment fragment) {
     if (fragment instanceof DisplayTag) {
       return FRAGMENT_DISPLAY_TAG;
-    } else if (fragment instanceof TagListFragment) {
+    } else if (fragment instanceof SearchListFragment) {
       return FRAGMENT_SEARCH;
     } else if (fragment instanceof TagListFragment) {
       return FRAGMENT_BROWSE;
@@ -244,12 +247,6 @@ public class FragmentSwitcher {
     return currentFragment != FRAGMENT_DISPLAY_TAG
         && currentFragment != FRAGMENT_SETTINGS
         && currentFragment != FRAGMENT_PRIVACY_POLICY;
-  }
-
-  boolean isFilterVisible() {
-    return currentFragment == FRAGMENT_BROWSE
-        || currentFragment == FRAGMENT_FAVORITES
-        || currentFragment == FRAGMENT_SEARCH;
   }
 
   boolean isSortVisible() {
@@ -326,8 +323,11 @@ public class FragmentSwitcher {
     currentFragment = id;
     activity
         .getSupportFragmentManager()
+        .popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+    activity
+        .getSupportFragmentManager()
         .beginTransaction()
-        .replace(R.id.fragment_container, getFragment(id), Integer.toString(getFragmentCount()))
+        .replace(R.id.fragment_container, getFragment(id), getFragment(id).getClass().getName())
         .commit();
   }
 
