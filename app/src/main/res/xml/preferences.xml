@@ -46,6 +46,12 @@
   <PreferenceCategory android:title="Backup">
 
     <Preference
+      android:icon="@drawable/account"
+      android:key="pref_key_account"
+      android:summary="Sign in or out of account"
+      android:title="Manage Account"/>
+
+    <Preference
       android:icon="@drawable/backup"
       android:key="pref_key_backup"
       android:summary="Backup Favorites to Google Drive"

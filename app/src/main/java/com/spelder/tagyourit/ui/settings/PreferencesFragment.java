@@ -27,6 +27,32 @@ public class PreferencesFragment extends PreferenceFragmentCompat {
     }
     back = new FavoritesBackup(activity);
 
+    String accountName = back.getSignedInEmail();
+
+    Preference accountPref = findPreference("pref_key_account");
+    if (accountName != null) {
+      accountPref.setTitle("Sign out");
+      accountPref.setSummary(accountName);
+    } else {
+      accountPref.setTitle("Sign in");
+      accountPref.setSummary("");
+    }
+    accountPref.setOnPreferenceClickListener(
+        preference -> {
+          if (back.getSignedInEmail() != null) {
+            back.signOut(() -> {
+              accountPref.setTitle("Sign in");
+              accountPref.setSummary("");
+            });
+          } else {
+            back.signInCustomAction(() -> {
+              accountPref.setTitle("Sign out");
+              accountPref.setSummary(accountName);
+            });
+          }
+          return true;
+        });
+
     Preference backupPref = findPreference("pref_key_backup");
     backupPref.setOnPreferenceClickListener(
         preference -> {

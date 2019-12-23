@@ -33,10 +33,12 @@ public class FavoritesBackup {
   private final Activity activity;
   private DriveServiceHelper mDriveServiceHelper;
   private Action action;
+  private SignInResult signInResult;
 
   private enum Action {
     BACKUP,
-    RESTORE
+    RESTORE,
+    SIGN_IN
   }
 
   public FavoritesBackup(Activity activity) {
@@ -66,6 +68,32 @@ public class FavoritesBackup {
       GoogleSignInClient googleSignInClient = GoogleSignIn.getClient(activity, signInOptions);
       activity.startActivityForResult(googleSignInClient.getSignInIntent(), REQUEST_CODE_SIGN_IN);
     }
+  }
+
+  public String getSignedInEmail() {
+    GoogleSignInAccount signInAccount = GoogleSignIn.getLastSignedInAccount(activity);
+    if (signInAccount != null && signInAccount.getAccount() != null) {
+      return signInAccount.getEmail();
+    }
+
+    return null;
+  }
+
+  public void signOut(SignInResult result) {
+    GoogleSignInOptions signInOptions =
+        new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+            .requestEmail()
+            .requestScopes(new Scope(DriveScopes.DRIVE_FILE))
+            .build();
+    GoogleSignInClient googleSignInClient = GoogleSignIn.getClient(activity, signInOptions);
+    googleSignInClient
+        .signOut()
+        .addOnCompleteListener(
+            activity,
+            task -> {
+              showMessage(activity, "Sign out successful");
+              result.finished();
+            });
   }
 
   /**
@@ -98,6 +126,10 @@ public class FavoritesBackup {
         break;
       case RESTORE:
         restoreAction();
+        break;
+      case SIGN_IN:
+        showMessage(activity, "Sign in successful");
+        signInResult.finished();
         break;
     }
   }
@@ -165,6 +197,12 @@ public class FavoritesBackup {
               }
             })
         .addOnFailureListener(task -> showMessage(activity, "Error restoring..."));
+  }
+
+  public void signInCustomAction(SignInResult result) {
+    signInResult = result;
+    action = Action.SIGN_IN;
+    signIn();
   }
 
   public void backup() {
