@@ -1,14 +1,16 @@
 package com.spelder.tagyourit.ui.settings;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import androidx.preference.Preference;
 import androidx.preference.SwitchPreference;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.spelder.tagyourit.R;
 import com.spelder.tagyourit.drive.FavoritesBackup;
-import com.spelder.tagyourit.ui.FragmentSwitcher;
+import com.spelder.tagyourit.networking.DownloadFavoritesService;
+import com.spelder.tagyourit.networking.RemoveFavoritesDownloadService;
 import com.spelder.tagyourit.ui.MainActivity;
-import com.spelder.tagyourit.ui.dialog.DownloadFavoritesDialog;
 import com.takisoft.fix.support.v7.preference.PreferenceFragmentCompat;
 
 /** Edits preferences for the system. */
@@ -19,7 +21,37 @@ public class PreferencesFragment extends PreferenceFragmentCompat {
   public void onCreatePreferencesFix(Bundle savedInstanceState, String rootKey) {
     addPreferencesFromResource(R.xml.preferences);
 
-    back = new FavoritesBackup(getActivity());
+    Activity activity = getActivity();
+    if (activity == null) {
+      return;
+    }
+    back = new FavoritesBackup(activity);
+
+    String accountName = back.getSignedInEmail();
+
+    Preference accountPref = findPreference("pref_key_account");
+    if (accountName != null) {
+      accountPref.setTitle("Sign out");
+      accountPref.setSummary(accountName);
+    } else {
+      accountPref.setTitle("Sign in");
+      accountPref.setSummary("");
+    }
+    accountPref.setOnPreferenceClickListener(
+        preference -> {
+          if (back.getSignedInEmail() != null) {
+            back.signOut(() -> {
+              accountPref.setTitle("Sign in");
+              accountPref.setSummary("");
+            });
+          } else {
+            back.signInCustomAction(() -> {
+              accountPref.setTitle("Sign out");
+              accountPref.setSummary(accountName);
+            });
+          }
+          return true;
+        });
 
     Preference backupPref = findPreference("pref_key_backup");
     backupPref.setOnPreferenceClickListener(
@@ -39,14 +71,15 @@ public class PreferencesFragment extends PreferenceFragmentCompat {
     download.setOnPreferenceChangeListener(
         (preference, newValue) -> {
           if (newValue instanceof Boolean) {
-            DownloadFavoritesDialog dialog = new DownloadFavoritesDialog();
-
-            Boolean boolVal = (Boolean) newValue;
-
-            Bundle bundle = new Bundle();
-            bundle.putBoolean(FragmentSwitcher.DOWNLOAD_KEY, boolVal);
-            dialog.setArguments(bundle);
-            dialog.show(getActivity().getSupportFragmentManager(), "download_favorites");
+            if ((Boolean) newValue) {
+              RemoveFavoritesDownloadService.cancel();
+              Intent intent = new Intent(getActivity(), DownloadFavoritesService.class);
+              getActivity().startService(intent);
+            } else {
+              DownloadFavoritesService.cancel();
+              Intent intent = new Intent(getActivity(), RemoveFavoritesDownloadService.class);
+              getActivity().startService(intent);
+            }
           }
           return true;
         });

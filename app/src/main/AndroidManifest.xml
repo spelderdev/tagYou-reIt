@@ -2,9 +2,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
   package="com.spelder.tagyourit">
 
-  <uses-permission android:name="android.permission.INTERNET"/>
-  <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
-  <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
+  <uses-permission android:name="android.permission.INTERNET" />
+  <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+  <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
 
   <application
     android:allowBackup="true"
@@ -19,37 +19,37 @@
       android:label="@string/app_name"
       android:theme="@style/AppTheme.NoActionBar">
       <intent-filter>
-        <action android:name="android.intent.action.MAIN"/>
-        <action android:name="android.intent.action.VIEW"/>
+        <action android:name="android.intent.action.MAIN" />
+        <action android:name="android.intent.action.VIEW" />
 
-        <category android:name="android.intent.category.LAUNCHER"/>
+        <category android:name="android.intent.category.LAUNCHER" />
       </intent-filter>
       <intent-filter>
-        <action android:name="android.intent.action.VIEW"/>
+        <action android:name="android.intent.action.VIEW" />
 
-        <category android:name="android.intent.category.DEFAULT"/>
-        <category android:name="android.intent.category.BROWSABLE"/>
+        <category android:name="android.intent.category.DEFAULT" />
+        <category android:name="android.intent.category.BROWSABLE" />
 
         <data
           android:host="www.barbershoptags.com"
           android:pathPrefix="/tag"
-          android:scheme="https"/>
+          android:scheme="https" />
       </intent-filter>
       <intent-filter>
-        <action android:name="android.intent.action.VIEW"/>
+        <action android:name="android.intent.action.VIEW" />
 
-        <category android:name="android.intent.category.DEFAULT"/>
-        <category android:name="android.intent.category.BROWSABLE"/>
+        <category android:name="android.intent.category.DEFAULT" />
+        <category android:name="android.intent.category.BROWSABLE" />
 
         <data
           android:host="www.barbershoptags.com"
           android:pathPrefix="/tag"
-          android:scheme="http"/>
+          android:scheme="http" />
       </intent-filter>
 
       <meta-data
         android:name="android.app.default_searchable"
-        android:value=".ui.SearchResultsActivity"/>
+        android:value=".ui.SearchResultsActivity" />
     </activity>
 
     <activity
@@ -64,18 +64,38 @@
       android:label="@string/app_name"
       android:theme="@style/AppTheme.DarkNav" />
 
-    <service android:name="com.spelder.tagyourit.music.MusicService">
+    <service
+      android:name="com.spelder.tagyourit.music.MusicService"
+      android:exported="false">
       <intent-filter>
-        <action android:name="android.intent.action.MEDIA_BUTTON"/>
-        <action android:name="android.media.AUDIO_BECOMING_NOISY"/>
-        <action android:name="android.media.browse.MediaBrowserService"/>
+        <action android:name="android.intent.action.MEDIA_BUTTON" />
+        <action android:name="android.media.AUDIO_BECOMING_NOISY" />
+        <action android:name="android.media.browse.MediaBrowserService" />
       </intent-filter>
     </service>
 
+    <service
+      android:name="com.spelder.tagyourit.networking.DownloadFavoritesService"
+      android:exported="false" />
+
+    <receiver
+      android:name="com.spelder.tagyourit.networking.CancelDownloadReceiver"
+      android:enabled="true"
+      android:exported="false" />
+
+    <service
+      android:name="com.spelder.tagyourit.networking.RemoveFavoritesDownloadService"
+      android:exported="false" />
+
+    <receiver
+      android:name="com.spelder.tagyourit.networking.CancelRemoveReceiver"
+      android:enabled="true"
+      android:exported="false" />
+
     <receiver android:name="androidx.media.session.MediaButtonReceiver">
       <intent-filter>
-        <action android:name="android.intent.action.MEDIA_BUTTON"/>
-        <action android:name="android.media.AUDIO_BECOMING_NOISY"/>
+        <action android:name="android.intent.action.MEDIA_BUTTON" />
+        <action android:name="android.media.AUDIO_BECOMING_NOISY" />
       </intent-filter>
     </receiver>
 
