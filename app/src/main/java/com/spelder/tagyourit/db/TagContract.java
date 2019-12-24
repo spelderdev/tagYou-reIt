@@ -261,18 +261,21 @@ public class TagContract {
     static final String SQL_DELETE_ENTRIES = "DROP TABLE IF EXISTS " + TABLE_NAME;
   }
 
-  static class FavoritesEntry implements BaseColumns {
-    static final String TABLE_NAME = "favorites";
+  static class ListEntriesEntry implements BaseColumns {
+    static final String TABLE_NAME = "list_entries";
 
-    static final String COLUMN_NAME_TAG_ID = "favorite_tag_id";
+    static final String COLUMN_NAME_TAG_ID = "tag_id";
+
+    static final String COLUMN_NAME_LIST_ID = "list_id";
 
     static final String SQL_CREATE_ENTRIES =
         "CREATE TABLE "
             + TABLE_NAME
             + " ("
-            + _ID
-            + " INTEGER PRIMARY KEY,"
             + COLUMN_NAME_TAG_ID
+            + TEXT_TYPE
+            + COMMA_SEP
+            + COLUMN_NAME_LIST_ID
             + TEXT_TYPE
             + COMMA_SEP
             + FOREIGN_KEY_OPEN
@@ -282,9 +285,67 @@ public class TagContract {
             + "("
             + TagEntry._ID
             + ")"
+            + COMMA_SEP
+            + FOREIGN_KEY_OPEN
+            + COLUMN_NAME_LIST_ID
+            + FOREIGN_KEY_CLOSE
+            + ListPropertiesEntry.TABLE_NAME
+            + "("
+            + ListPropertiesEntry._ID
+            + ")"
+            + COMMA_SEP
+            + "PRIMARY KEY ("
+            + COLUMN_NAME_TAG_ID
+            + COMMA_SEP
+            + COLUMN_NAME_LIST_ID
+            + ")"
             + " )";
 
     static final String SQL_DELETE_ENTRIES = "DROP TABLE IF EXISTS " + TABLE_NAME;
+  }
+
+  static class ListPropertiesEntry implements BaseColumns {
+    static final String TABLE_NAME = "list_properties";
+
+    static final String COLUMN_NAME_NAME = "name";
+
+    static final String COLUMN_NAME_USER_CREATED = "user_created";
+
+    static final String COLUMN_NAME_ICON = "icon";
+
+    static final String COLUMN_NAME_COLOR = "color";
+
+    static final String COLUMN_NAME_DOWNLOAD_SHEET = "download_sheet";
+
+    static final String COLUMN_NAME_DOWNLOAD_TRACK = "download_track";
+
+    static final String SQL_CREATE_ENTRIES =
+        "CREATE TABLE "
+            + TABLE_NAME
+            + " ("
+            + _ID
+            + " INTEGER PRIMARY KEY,"
+            + COLUMN_NAME_NAME
+            + TEXT_TYPE
+            + COMMA_SEP
+            + COLUMN_NAME_USER_CREATED
+            + INT_TYPE
+            + COMMA_SEP
+            + COLUMN_NAME_ICON
+            + INT_TYPE
+            + COMMA_SEP
+            + COLUMN_NAME_COLOR
+            + INT_TYPE
+            + COMMA_SEP
+            + COLUMN_NAME_DOWNLOAD_SHEET
+            + INT_TYPE
+            + COMMA_SEP
+            + COLUMN_NAME_DOWNLOAD_TRACK
+            + INT_TYPE
+            + " )";
+
+    static final String SQL_DELETE_ENTRIES = "DROP TABLE IF EXISTS " + TABLE_NAME;
+    static final String FAVORITE_NAME = "Favorites";
   }
 
   static class RatingEntry implements BaseColumns {

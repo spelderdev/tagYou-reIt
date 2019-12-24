@@ -7,8 +7,9 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.preference.PreferenceManager;
 import android.util.Log;
-import com.spelder.tagyourit.db.TagContract.FavoritesEntry;
 import com.spelder.tagyourit.db.TagContract.LearningTracksEntry;
+import com.spelder.tagyourit.db.TagContract.ListEntriesEntry;
+import com.spelder.tagyourit.db.TagContract.ListPropertiesEntry;
 import com.spelder.tagyourit.db.TagContract.RatingEntry;
 import com.spelder.tagyourit.db.TagContract.TagEntry;
 import com.spelder.tagyourit.db.TagContract.VideoEntry;
@@ -268,11 +269,44 @@ public class TagDb {
     SQLiteDatabase db = TagDbHelper.getInstance(context).getWritableDatabase();
     // Create a new map of values, where column names are the keys
     ContentValues values = new ContentValues();
-    values.put(FavoritesEntry.COLUMN_NAME_TAG_ID, tagId);
+    values.put(ListEntriesEntry.COLUMN_NAME_TAG_ID, tagId);
+    values.put(
+        ListEntriesEntry.COLUMN_NAME_LIST_ID, getListId(ListPropertiesEntry.FAVORITE_NAME, db));
     // Insert the new row, returning the primary key value of the new row
-    long newRowId = db.insert(FavoritesEntry.TABLE_NAME, null, values);
-    Log.d("FavoriteDb,", "tagId: " + newRowId);
+    long newRowId = db.insert(ListEntriesEntry.TABLE_NAME, null, values);
+    Log.d("ListDb,", "tagId: " + newRowId);
     db.close();
+  }
+
+  private String getListId(String listName) {
+    SQLiteDatabase db = TagDbHelper.getInstance(context).getWritableDatabase();
+    String id = getListId(listName, db);
+    db.close();
+
+    return id;
+  }
+
+  private String getListId(String listName, SQLiteDatabase db) {
+    String sql =
+        "SELECT "
+            + ListPropertiesEntry._ID
+            + " FROM "
+            + ListPropertiesEntry.TABLE_NAME
+            + " WHERE "
+            + ListPropertiesEntry.COLUMN_NAME_NAME
+            + " = '"
+            + listName
+            + "'";
+
+    Cursor c = db.rawQuery(sql, new String[] {});
+    if (c.getCount() == 0) {
+      return null;
+    }
+    c.moveToFirst();
+    String id = c.getString(c.getColumnIndex(ListPropertiesEntry._ID));
+    c.close();
+
+    return id;
   }
 
   public void deleteFavorite(Tag tag) {
@@ -283,11 +317,16 @@ public class TagDb {
     // Gets the data repository in write mode
     SQLiteDatabase db = TagDbHelper.getInstance(context).getWritableDatabase();
     // Define 'where' part of query.
-    String selection = FavoritesEntry.COLUMN_NAME_TAG_ID + " LIKE ?";
+    String selection =
+        ListEntriesEntry.COLUMN_NAME_TAG_ID
+            + " LIKE ? AND "
+            + ListEntriesEntry.COLUMN_NAME_LIST_ID
+            + " = "
+            + getListId(ListPropertiesEntry.FAVORITE_NAME, db);
     // Specify arguments in placeholder order.
     String[] selectionArgs = {"" + tag.getDbId()};
     // Issue SQL statement.
-    int deletedRows = db.delete(FavoritesEntry.TABLE_NAME, selection, selectionArgs);
+    int deletedRows = db.delete(ListEntriesEntry.TABLE_NAME, selection, selectionArgs);
     Log.d("FavoriteDB", "Number of Deleted rows: " + deletedRows);
 
     // Define 'where' part of query.
@@ -323,21 +362,25 @@ public class TagDb {
         "SELECT * FROM "
             + TagEntry.TABLE_NAME
             + ", "
-            + FavoritesEntry.TABLE_NAME
+            + ListEntriesEntry.TABLE_NAME
             + " WHERE "
             + TagEntry.TABLE_NAME
             + "."
             + TagEntry._ID
             + " = "
-            + FavoritesEntry.TABLE_NAME
+            + ListEntriesEntry.TABLE_NAME
             + "."
-            + FavoritesEntry.COLUMN_NAME_TAG_ID
+            + ListEntriesEntry.COLUMN_NAME_TAG_ID
             + " AND "
             + TagEntry.TABLE_NAME
             + "."
             + TagEntry.COLUMN_NAME_ID
             + " = "
-            + tag.getId();
+            + tag.getId()
+            + " AND "
+            + ListEntriesEntry.COLUMN_NAME_LIST_ID
+            + " = "
+            + getListId(ListPropertiesEntry.FAVORITE_NAME, db);
     Cursor c = db.rawQuery(sql, new String[] {});
     Long dbId = null;
     if (c.getCount() > 0) {
@@ -363,15 +406,19 @@ public class TagDb {
         "SELECT * FROM "
             + TagEntry.TABLE_NAME
             + ", "
-            + FavoritesEntry.TABLE_NAME
+            + ListEntriesEntry.TABLE_NAME
             + " WHERE "
             + TagEntry.TABLE_NAME
             + "."
             + TagEntry._ID
             + " = "
-            + FavoritesEntry.TABLE_NAME
+            + ListEntriesEntry.TABLE_NAME
             + "."
-            + FavoritesEntry.COLUMN_NAME_TAG_ID
+            + ListEntriesEntry.COLUMN_NAME_TAG_ID
+            + " AND "
+            + ListEntriesEntry.COLUMN_NAME_LIST_ID
+            + " = "
+            + getListId(ListPropertiesEntry.FAVORITE_NAME)
             + filter.getDbFilter()
             + " ORDER BY "
             + getSortColumnName(sortBy);
@@ -440,15 +487,19 @@ public class TagDb {
         "SELECT * FROM "
             + TagEntry.TABLE_NAME
             + ", "
-            + FavoritesEntry.TABLE_NAME
+            + ListEntriesEntry.TABLE_NAME
             + " WHERE "
             + TagEntry.TABLE_NAME
             + "."
             + TagEntry._ID
             + " = "
-            + FavoritesEntry.TABLE_NAME
+            + ListEntriesEntry.TABLE_NAME
             + "."
-            + FavoritesEntry.COLUMN_NAME_TAG_ID
+            + ListEntriesEntry.COLUMN_NAME_TAG_ID
+            + " AND "
+            + ListEntriesEntry.COLUMN_NAME_LIST_ID
+            + " = "
+            + getListId(ListPropertiesEntry.FAVORITE_NAME)
             + " ORDER BY "
             + TagEntry.COLUMN_NAME_TITLE;
     return getFavorites(sql);
@@ -528,8 +579,13 @@ public class TagDb {
 
   public boolean hasFavorites() {
     SQLiteDatabase db = TagDbHelper.getInstance(context).getWritableDatabase();
-    // SELECT COUNT(column_name) FROM table_name;
-    String sql = "SELECT COUNT(*) AS favCount FROM " + FavoritesEntry.TABLE_NAME;
+    String sql =
+        "SELECT COUNT(*) AS favCount FROM "
+            + ListEntriesEntry.TABLE_NAME
+            + " WHERE "
+            + ListEntriesEntry.COLUMN_NAME_LIST_ID
+            + " = "
+            + getListId(ListPropertiesEntry.FAVORITE_NAME, db);
     Cursor c = db.rawQuery(sql, new String[] {});
     if (c.getCount() == 0) {
       return false;
