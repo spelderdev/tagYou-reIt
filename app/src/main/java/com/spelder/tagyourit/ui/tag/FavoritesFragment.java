@@ -1,5 +1,7 @@
 package com.spelder.tagyourit.ui.tag;
 
+import static com.spelder.tagyourit.ui.FragmentSwitcher.PAR_KEY;
+
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -12,6 +14,7 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.ListFragment;
 import com.spelder.tagyourit.R;
 import com.spelder.tagyourit.db.TagDb;
+import com.spelder.tagyourit.model.ListProperties;
 import com.spelder.tagyourit.model.Tag;
 import com.spelder.tagyourit.networking.api.SortBuilder;
 import com.spelder.tagyourit.networking.api.filter.FilterBuilder;
@@ -25,6 +28,7 @@ public class FavoritesFragment extends ListFragment
   private TagListAdapter listAdapter;
   private FilterBar filterBar;
   private FilterBar filterBarEmpty;
+  private ListProperties listProperties;
 
   @Override
   public void onCreate(Bundle savedInstanceState) {
@@ -54,7 +58,10 @@ public class FavoritesFragment extends ListFragment
       @NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
     TagDb db = new TagDb(getActivity());
     SortBuilder sort = new SortBuilder(getContext());
-    List<Tag> tags = db.getFavorites(new FilterBuilder(getActivity()).build(), sort.build());
+    listProperties = retrieveListProperties();
+    List<Tag> tags =
+        db.getFavorites(
+            new FilterBuilder(getActivity()).build(), sort.build(), listProperties.getDbId());
     listAdapter.clearTags();
     listAdapter.addTags(tags);
     listAdapter.notifyDataSetChanged();
@@ -86,6 +93,15 @@ public class FavoritesFragment extends ListFragment
     super.onActivityCreated(savedInstanceState);
   }
 
+  private ListProperties retrieveListProperties() {
+    Bundle bundle = getArguments();
+    if (bundle == null) {
+      return null;
+    }
+
+    return bundle.getParcelable(PAR_KEY);
+  }
+
   @Override
   public void onListItemClick(@NonNull ListView l, @NonNull View v, int position, long id) {
     Tag clickedTag = (Tag) getListView().getItemAtPosition(position);
@@ -105,10 +121,16 @@ public class FavoritesFragment extends ListFragment
       Log.d("TagListFragment", "filterChanged");
       TagDb db = new TagDb(getActivity());
       SortBuilder sort = new SortBuilder(getContext());
-      List<Tag> tags = db.getFavorites(new FilterBuilder(getActivity()).build(), sort.build());
+      List<Tag> tags =
+          db.getFavorites(
+              new FilterBuilder(getActivity()).build(), sort.build(), listProperties.getDbId());
       listAdapter.clearTags();
       listAdapter.addTags(tags);
       listAdapter.notifyDataSetChanged();
     }
+  }
+
+  public ListProperties getListProperties() {
+    return listProperties;
   }
 }

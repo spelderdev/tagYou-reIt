@@ -13,6 +13,8 @@ import com.spelder.tagyourit.db.TagContract.ListPropertiesEntry;
 import com.spelder.tagyourit.db.TagContract.RatingEntry;
 import com.spelder.tagyourit.db.TagContract.TagEntry;
 import com.spelder.tagyourit.db.TagContract.VideoEntry;
+import com.spelder.tagyourit.model.ListIcon;
+import com.spelder.tagyourit.model.ListProperties;
 import com.spelder.tagyourit.model.Tag;
 import com.spelder.tagyourit.model.TrackComponents;
 import com.spelder.tagyourit.model.VideoComponents;
@@ -278,15 +280,15 @@ public class TagDb {
     db.close();
   }
 
-  private String getListId(String listName) {
+  private Long getListId(String listName) {
     SQLiteDatabase db = TagDbHelper.getInstance(context).getWritableDatabase();
-    String id = getListId(listName, db);
+    Long id = getListId(listName, db);
     db.close();
 
     return id;
   }
 
-  private String getListId(String listName, SQLiteDatabase db) {
+  private Long getListId(String listName, SQLiteDatabase db) {
     String sql =
         "SELECT "
             + ListPropertiesEntry._ID
@@ -303,10 +305,98 @@ public class TagDb {
       return null;
     }
     c.moveToFirst();
-    String id = c.getString(c.getColumnIndex(ListPropertiesEntry._ID));
+    Long id = c.getLong(c.getColumnIndex(ListPropertiesEntry._ID));
     c.close();
 
     return id;
+  }
+
+  public void updateListProperties(ListProperties properties) {
+    SQLiteDatabase db = TagDbHelper.getInstance(context).getWritableDatabase();
+
+    String strFilter = ListPropertiesEntry._ID + "=" + properties.getDbId();
+    db.update(TagEntry.TABLE_NAME, convertToContentValues(properties), strFilter, null);
+    Log.d("TagDb", "Updated listId: " + properties.getDbId());
+
+    db.close();
+  }
+
+  public long addListProperties(ListProperties properties) {
+    SQLiteDatabase db = TagDbHelper.getInstance(context).getWritableDatabase();
+
+    long newRowId =
+        db.insert(ListPropertiesEntry.TABLE_NAME, null, convertToContentValues(properties));
+    Log.d("TagDb,", "listId: " + newRowId);
+    db.close();
+
+    return newRowId;
+  }
+
+  private ContentValues convertToContentValues(ListProperties properties) {
+    ContentValues values = new ContentValues();
+    values.put(ListPropertiesEntry.COLUMN_NAME_NAME, properties.getName());
+    values.put(ListPropertiesEntry.COLUMN_NAME_USER_CREATED, properties.isUserCreated() ? 1 : 0);
+    values.put(
+        ListPropertiesEntry.COLUMN_NAME_DOWNLOAD_SHEET, properties.isDownloadSheet() ? 1 : 0);
+    values.put(
+        ListPropertiesEntry.COLUMN_NAME_DOWNLOAD_TRACK, properties.isDownloadTrack() ? 1 : 0);
+    values.put(ListPropertiesEntry.COLUMN_NAME_ICON, properties.getIcon().getDbId());
+
+    return values;
+  }
+
+  public List<ListProperties> getListProperties() {
+    ArrayList<ListProperties> listProperties = new ArrayList<>();
+    SQLiteDatabase db = TagDbHelper.getInstance(context).getWritableDatabase();
+
+    String sql = "SELECT * FROM " + ListPropertiesEntry.TABLE_NAME;
+
+    Cursor c = db.rawQuery(sql, new String[] {});
+    if (c.getCount() == 0) {
+      return listProperties;
+    }
+    c.moveToFirst();
+
+    do {
+      ListProperties properties = new ListProperties();
+      properties.setDbId(c.getLong(c.getColumnIndex(ListPropertiesEntry._ID)));
+      properties.setName(c.getString(c.getColumnIndex(ListPropertiesEntry.COLUMN_NAME_NAME)));
+      properties.setUserCreated(
+          c.getInt(c.getColumnIndex(ListPropertiesEntry.COLUMN_NAME_USER_CREATED)) == 1);
+      properties.setDownloadSheet(
+          c.getInt(c.getColumnIndex(ListPropertiesEntry.COLUMN_NAME_DOWNLOAD_SHEET)) == 1);
+      properties.setDownloadTrack(
+          c.getInt(c.getColumnIndex(ListPropertiesEntry.COLUMN_NAME_DOWNLOAD_TRACK)) == 1);
+      properties.setIcon(
+          ListIcon.fromDbId(c.getInt(c.getColumnIndex(ListPropertiesEntry.COLUMN_NAME_ICON))));
+      properties.setListSize(getListSize(properties.getDbId(), db));
+
+      listProperties.add(properties);
+      Log.d("TagDb", "" + c.getInt(c.getColumnIndex(ListPropertiesEntry.COLUMN_NAME_NAME)));
+    } while (c.moveToNext());
+
+    c.close();
+    db.close();
+    return listProperties;
+  }
+
+  private int getListSize(long listId, SQLiteDatabase db) {
+    String sql =
+        "SELECT COUNT(*) AS tagCount FROM "
+            + ListEntriesEntry.TABLE_NAME
+            + " WHERE "
+            + ListEntriesEntry.COLUMN_NAME_LIST_ID
+            + " = "
+            + listId;
+    Cursor c = db.rawQuery(sql, new String[] {});
+    if (c.getCount() == 0) {
+      return 0;
+    }
+    c.moveToFirst();
+    int i = c.getInt(0);
+    c.close();
+
+    return i;
   }
 
   public void deleteFavorite(Tag tag) {
@@ -387,6 +477,7 @@ public class TagDb {
       c.moveToFirst();
       dbId = c.getLong(c.getColumnIndex(TagEntry.COLUMN_NAME_ID));
     }
+
     c.close();
     db.close();
     return dbId;
@@ -399,7 +490,7 @@ public class TagDb {
     }
   }
 
-  public List<Tag> getFavorites(FilterBy filter, SortBy sortBy) {
+  public List<Tag> getFavorites(FilterBy filter, SortBy sortBy, Long listDbId) {
     Log.d("TagDb", filter.getDbFilter());
 
     String sql =
@@ -418,7 +509,7 @@ public class TagDb {
             + " AND "
             + ListEntriesEntry.COLUMN_NAME_LIST_ID
             + " = "
-            + getListId(ListPropertiesEntry.FAVORITE_NAME)
+            + listDbId
             + filter.getDbFilter()
             + " ORDER BY "
             + getSortColumnName(sortBy);
@@ -579,22 +670,13 @@ public class TagDb {
 
   public boolean hasFavorites() {
     SQLiteDatabase db = TagDbHelper.getInstance(context).getWritableDatabase();
-    String sql =
-        "SELECT COUNT(*) AS favCount FROM "
-            + ListEntriesEntry.TABLE_NAME
-            + " WHERE "
-            + ListEntriesEntry.COLUMN_NAME_LIST_ID
-            + " = "
-            + getListId(ListPropertiesEntry.FAVORITE_NAME, db);
-    Cursor c = db.rawQuery(sql, new String[] {});
-    if (c.getCount() == 0) {
+
+    Long id = getListId(ListPropertiesEntry.FAVORITE_NAME, db);
+    if (id == null) {
       return false;
     }
-    c.moveToFirst();
-    int i = c.getInt(0);
-    c.close();
-    db.close();
-    return i > 0;
+
+    return getListSize(id, db) > 0;
   }
 
   public void insertUserRating(long tagId, double rating) {

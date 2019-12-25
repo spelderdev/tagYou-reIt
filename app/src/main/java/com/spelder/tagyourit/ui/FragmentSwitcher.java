@@ -11,12 +11,14 @@ import androidx.fragment.app.FragmentManager;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.spelder.tagyourit.R;
 import com.spelder.tagyourit.db.TagDb;
+import com.spelder.tagyourit.model.ListProperties;
 import com.spelder.tagyourit.model.Tag;
 import com.spelder.tagyourit.ui.pitch.PitchPipeFragment;
 import com.spelder.tagyourit.ui.settings.PreferencesFragment;
 import com.spelder.tagyourit.ui.settings.PrivacyPolicyFragment;
 import com.spelder.tagyourit.ui.tag.DisplayTag;
 import com.spelder.tagyourit.ui.tag.FavoritesFragment;
+import com.spelder.tagyourit.ui.tag.ListFragment;
 import com.spelder.tagyourit.ui.tag.SearchListFragment;
 import com.spelder.tagyourit.ui.tag.TagListFragment;
 
@@ -25,44 +27,27 @@ import com.spelder.tagyourit.ui.tag.TagListFragment;
  * correct fragments.
  */
 public class FragmentSwitcher {
-  public static final String DOWNLOAD_KEY = "com.spelder.tagyourit.ui.par.download";
-
   public static final String TAG_KEY = "com.spelder.tagyourit.ui.par.tag";
-
   public static final String PAR_KEY = "com.spelder.tagyourit.ui.par";
-
   private static final int FRAGMENT_SETTINGS = 3;
-
   private static final int FRAGMENT_BROWSE = 0;
-
-  private static final int FRAGMENT_FAVORITES = 1;
-
+  private static final int FRAGMENT_LIST = 1;
   private static final int FRAGMENT_DISPLAY_TAG = 4;
-
   private static final int FRAGMENT_SEARCH = 5;
-
   private static final int FRAGMENT_PITCH_PIPE = 6;
-
   private static final int FRAGMENT_PRIVACY_POLICY = 7;
+  private static final int FRAGMENT_TAG_LIST = 8;
 
   private final FragmentActivity activity;
-
   private Fragment fragmentBrowse;
-
-  private Fragment fragmentFavorites;
-
+  private Fragment fragmentList;
   private Fragment fragmentPitchPipe;
-
   private PreferencesFragment fragmentSettings;
-
   private Fragment fragmentDisplay;
-
   private Fragment fragmentSearch;
-
   private Fragment fragmentPrivacyPolicy;
-
+  private Fragment fragmentTagList;
   private int currentFragment;
-
   private int baseFragment = FRAGMENT_BROWSE;
 
   FragmentSwitcher(FragmentActivity activity) {
@@ -88,11 +73,11 @@ public class FragmentSwitcher {
         }
         frag = fragmentBrowse;
         break;
-      case FRAGMENT_FAVORITES:
-        if (fragmentFavorites == null) {
-          fragmentFavorites = new FavoritesFragment();
+      case FRAGMENT_LIST:
+        if (fragmentList == null) {
+          fragmentList = new ListFragment();
         }
-        frag = fragmentFavorites;
+        frag = fragmentList;
         break;
       case FRAGMENT_PITCH_PIPE:
         if (fragmentPitchPipe == null) {
@@ -122,14 +107,18 @@ public class FragmentSwitcher {
         fragmentDisplay = new DisplayTag();
         frag = fragmentDisplay;
         break;
+      case FRAGMENT_TAG_LIST:
+        fragmentTagList = new FavoritesFragment();
+        frag = fragmentTagList;
+        break;
     }
     return frag;
   }
 
   void displayNavigationSelectedFragment(int id) {
     if (id == R.id.nav_favorite) {
-      baseFragment = FRAGMENT_FAVORITES;
-      displayFragment(FRAGMENT_FAVORITES);
+      baseFragment = FRAGMENT_LIST;
+      displayFragment(FRAGMENT_LIST);
     } else if (id == R.id.nav_settings) {
       baseFragment = FRAGMENT_SETTINGS;
       displayFragment(FRAGMENT_SETTINGS);
@@ -184,12 +173,14 @@ public class FragmentSwitcher {
       return FRAGMENT_SEARCH;
     } else if (fragment instanceof TagListFragment) {
       return FRAGMENT_BROWSE;
-    } else if (fragment instanceof FavoritesFragment) {
-      return FRAGMENT_FAVORITES;
+    } else if (fragment instanceof ListFragment) {
+      return FRAGMENT_LIST;
     } else if (fragment instanceof PitchPipeFragment) {
       return FRAGMENT_PITCH_PIPE;
     } else if (fragment instanceof PrivacyPolicyFragment) {
       return FRAGMENT_PRIVACY_POLICY;
+    } else if (fragment instanceof FavoritesFragment) {
+      return FRAGMENT_TAG_LIST;
     }
     return baseFragment;
   }
@@ -203,6 +194,23 @@ public class FragmentSwitcher {
 
   public void displayPrivacyPolicy() {
     displayFragmentBackStack(FRAGMENT_PRIVACY_POLICY);
+  }
+
+  public void displayList(ListProperties clickedList) {
+    Bundle bundles = new Bundle();
+    if (clickedList != null) {
+      bundles.putParcelable(PAR_KEY, clickedList);
+    }
+    // add the bundle as an argument
+    Fragment displayListFragment = getFragment(FRAGMENT_TAG_LIST);
+    displayListFragment.setArguments(bundles);
+    currentFragment = FRAGMENT_TAG_LIST;
+    activity
+        .getSupportFragmentManager()
+        .beginTransaction()
+        .replace(R.id.fragment_container, displayListFragment, Integer.toString(getFragmentCount()))
+        .addToBackStack("" + currentFragment)
+        .commit();
   }
 
   public void displayTag(Tag clickedTag) {
@@ -251,8 +259,8 @@ public class FragmentSwitcher {
 
   boolean isSortVisible() {
     return currentFragment == FRAGMENT_BROWSE
-        || currentFragment == FRAGMENT_FAVORITES
-        || currentFragment == FRAGMENT_SEARCH;
+        || currentFragment == FRAGMENT_SEARCH
+        || currentFragment == FRAGMENT_TAG_LIST;
   }
 
   int getCurrentNavigationId() {
@@ -263,7 +271,7 @@ public class FragmentSwitcher {
     switch (fragmentId) {
       case FRAGMENT_BROWSE:
         return R.id.nav_browse;
-      case FRAGMENT_FAVORITES:
+      case FRAGMENT_LIST:
         return R.id.nav_favorite;
       case FRAGMENT_SETTINGS:
         return R.id.nav_settings;
@@ -281,8 +289,8 @@ public class FragmentSwitcher {
     Log.d("Title", "" + id);
     if (id == FRAGMENT_BROWSE) {
       return "Discover";
-    } else if (id == FRAGMENT_FAVORITES) {
-      return "Favorites";
+    } else if (id == FRAGMENT_LIST) {
+      return "Lists";
     } else if (id == FRAGMENT_PITCH_PIPE) {
       return "Pitch Pipe";
     } else if (id == FRAGMENT_PRIVACY_POLICY) {
@@ -292,9 +300,15 @@ public class FragmentSwitcher {
     } else if (id == FRAGMENT_SETTINGS) {
       return "Settings";
     } else if (id == FRAGMENT_DISPLAY_TAG) {
-      return ((DisplayTag) fragmentDisplay).getDisplayedTag().getTitle();
+      return getDisplayedTag().getTitle();
+    } else if (id == FRAGMENT_TAG_LIST) {
+      return getDisplayedList().getName();
     }
     return "";
+  }
+
+  ListProperties getDisplayedList() {
+    return ((FavoritesFragment) fragmentTagList).getListProperties();
   }
 
   Tag getDisplayedTag() {
@@ -308,7 +322,7 @@ public class FragmentSwitcher {
   int getBaseFragmentId() {
     TagDb db = new TagDb(activity);
     if (db.hasFavorites()) {
-      return FRAGMENT_FAVORITES;
+      return FRAGMENT_LIST;
     }
 
     return FRAGMENT_BROWSE;
