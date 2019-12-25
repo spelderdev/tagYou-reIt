@@ -50,6 +50,7 @@ public class TagDbHelper extends SQLiteOpenHelper {
     db.execSQL(TagContract.TagEntry.SQL_CREATE_ENTRIES);
     db.execSQL(TagContract.LearningTracksEntry.SQL_CREATE_ENTRIES);
     db.execSQL(TagContract.ListPropertiesEntry.SQL_CREATE_ENTRIES);
+    db.execSQL(TagContract.ListPropertiesEntry.SQL_CREATE_DEFAULT_ENTRIES);
     db.execSQL(TagContract.ListEntriesEntry.SQL_CREATE_ENTRIES);
     db.execSQL(TagContract.RatingEntry.SQL_CREATE_ENTRIES);
     db.execSQL(TagContract.VideoEntry.SQL_CREATE_ENTRIES);

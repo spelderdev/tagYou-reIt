@@ -44,6 +44,8 @@ import com.spelder.tagyourit.music.model.Speed;
 import com.spelder.tagyourit.networking.TagListRetriever;
 import com.spelder.tagyourit.networking.UpdateTagTask;
 import com.spelder.tagyourit.networking.api.filter.FilterBuilder;
+import com.spelder.tagyourit.ui.lists.AddListActivity;
+import com.spelder.tagyourit.ui.lists.UpdateListActivity;
 import com.spelder.tagyourit.ui.music.MusicPlayerActivity;
 import com.spelder.tagyourit.ui.settings.SortBottomSheet;
 import com.spelder.tagyourit.ui.video.VideoPlayerActivity;
@@ -60,33 +62,20 @@ public class MainActivity extends AppCompatActivity
         OnQueryTextListener,
         SharedPreferences.OnSharedPreferenceChangeListener {
   private static final String TAG = MainActivity.class.getName();
-
   public static String currentQuery = "";
 
   private FragmentSwitcher manager;
-
   private FilterBuilder filterBuilder;
-
   private Activity actionBar;
-
   private SearchView searchView;
-
   private View trackToolbar;
-
   private TextView trackTitle;
-
   private TextView trackPart;
-
   private ImageView trackPlayPause;
-
   private View trackLoading;
-
   private MusicService musicSrv;
-
   private Intent playIntent;
-
   private boolean musicBound = false;
-
   private SortBottomSheet sortBottomSheet;
 
   private final MusicNotifier musicNotifier =
@@ -357,6 +346,9 @@ public class MainActivity extends AppCompatActivity
     menu.findItem(R.id.action_menu).setVisible(manager.isMenuVisible());
     menu.findItem(R.id.action_search).setVisible(manager.isSearchVisible());
     menu.findItem(R.id.action_sort).setVisible(manager.isSortVisible());
+    menu.findItem(R.id.action_add_list).setVisible(manager.isAddListVisible());
+    menu.findItem(R.id.action_delete_list).setVisible(manager.isDeleteListVisible());
+    menu.findItem(R.id.action_list_options).setVisible(manager.isListOptionsVisible());
 
     searchView = (SearchView) menu.findItem(R.id.action_search).getActionView();
     searchView.setOnQueryTextListener(this);
@@ -404,6 +396,17 @@ public class MainActivity extends AppCompatActivity
 
       case R.id.action_sort:
         toggleSort();
+        return true;
+
+      case R.id.action_add_list:
+        openAddList();
+        return true;
+
+      case R.id.action_delete_list:
+        return true;
+
+      case R.id.action_list_options:
+        openUpdateList();
         return true;
 
       case android.R.id.home:
@@ -496,6 +499,18 @@ public class MainActivity extends AppCompatActivity
     Intent intent = new Intent(this, VideoPlayerActivity.class);
     intent.putExtra(VIDEO_ID_KEY, currentVideoId);
     intent.putParcelableArrayListExtra(VIDEOS_KEY, videos);
+    startActivity(intent);
+  }
+
+  private void openAddList() {
+    openActivityFromBottom();
+    Intent intent = new Intent(this, AddListActivity.class);
+    startActivity(intent);
+  }
+
+  private void openUpdateList() {
+    openActivityFromBottom();
+    Intent intent = new Intent(this, UpdateListActivity.class);
     startActivity(intent);
   }
 

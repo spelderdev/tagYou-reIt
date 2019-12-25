@@ -65,7 +65,7 @@ public class TestFilter {
     TestUtility.favoriteTag(tagTitle2);
     TestUtility.favoriteTag(tagTitle3 + " Ethan");
 
-    onView(withId(R.id.nav_favorite)).perform(click());
+    onView(withId(R.id.nav_lists)).perform(click());
 
     onView(allOf(withId(R.id.filter_parts), isDisplayed())).perform(scrollTo(), click());
 

@@ -1,4 +1,4 @@
-package com.spelder.tagyourit.ui.tag;
+package com.spelder.tagyourit.ui.lists;
 
 import android.content.Context;
 import android.view.LayoutInflater;

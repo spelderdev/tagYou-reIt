@@ -18,7 +18,7 @@ import com.spelder.tagyourit.ui.settings.PreferencesFragment;
 import com.spelder.tagyourit.ui.settings.PrivacyPolicyFragment;
 import com.spelder.tagyourit.ui.tag.DisplayTag;
 import com.spelder.tagyourit.ui.tag.FavoritesFragment;
-import com.spelder.tagyourit.ui.tag.ListFragment;
+import com.spelder.tagyourit.ui.lists.ListFragment;
 import com.spelder.tagyourit.ui.tag.SearchListFragment;
 import com.spelder.tagyourit.ui.tag.TagListFragment;
 
@@ -116,7 +116,7 @@ public class FragmentSwitcher {
   }
 
   void displayNavigationSelectedFragment(int id) {
-    if (id == R.id.nav_favorite) {
+    if (id == R.id.nav_lists) {
       baseFragment = FRAGMENT_LIST;
       displayFragment(FRAGMENT_LIST);
     } else if (id == R.id.nav_settings) {
@@ -263,6 +263,18 @@ public class FragmentSwitcher {
         || currentFragment == FRAGMENT_TAG_LIST;
   }
 
+  boolean isAddListVisible() {
+    return currentFragment == FRAGMENT_LIST;
+  }
+
+  boolean isDeleteListVisible() {
+    return currentFragment == FRAGMENT_TAG_LIST && getDisplayedList().isUserCreated();
+  }
+
+  boolean isListOptionsVisible() {
+    return currentFragment == FRAGMENT_TAG_LIST;
+  }
+
   int getCurrentNavigationId() {
     return getNavigationId(currentFragment);
   }
@@ -272,7 +284,7 @@ public class FragmentSwitcher {
       case FRAGMENT_BROWSE:
         return R.id.nav_browse;
       case FRAGMENT_LIST:
-        return R.id.nav_favorite;
+        return R.id.nav_lists;
       case FRAGMENT_SETTINGS:
         return R.id.nav_settings;
       case FRAGMENT_PITCH_PIPE:
@@ -307,7 +319,7 @@ public class FragmentSwitcher {
     return "";
   }
 
-  ListProperties getDisplayedList() {
+  private ListProperties getDisplayedList() {
     return ((FavoritesFragment) fragmentTagList).getListProperties();
   }
 

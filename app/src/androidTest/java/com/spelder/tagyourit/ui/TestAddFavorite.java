@@ -82,7 +82,7 @@ public class TestAddFavorite {
 
     onView(withId(R.id.action_favorite)).perform(click());
 
-    onView(withId(R.id.nav_favorite)).perform(click());
+    onView(withId(R.id.nav_lists)).perform(click());
 
     TestUtility.unFavoriteTag(tag_title);
   }
@@ -97,7 +97,7 @@ public class TestAddFavorite {
     TestUtility.favoriteTag(tagTitle2 + " David");
     TestUtility.favoriteTag(tagTitle3 + " Island Boys");
 
-    onView(withId(R.id.nav_favorite)).perform(click());
+    onView(withId(R.id.nav_lists)).perform(click());
 
     TestUtility.unFavoriteTag(tagTitle1);
     TestUtility.unFavoriteTag(tagTitle2);
@@ -135,7 +135,7 @@ public class TestAddFavorite {
 
     assertEquals(2, dir.listFiles().length);
 
-    onView(withId(R.id.nav_favorite)).perform(click());
+    onView(withId(R.id.nav_lists)).perform(click());
 
     TestUtility.unFavoriteTag(tagTitle1);
     TestUtility.unFavoriteTag(tagTitle2);

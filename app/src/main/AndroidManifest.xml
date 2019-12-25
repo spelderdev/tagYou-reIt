@@ -64,6 +64,18 @@
       android:label="@string/app_name"
       android:theme="@style/AppTheme.DarkNav" />
 
+    <activity
+      android:name=".ui.lists.AddListActivity"
+      android:configChanges="keyboardHidden|screenSize"
+      android:label="@string/app_name"
+      android:theme="@style/AppTheme.NoActionBar.DarkNav" />
+
+    <activity
+      android:name=".ui.lists.UpdateListActivity"
+      android:configChanges="keyboardHidden|screenSize"
+      android:label="@string/app_name"
+      android:theme="@style/AppTheme.NoActionBar.DarkNav" />
+
     <service
       android:name="com.spelder.tagyourit.music.MusicService"
       android:exported="false">
