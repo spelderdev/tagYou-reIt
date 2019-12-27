@@ -26,13 +26,18 @@ public class ListFragment extends androidx.fragment.app.ListFragment {
   @Override
   public View onCreateView(
       @NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    return inflater.inflate(R.layout.list_view, container, false);
+  }
+
+  @Override
+  public void onResume() {
+    super.onResume();
+
     TagDb db = new TagDb(getActivity());
     List<ListProperties> properties = db.getListProperties();
     listAdapter.clearProperties();
     listAdapter.addProperties(properties);
     listAdapter.notifyDataSetChanged();
-
-    return inflater.inflate(R.layout.list_view, container, false);
   }
 
   @Override

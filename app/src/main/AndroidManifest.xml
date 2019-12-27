@@ -65,16 +65,11 @@
       android:theme="@style/AppTheme.DarkNav" />
 
     <activity
-      android:name=".ui.lists.AddListActivity"
+      android:name=".ui.lists.EditListActivity"
       android:configChanges="keyboardHidden|screenSize"
+      android:exported="false"
       android:label="@string/app_name"
-      android:theme="@style/AppTheme.NoActionBar.DarkNav" />
-
-    <activity
-      android:name=".ui.lists.UpdateListActivity"
-      android:configChanges="keyboardHidden|screenSize"
-      android:label="@string/app_name"
-      android:theme="@style/AppTheme.NoActionBar.DarkNav" />
+      android:theme="@style/AppTheme.NoActionBar.List" />
 
     <service
       android:name="com.spelder.tagyourit.music.MusicService"

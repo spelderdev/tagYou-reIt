@@ -147,4 +147,13 @@
   <string name="filter_collection_classic">Classic</string>
   <string name="filter_collection_easy">Easy</string>
   <string name="filter_collection_100">100 Days</string>
+
+  <string name="list_new">Create new list</string>
+  <string name="list_update">Update list options</string>
+  <string name="list_name_hint">List name</string>
+  <string name="list_icon_description">Icon for list</string>
+  <string name="list_download_sheet">Download sheet</string>
+  <string name="list_download_track">Download track</string>
+  <string name="list_create_button">Create list</string>
+  <string name="list_update_button">Update list</string>
 </resources>

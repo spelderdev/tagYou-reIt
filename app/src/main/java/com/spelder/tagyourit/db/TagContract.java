@@ -300,8 +300,8 @@ public class TagContract {
             + COMMA_SEP
             + COLUMN_NAME_DOWNLOAD_TRACK
             + ") VALUES "
-            + "('Favorites', 0, 0, 1, 0),"
-            + "('Teachable', 0, 0, 1, 0)";
+            + "('Favorites', 0, 1, 1, 0),"
+            + "('Teachable', 0, 8, 1, 0)";
     static final String FAVORITE_NAME = "Favorites";
   }
 

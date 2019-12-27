@@ -17,7 +17,7 @@ import com.spelder.tagyourit.ui.pitch.PitchPipeFragment;
 import com.spelder.tagyourit.ui.settings.PreferencesFragment;
 import com.spelder.tagyourit.ui.settings.PrivacyPolicyFragment;
 import com.spelder.tagyourit.ui.tag.DisplayTag;
-import com.spelder.tagyourit.ui.tag.FavoritesFragment;
+import com.spelder.tagyourit.ui.lists.CustomListFragment;
 import com.spelder.tagyourit.ui.lists.ListFragment;
 import com.spelder.tagyourit.ui.tag.SearchListFragment;
 import com.spelder.tagyourit.ui.tag.TagListFragment;
@@ -108,7 +108,7 @@ public class FragmentSwitcher {
         frag = fragmentDisplay;
         break;
       case FRAGMENT_TAG_LIST:
-        fragmentTagList = new FavoritesFragment();
+        fragmentTagList = new CustomListFragment();
         frag = fragmentTagList;
         break;
     }
@@ -179,7 +179,7 @@ public class FragmentSwitcher {
       return FRAGMENT_PITCH_PIPE;
     } else if (fragment instanceof PrivacyPolicyFragment) {
       return FRAGMENT_PRIVACY_POLICY;
-    } else if (fragment instanceof FavoritesFragment) {
+    } else if (fragment instanceof CustomListFragment) {
       return FRAGMENT_TAG_LIST;
     }
     return baseFragment;
@@ -319,8 +319,8 @@ public class FragmentSwitcher {
     return "";
   }
 
-  private ListProperties getDisplayedList() {
-    return ((FavoritesFragment) fragmentTagList).getListProperties();
+  ListProperties getDisplayedList() {
+    return ((CustomListFragment) fragmentTagList).getListProperties();
   }
 
   Tag getDisplayedTag() {

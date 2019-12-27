@@ -312,24 +312,27 @@ public class TagDb {
   }
 
   public void updateListProperties(ListProperties properties) {
+    if (properties.getDbId() == null) {
+      addListProperties(properties);
+      return;
+    }
+
     SQLiteDatabase db = TagDbHelper.getInstance(context).getWritableDatabase();
 
     String strFilter = ListPropertiesEntry._ID + "=" + properties.getDbId();
-    db.update(TagEntry.TABLE_NAME, convertToContentValues(properties), strFilter, null);
+    db.update(ListPropertiesEntry.TABLE_NAME, convertToContentValues(properties), strFilter, null);
     Log.d("TagDb", "Updated listId: " + properties.getDbId());
 
     db.close();
   }
 
-  public long addListProperties(ListProperties properties) {
+  private void addListProperties(ListProperties properties) {
     SQLiteDatabase db = TagDbHelper.getInstance(context).getWritableDatabase();
 
     long newRowId =
         db.insert(ListPropertiesEntry.TABLE_NAME, null, convertToContentValues(properties));
     Log.d("TagDb,", "listId: " + newRowId);
     db.close();
-
-    return newRowId;
   }
 
   private ContentValues convertToContentValues(ListProperties properties) {
@@ -380,6 +383,41 @@ public class TagDb {
     return listProperties;
   }
 
+  public ListProperties getListProperties(long dbId) {
+    SQLiteDatabase db = TagDbHelper.getInstance(context).getWritableDatabase();
+
+    String sql =
+        "SELECT * FROM "
+            + ListPropertiesEntry.TABLE_NAME
+            + " WHERE "
+            + ListPropertiesEntry._ID
+            + "="
+            + dbId;
+
+    Cursor c = db.rawQuery(sql, new String[] {});
+    if (c.getCount() == 0) {
+      return null;
+    }
+    c.moveToFirst();
+
+    ListProperties properties = new ListProperties();
+    properties.setDbId(c.getLong(c.getColumnIndex(ListPropertiesEntry._ID)));
+    properties.setName(c.getString(c.getColumnIndex(ListPropertiesEntry.COLUMN_NAME_NAME)));
+    properties.setUserCreated(
+        c.getInt(c.getColumnIndex(ListPropertiesEntry.COLUMN_NAME_USER_CREATED)) == 1);
+    properties.setDownloadSheet(
+        c.getInt(c.getColumnIndex(ListPropertiesEntry.COLUMN_NAME_DOWNLOAD_SHEET)) == 1);
+    properties.setDownloadTrack(
+        c.getInt(c.getColumnIndex(ListPropertiesEntry.COLUMN_NAME_DOWNLOAD_TRACK)) == 1);
+    properties.setIcon(
+        ListIcon.fromDbId(c.getInt(c.getColumnIndex(ListPropertiesEntry.COLUMN_NAME_ICON))));
+    properties.setListSize(getListSize(properties.getDbId(), db));
+
+    c.close();
+    db.close();
+    return properties;
+  }
+
   private int getListSize(long listId, SQLiteDatabase db) {
     String sql =
         "SELECT COUNT(*) AS tagCount FROM "
@@ -397,6 +435,32 @@ public class TagDb {
     c.close();
 
     return i;
+  }
+
+  public void deleteList(ListProperties listProperties) {
+    SQLiteDatabase db = TagDbHelper.getInstance(context).getWritableDatabase();
+
+    deleteListEntries(listProperties.getDbId(), db);
+
+    // Define 'where' part of query.
+    String selection = ListPropertiesEntry._ID + " LIKE ?";
+    // Specify arguments in placeholder order.
+    String[] selectionArgs4 = {"" + listProperties.getDbId()};
+    // Issue SQL statement.
+    int deletedRows = db.delete(ListPropertiesEntry.TABLE_NAME, selection, selectionArgs4);
+    Log.d("ListPropertiesDB", "Number of Deleted rows: " + deletedRows);
+
+    db.close();
+  }
+
+  private void deleteListEntries(long dbId, SQLiteDatabase db) {
+    // Define 'where' part of query.
+    String selection = ListEntriesEntry.COLUMN_NAME_LIST_ID + " LIKE ?";
+    // Specify arguments in placeholder order.
+    String[] selectionArgs4 = {"" + dbId};
+    // Issue SQL statement.
+    int deletedRows = db.delete(ListEntriesEntry.TABLE_NAME, selection, selectionArgs4);
+    Log.d("ListEntriesDB", "Number of Deleted rows: " + deletedRows);
   }
 
   public void deleteFavorite(Tag tag) {

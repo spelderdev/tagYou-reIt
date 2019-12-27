@@ -1,4 +1,4 @@
-package com.spelder.tagyourit.ui.tag;
+package com.spelder.tagyourit.ui.lists;
 
 import static com.spelder.tagyourit.ui.FragmentSwitcher.PAR_KEY;
 
@@ -20,10 +20,11 @@ import com.spelder.tagyourit.networking.api.SortBuilder;
 import com.spelder.tagyourit.networking.api.filter.FilterBuilder;
 import com.spelder.tagyourit.ui.MainActivity;
 import com.spelder.tagyourit.ui.settings.filter.FilterBar;
+import com.spelder.tagyourit.ui.tag.TagListAdapter;
 import java.util.List;
 
 /** The favorites tag list. */
-public class FavoritesFragment extends ListFragment
+public class CustomListFragment extends ListFragment
     implements SharedPreferences.OnSharedPreferenceChangeListener {
   private TagListAdapter listAdapter;
   private FilterBar filterBar;
@@ -56,17 +57,23 @@ public class FavoritesFragment extends ListFragment
   @Override
   public View onCreateView(
       @NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-    TagDb db = new TagDb(getActivity());
-    SortBuilder sort = new SortBuilder(getContext());
     listProperties = retrieveListProperties();
+    return inflater.inflate(R.layout.favorites_view, container, false);
+  }
+
+  @Override
+  public void onResume() {
+    super.onResume();
+
+    TagDb db = new TagDb(getActivity());
+    listProperties = db.getListProperties(listProperties.getDbId());
+    SortBuilder sort = new SortBuilder(getContext());
     List<Tag> tags =
         db.getFavorites(
             new FilterBuilder(getActivity()).build(), sort.build(), listProperties.getDbId());
     listAdapter.clearTags();
     listAdapter.addTags(tags);
     listAdapter.notifyDataSetChanged();
-
-    return inflater.inflate(R.layout.favorites_view, container, false);
   }
 
   @Override

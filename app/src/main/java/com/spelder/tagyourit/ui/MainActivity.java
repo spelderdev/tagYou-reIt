@@ -1,5 +1,6 @@
 package com.spelder.tagyourit.ui;
 
+import static com.spelder.tagyourit.ui.FragmentSwitcher.PAR_KEY;
 import static com.spelder.tagyourit.ui.video.VideoPlayerActivity.VIDEOS_KEY;
 import static com.spelder.tagyourit.ui.video.VideoPlayerActivity.VIDEO_ID_KEY;
 
@@ -44,8 +45,7 @@ import com.spelder.tagyourit.music.model.Speed;
 import com.spelder.tagyourit.networking.TagListRetriever;
 import com.spelder.tagyourit.networking.UpdateTagTask;
 import com.spelder.tagyourit.networking.api.filter.FilterBuilder;
-import com.spelder.tagyourit.ui.lists.AddListActivity;
-import com.spelder.tagyourit.ui.lists.UpdateListActivity;
+import com.spelder.tagyourit.ui.lists.EditListActivity;
 import com.spelder.tagyourit.ui.music.MusicPlayerActivity;
 import com.spelder.tagyourit.ui.settings.SortBottomSheet;
 import com.spelder.tagyourit.ui.video.VideoPlayerActivity;
@@ -364,12 +364,11 @@ public class MainActivity extends AppCompatActivity
   @Override
   public boolean onOptionsItemSelected(@NonNull MenuItem item) {
     Log.d(TAG, "Option selected");
-    // Handle presses on the action bar items
+    TagDb db = new TagDb(this);
     switch (item.getItemId()) {
       case R.id.action_favorite:
         Tag tag = manager.getDisplayedTag();
 
-        TagDb db = new TagDb(this);
         long newRow = db.insertFavorite(tag);
 
         tag.setDbId(newRow);
@@ -381,8 +380,7 @@ public class MainActivity extends AppCompatActivity
         Log.d("MainActivity", "UnFavorites");
         Tag unTag = manager.getDisplayedTag();
 
-        TagDb unDb = new TagDb(this);
-        unDb.deleteFavorite(unTag);
+        db.deleteFavorite(unTag);
 
         unTag.setDbId(null);
 
@@ -403,6 +401,8 @@ public class MainActivity extends AppCompatActivity
         return true;
 
       case R.id.action_delete_list:
+        db.deleteList(manager.getDisplayedList());
+        manager.displayNavigationSelectedFragment(R.id.nav_lists);
         return true;
 
       case R.id.action_list_options:
@@ -504,13 +504,14 @@ public class MainActivity extends AppCompatActivity
 
   private void openAddList() {
     openActivityFromBottom();
-    Intent intent = new Intent(this, AddListActivity.class);
+    Intent intent = new Intent(this, EditListActivity.class);
     startActivity(intent);
   }
 
   private void openUpdateList() {
     openActivityFromBottom();
-    Intent intent = new Intent(this, UpdateListActivity.class);
+    Intent intent = new Intent(this, EditListActivity.class);
+    intent.putExtra(PAR_KEY, manager.getDisplayedList());
     startActivity(intent);
   }
 

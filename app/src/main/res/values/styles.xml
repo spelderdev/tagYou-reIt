@@ -28,6 +28,12 @@
     <item name="bottomSheetDialogTheme">@style/Widget.AppTheme.BottomSheet</item>
   </style>
 
+  <style name="AppTheme.NoActionBar.List" parent="AppTheme.NoActionBar">
+    <item name="colorAccent">@color/colorPrimary</item>
+    <item name="colorControlHighlight">@color/colorPrimary</item>
+    <item name="colorButtonNormal">@color/colorPrimary</item>
+  </style>
+
   <style name="AppTheme.NoActionBar.DarkNav" parent="AppTheme.NoActionBar">
     <item name="android:navigationBarColor">@color/colorPrimaryDark</item>
   </style>
@@ -54,7 +60,7 @@
     <item name="shapeAppearanceLargeComponent">@style/ShapeAppearance.MyApp.LargeComponent</item>
   </style>
 
-  <style name="AppModalStyle" parent="Widget.MaterialComponents.BottomSheet.Modal"></style>
+  <style name="AppModalStyle" parent="Widget.MaterialComponents.BottomSheet.Modal" />
 
   <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.MaterialComponents.Dark.ActionBar" />
 

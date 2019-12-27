@@ -28,7 +28,7 @@ public class ListProperties implements Parcelable {
   private Long dbId;
   private String name;
   private boolean userCreated;
-  private ListIcon icon;
+  private ListIcon icon = ListIcon.DEFAULT;
   private boolean downloadSheet;
   private boolean downloadTrack;
   private int listSize;
