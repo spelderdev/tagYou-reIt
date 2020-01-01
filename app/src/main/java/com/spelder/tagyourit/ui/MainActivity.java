@@ -296,6 +296,9 @@ public class MainActivity extends AppCompatActivity
 
     PreferenceManager.getDefaultSharedPreferences(this)
         .unregisterOnSharedPreferenceChangeListener(this);
+
+    TagDb db = new TagDb(this);
+    db.close();
   }
 
   @Override

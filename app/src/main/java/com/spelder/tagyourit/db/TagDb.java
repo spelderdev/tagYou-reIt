@@ -70,7 +70,6 @@ public class TagDb {
     // Insert the new row, returning the primary key value of the new row
     long newRowId = db.insert(TagEntry.TABLE_NAME, null, values);
     Log.d("TagDb,", "tagId: " + tag.getId());
-    db.close();
 
     insertTrack(tag.getTracks(), newRowId);
     insertVideos(tag.getVideos(), newRowId);
@@ -85,8 +84,6 @@ public class TagDb {
     for (Tag tag : tags) {
       updateTag(tag, db);
     }
-
-    db.close();
   }
 
   public void updateVideos(List<VideoComponents> videos) {
@@ -102,8 +99,6 @@ public class TagDb {
 
       insertVideos(videos, dbId);
     }
-
-    db.close();
   }
 
   private void updateTag(Tag tag, SQLiteDatabase db) {
@@ -210,7 +205,6 @@ public class TagDb {
       Log.d("TagDb", "" + c.getInt(c.getColumnIndex(TagEntry.COLUMN_NAME_ID)));
     } while (c.moveToNext());
     c.close();
-    db.close();
     return outdatedTagIdList;
   }
 
@@ -226,7 +220,6 @@ public class TagDb {
       long newRowId = db.insert(LearningTracksEntry.TABLE_NAME, null, values);
       Log.d("TrackDb,", "trackId: " + newRowId);
     }
-    db.close();
   }
 
   private void insertVideos(Collection<VideoComponents> videos, long tagId) {
@@ -263,7 +256,6 @@ public class TagDb {
       long newRowId = db.insert(VideoEntry.TABLE_NAME, null, values);
       Log.d("VideoDb,", "videoId: " + newRowId);
     }
-    db.close();
   }
 
   private void insertFavorite(long tagId) {
@@ -277,13 +269,11 @@ public class TagDb {
     // Insert the new row, returning the primary key value of the new row
     long newRowId = db.insert(ListEntriesEntry.TABLE_NAME, null, values);
     Log.d("ListDb,", "tagId: " + newRowId);
-    db.close();
   }
 
   private Long getListId(String listName) {
     SQLiteDatabase db = TagDbHelper.getInstance(context).getWritableDatabase();
     Long id = getListId(listName, db);
-    db.close();
 
     return id;
   }
@@ -322,8 +312,6 @@ public class TagDb {
     String strFilter = ListPropertiesEntry._ID + "=" + properties.getDbId();
     db.update(ListPropertiesEntry.TABLE_NAME, convertToContentValues(properties), strFilter, null);
     Log.d("TagDb", "Updated listId: " + properties.getDbId());
-
-    db.close();
   }
 
   private void addListProperties(ListProperties properties) {
@@ -332,7 +320,6 @@ public class TagDb {
     long newRowId =
         db.insert(ListPropertiesEntry.TABLE_NAME, null, convertToContentValues(properties));
     Log.d("TagDb,", "listId: " + newRowId);
-    db.close();
   }
 
   private ContentValues convertToContentValues(ListProperties properties) {
@@ -381,7 +368,6 @@ public class TagDb {
     } while (c.moveToNext());
 
     c.close();
-    db.close();
     return listProperties;
   }
 
@@ -417,7 +403,6 @@ public class TagDb {
     properties.setListSize(getListSize(properties.getDbId(), db));
 
     c.close();
-    db.close();
     return properties;
   }
 
@@ -452,8 +437,6 @@ public class TagDb {
     // Issue SQL statement.
     int deletedRows = db.delete(ListPropertiesEntry.TABLE_NAME, selection, selectionArgs4);
     Log.d("ListPropertiesDB", "Number of Deleted rows: " + deletedRows);
-
-    db.close();
   }
 
   private void deleteListEntries(long dbId, SQLiteDatabase db) {
@@ -509,8 +492,6 @@ public class TagDb {
     // Issue SQL statement.
     deletedRows = db.delete(TagEntry.TABLE_NAME, selection, selectionArgs2);
     Log.d("TagDB", "Number of Deleted rows: " + deletedRows);
-
-    db.close();
   }
 
   public Long isFavorite(Tag tag) {
@@ -546,7 +527,6 @@ public class TagDb {
     }
 
     c.close();
-    db.close();
     return dbId;
   }
 
@@ -636,7 +616,6 @@ public class TagDb {
       Log.d("TagDb", "" + c.getInt(c.getColumnIndex(TagEntry.COLUMN_NAME_ID)));
     } while (c.moveToNext());
     c.close();
-    db.close();
     return tags;
   }
 
@@ -757,14 +736,12 @@ public class TagDb {
       // Insert the new row, returning the primary key value of the new row
       long newRowId = db.insert(RatingEntry.TABLE_NAME, null, values);
       Log.d("TagDb,", "Inserted ratingId: " + newRowId);
-      db.close();
     } else {
       SQLiteDatabase db = TagDbHelper.getInstance(context).getWritableDatabase();
       String[] args = new String[] {"" + tagId};
       long newRowId =
           db.update(RatingEntry.TABLE_NAME, values, RatingEntry.COLUMN_NAME_TAG_ID + "=?", args);
       Log.d("TagDb,", "Updated ratingId: " + newRowId);
-      db.close();
     }
   }
 
@@ -787,7 +764,11 @@ public class TagDb {
           Double.parseDouble(c.getString(c.getColumnIndex(RatingEntry.COLUMN_NAME_TAG_RATING)));
     }
     c.close();
-    db.close();
     return rating;
+  }
+
+  public void close() {
+    SQLiteDatabase db = TagDbHelper.getInstance(context).getWritableDatabase();
+    db.close();
   }
 }
