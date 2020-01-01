@@ -344,6 +344,7 @@ public class TagDb {
     values.put(
         ListPropertiesEntry.COLUMN_NAME_DOWNLOAD_TRACK, properties.isDownloadTrack() ? 1 : 0);
     values.put(ListPropertiesEntry.COLUMN_NAME_ICON, properties.getIcon().getDbId());
+    values.put(ListPropertiesEntry.COLUMN_NAME_COLOR, properties.getColor());
 
     return values;
   }
@@ -372,6 +373,7 @@ public class TagDb {
           c.getInt(c.getColumnIndex(ListPropertiesEntry.COLUMN_NAME_DOWNLOAD_TRACK)) == 1);
       properties.setIcon(
           ListIcon.fromDbId(c.getInt(c.getColumnIndex(ListPropertiesEntry.COLUMN_NAME_ICON))));
+      properties.setColor(c.getInt(c.getColumnIndex(ListPropertiesEntry.COLUMN_NAME_COLOR)));
       properties.setListSize(getListSize(properties.getDbId(), db));
 
       listProperties.add(properties);
@@ -411,6 +413,7 @@ public class TagDb {
         c.getInt(c.getColumnIndex(ListPropertiesEntry.COLUMN_NAME_DOWNLOAD_TRACK)) == 1);
     properties.setIcon(
         ListIcon.fromDbId(c.getInt(c.getColumnIndex(ListPropertiesEntry.COLUMN_NAME_ICON))));
+    properties.setColor(c.getInt(c.getColumnIndex(ListPropertiesEntry.COLUMN_NAME_COLOR)));
     properties.setListSize(getListSize(properties.getDbId(), db));
 
     c.close();

@@ -10,8 +10,8 @@ CREATE TABLE list_properties (
 
 INSERT INTO list_properties (name, user_created, icon, color, download_sheet, download_track)
 VALUES
-  ("Favorites", 0, 0, 1, 1, 0),
-  ("Teachable", 0, 0, 8, 1, 0);
+  ("Favorites", 0, 1, -1801946, 1, 0),
+  ("Teachable", 0, 8, -7617718, 1, 0);
 
 PRAGMA foreign_keys=off;
 

@@ -1,5 +1,6 @@
 package com.spelder.tagyourit.model;
 
+import android.graphics.Color;
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -16,6 +17,7 @@ public class ListProperties implements Parcelable {
           listProperties.setDownloadSheet(source.readInt() == 1);
           listProperties.setDownloadTrack(source.readInt() == 1);
           listProperties.setListSize(source.readInt());
+          listProperties.setColor(source.readInt());
           return listProperties;
         }
 
@@ -29,6 +31,7 @@ public class ListProperties implements Parcelable {
   private String name;
   private boolean userCreated;
   private ListIcon icon = ListIcon.DEFAULT;
+  private int color = Color.GRAY;
   private boolean downloadSheet;
   private boolean downloadTrack;
   private int listSize;
@@ -63,6 +66,14 @@ public class ListProperties implements Parcelable {
 
   public void setIcon(ListIcon icon) {
     this.icon = icon;
+  }
+
+  public int getColor() {
+    return color;
+  }
+
+  public void setColor(int color) {
+    this.color = color;
   }
 
   public boolean isDownloadSheet() {
@@ -101,5 +112,6 @@ public class ListProperties implements Parcelable {
     parcel.writeInt(downloadSheet ? 1 : 0);
     parcel.writeInt(downloadTrack ? 1 : 0);
     parcel.writeInt(listSize);
+    parcel.writeInt(color);
   }
 }

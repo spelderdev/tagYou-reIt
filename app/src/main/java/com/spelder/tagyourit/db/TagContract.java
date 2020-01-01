@@ -1,6 +1,7 @@
 package com.spelder.tagyourit.db;
 
 import android.provider.BaseColumns;
+import com.spelder.tagyourit.model.ListColor;
 
 /** Defines the structure of the tag databases. */
 public class TagContract {
@@ -296,12 +297,18 @@ public class TagContract {
             + COMMA_SEP
             + COLUMN_NAME_ICON
             + COMMA_SEP
+            + COLUMN_NAME_COLOR
+            + COMMA_SEP
             + COLUMN_NAME_DOWNLOAD_SHEET
             + COMMA_SEP
             + COLUMN_NAME_DOWNLOAD_TRACK
             + ") VALUES "
-            + "('Favorites', 0, 1, 1, 0),"
-            + "('Teachable', 0, 8, 1, 0)";
+            + "('Favorites', 0, 1, "
+            + ListColor.ORANGE.getColorId()
+            + ", 1, 0),"
+            + "('Teachable', 0, 8, "
+            + ListColor.CYAN.getColorId()
+            + ", 1, 0)";
     static final String FAVORITE_NAME = "Favorites";
   }
 

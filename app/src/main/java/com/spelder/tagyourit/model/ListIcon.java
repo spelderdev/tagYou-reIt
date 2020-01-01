@@ -16,7 +16,7 @@ public enum ListIcon {
   private int dbId;
   private int resourceId;
 
-  private ListIcon(int resourceId, int dbId) {
+  ListIcon(int resourceId, int dbId) {
     this.dbId = dbId;
     this.resourceId = resourceId;
   }
