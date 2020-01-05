@@ -18,14 +18,14 @@ PRAGMA foreign_keys=off;
 BEGIN TRANSACTION;
 
 CREATE TABLE list_entries (
-  tag_id TEXT,
+  tag_db_id TEXT,
   list_id TEXT,
-  FOREIGN KEY(tag_id) REFERENCES tag(_id),
+  FOREIGN KEY(tag_db_id) REFERENCES tag(_id),
   FOREIGN KEY(list_id) REFERENCES list_properties(_id),
-  PRIMARY KEY (tag_id, list_id)
+  PRIMARY KEY (tag_db_id, list_id)
 );
 
-INSERT INTO list_entries (tag_id, list_id)
+INSERT INTO list_entries (tag_db_id, list_id)
   SELECT favorites.favorite_tag_id, list_properties._id
   FROM favorites, list_properties
   WHERE list_properties.name = "Favorites";

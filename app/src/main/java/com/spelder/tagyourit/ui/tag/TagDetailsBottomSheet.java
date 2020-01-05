@@ -1,6 +1,5 @@
 package com.spelder.tagyourit.ui.tag;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -11,10 +10,8 @@ import android.widget.Button;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.annotation.StyleRes;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.spelder.tagyourit.R;
-import com.spelder.tagyourit.db.TagDb;
 import com.spelder.tagyourit.model.Tag;
 import com.spelder.tagyourit.model.TrackComponents;
 import com.spelder.tagyourit.model.TrackParts;
@@ -116,30 +113,14 @@ public class TagDetailsBottomSheet extends BottomSheetDialogFragment {
     Button rateButton = view.findViewById(R.id.tag_detail_rate_button);
     rateButton.setOnClickListener(v -> createRatingDialog(tag));
 
-    Button favoriteButton = view.findViewById(R.id.tag_detail_favorite_button);
-    int favoriteResource = tag.isFavorited() ? R.drawable.favorite : R.drawable.favorite_outline;
-    favoriteButton.setCompoundDrawablesWithIntrinsicBounds(
-        null, getResources().getDrawable(favoriteResource), null, null);
+    Button favoriteButton = view.findViewById(R.id.tag_detail_lists_button);
     favoriteButton.setOnClickListener(
         v -> {
-          TagDb db = new TagDb(getActivity());
-          if (!tag.isFavorited()) {
-            favoriteButton.setCompoundDrawablesWithIntrinsicBounds(
-                null, getResources().getDrawable(R.drawable.favorite), null, null);
-
-            long newRow = db.insertFavorite(tag);
-            tag.setDbId(newRow);
-          } else {
-            favoriteButton.setCompoundDrawablesWithIntrinsicBounds(
-                null, getResources().getDrawable(R.drawable.favorite_outline), null, null);
-
-            db.deleteFavorite(tag);
-            tag.setDbId(null);
+          MainActivity activity = (MainActivity) getActivity();
+          if (activity == null) {
+            return;
           }
-          Activity activity = getActivity();
-          if (activity != null) {
-            activity.invalidateOptionsMenu();
-          }
+          activity.openTagSelectList();
         });
   }
 

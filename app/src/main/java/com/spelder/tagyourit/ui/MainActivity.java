@@ -46,6 +46,7 @@ import com.spelder.tagyourit.networking.TagListRetriever;
 import com.spelder.tagyourit.networking.UpdateTagTask;
 import com.spelder.tagyourit.networking.api.filter.FilterBuilder;
 import com.spelder.tagyourit.ui.lists.EditListActivity;
+import com.spelder.tagyourit.ui.lists.TagSelectListActivity;
 import com.spelder.tagyourit.ui.music.MusicPlayerActivity;
 import com.spelder.tagyourit.ui.settings.SortBottomSheet;
 import com.spelder.tagyourit.ui.video.VideoPlayerActivity;
@@ -508,6 +509,13 @@ public class MainActivity extends AppCompatActivity
   private void openAddList() {
     openActivityFromBottom();
     Intent intent = new Intent(this, EditListActivity.class);
+    startActivity(intent);
+  }
+
+  public void openTagSelectList() {
+    openActivityFromBottom();
+    Intent intent = new Intent(this, TagSelectListActivity.class);
+    intent.putExtra(PAR_KEY, manager.getDisplayedTag());
     startActivity(intent);
   }
 

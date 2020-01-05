@@ -105,14 +105,14 @@
     android:orientation="horizontal">
 
     <androidx.appcompat.widget.AppCompatButton
-      android:id="@+id/tag_detail_favorite_button"
+      android:id="@+id/tag_detail_lists_button"
       android:layout_width="0dp"
       android:layout_height="match_parent"
       android:layout_weight="1"
       android:background="?attr/selectableItemBackgroundBorderless"
       android:drawablePadding="2dp"
-      android:drawableTop="@drawable/favorite"
-      android:text="@string/tag_menu_favorite"
+      android:drawableTop="@drawable/list_transparent"
+      android:text="@string/tag_menu_lists"
       android:textColor="@color/lightSecondaryTitle"
       android:textSize="12sp"
       android:theme="@style/PrimaryFlatButton"/>

@@ -217,7 +217,7 @@ public class TagContract {
 
   static class ListEntriesEntry implements BaseColumns {
     static final String TABLE_NAME = "list_entries";
-    static final String COLUMN_NAME_TAG_ID = "tag_id";
+    static final String COLUMN_NAME_TAG_ID = "tag_db_id";
     static final String COLUMN_NAME_LIST_ID = "list_id";
     static final String SQL_CREATE_ENTRIES =
         "CREATE TABLE "

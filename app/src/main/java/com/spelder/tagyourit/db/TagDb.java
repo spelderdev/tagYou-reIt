@@ -39,16 +39,35 @@ public class TagDb {
     context = c;
   }
 
+  public void updateTagList(Tag tag, List<Long> selectedListIds) {
+    Log.d("TagDb", selectedListIds.toString());
+    if (selectedListIds.isEmpty()) {
+      long tagDbId = getDbIdFromTagId(tag.getId());
+      if (tagDbId != -1) {
+        deleteListEntriesByTagId(tagDbId);
+        deleteTag(tag);
+      }
+    } else {
+      long tagDbId = getDbIdFromTagId(tag.getId());
+      if (tagDbId == -1) {
+        tagDbId = insertTag(tag);
+      }
+      deleteListEntriesByTagId(tagDbId);
+      for (Long listId : selectedListIds) {
+        insertInList(tagDbId, listId);
+      }
+    }
+  }
+
   public long insertFavorite(Tag tag) {
-    long tagId = insertTag(tag);
-    insertFavorite(tagId);
-    return tagId;
+    long tagDbId = insertTag(tag);
+    insertFavorite(tagDbId);
+    return tagDbId;
   }
 
   private long insertTag(Tag tag) {
-    // Gets the data repository in write mode
     SQLiteDatabase db = TagDbHelper.getInstance(context).getWritableDatabase();
-    // Create a new map of values, where column names are the keys
+
     ContentValues values = new ContentValues();
     values.put(TagEntry.COLUMN_NAME_ID, tag.getId());
     values.put(TagEntry.COLUMN_NAME_TITLE, tag.getTitle());
@@ -67,9 +86,9 @@ public class TagDb {
     values.put(TagEntry.COLUMN_NAME_SHEET_MUSIC_LINK, tag.getSheetMusicLink());
     values.put(TagEntry.COLUMN_NAME_SHEET_MUSIC_FILE, tag.getSheetMusicFile());
     values.put(TagEntry.COLUMN_NAME_LAST_MODIFIED_DATE, sdf.format(new Date()));
-    // Insert the new row, returning the primary key value of the new row
+
     long newRowId = db.insert(TagEntry.TABLE_NAME, null, values);
-    Log.d("TagDb,", "tagId: " + tag.getId());
+    Log.d("TagDb,", "Inserted tagId: " + tag.getId());
 
     insertTrack(tag.getTracks(), newRowId);
     insertVideos(tag.getVideos(), newRowId);
@@ -93,7 +112,7 @@ public class TagDb {
 
     SQLiteDatabase db = TagDbHelper.getInstance(context).getWritableDatabase();
 
-    long dbId = getDbIdFromTagId(videos.get(0).getTagId(), db);
+    long dbId = getDbIdFromTagId(videos.get(0).getTagId());
     if (dbId > -1) {
       deleteVideos(dbId, db);
 
@@ -125,7 +144,7 @@ public class TagDb {
     db.update(TagEntry.TABLE_NAME, values, strFilter, null);
     Log.d("TagDb,", "Updated tagId: " + tag.getId());
 
-    long dbId = getDbIdFromTagId(tag.getId(), db);
+    long dbId = getDbIdFromTagId(tag.getId());
     if (dbId > -1) {
       deleteTracks(dbId, db);
       deleteVideos(dbId, db);
@@ -155,7 +174,9 @@ public class TagDb {
     Log.d("LearningTrackDB", "Number of Deleted rows: " + deletedRows);
   }
 
-  private long getDbIdFromTagId(int tagId, SQLiteDatabase db) {
+  private long getDbIdFromTagId(int tagId) {
+    SQLiteDatabase db = TagDbHelper.getInstance(context).getWritableDatabase();
+
     String sql =
         "SELECT "
             + TagEntry._ID
@@ -167,6 +188,7 @@ public class TagDb {
             + tagId;
     Cursor c = db.rawQuery(sql, new String[] {});
     if (c.getCount() == 0) {
+      Log.d("TagDb", "Tag id not found: " + tagId);
       return -1;
     }
     c.moveToFirst();
@@ -174,6 +196,7 @@ public class TagDb {
     long dbId;
     do {
       dbId = c.getLong(c.getColumnIndex(TagEntry._ID));
+      Log.d("TagDb", "Found tag id of " + dbId);
     } while (c.moveToNext());
     c.close();
     return dbId;
@@ -218,7 +241,7 @@ public class TagDb {
       values.put(LearningTracksEntry.COLUMN_NAME_FILE_TYPE, track.getType());
       values.put(LearningTracksEntry.COLUMN_NAME_FILE, "");
       long newRowId = db.insert(LearningTracksEntry.TABLE_NAME, null, values);
-      Log.d("TrackDb,", "trackId: " + newRowId);
+      Log.d("TrackDb,", "Inserted trackId: " + newRowId);
     }
   }
 
@@ -254,21 +277,27 @@ public class TagDb {
           VideoEntry.COLUMN_NAME_COMMENT_COUNT,
           video.getCommentCount() != null ? video.getCommentCount().toString() : "0");
       long newRowId = db.insert(VideoEntry.TABLE_NAME, null, values);
-      Log.d("VideoDb,", "videoId: " + newRowId);
+      Log.d("VideoDb,", "Inserted videoId: " + newRowId);
     }
   }
 
-  private void insertFavorite(long tagId) {
-    // Gets the data repository in write mode
+  private void insertFavorite(long tagDbId) {
     SQLiteDatabase db = TagDbHelper.getInstance(context).getWritableDatabase();
-    // Create a new map of values, where column names are the keys
     ContentValues values = new ContentValues();
-    values.put(ListEntriesEntry.COLUMN_NAME_TAG_ID, tagId);
+    values.put(ListEntriesEntry.COLUMN_NAME_TAG_ID, tagDbId);
     values.put(
         ListEntriesEntry.COLUMN_NAME_LIST_ID, getListId(ListPropertiesEntry.FAVORITE_NAME, db));
-    // Insert the new row, returning the primary key value of the new row
-    long newRowId = db.insert(ListEntriesEntry.TABLE_NAME, null, values);
-    Log.d("ListDb,", "tagId: " + newRowId);
+    db.insert(ListEntriesEntry.TABLE_NAME, null, values);
+    Log.d("ListEntryDb,", "Inserted favorite tagDbId: " + tagDbId);
+  }
+
+  private void insertInList(long tagDbId, long listId) {
+    SQLiteDatabase db = TagDbHelper.getInstance(context).getWritableDatabase();
+    ContentValues values = new ContentValues();
+    values.put(ListEntriesEntry.COLUMN_NAME_TAG_ID, tagDbId);
+    values.put(ListEntriesEntry.COLUMN_NAME_LIST_ID, listId);
+    db.insert(ListEntriesEntry.TABLE_NAME, null, values);
+    Log.d("ListEntryDb,", "Inserted tagDbId: " + tagDbId + " into list: " + listId);
   }
 
   private Long getListId(String listName) {
@@ -319,7 +348,7 @@ public class TagDb {
 
     long newRowId =
         db.insert(ListPropertiesEntry.TABLE_NAME, null, convertToContentValues(properties));
-    Log.d("TagDb,", "listId: " + newRowId);
+    Log.d("TagDb,", "Inserted listId: " + newRowId);
   }
 
   private ContentValues convertToContentValues(ListProperties properties) {
@@ -428,7 +457,7 @@ public class TagDb {
   public void deleteList(ListProperties listProperties) {
     SQLiteDatabase db = TagDbHelper.getInstance(context).getWritableDatabase();
 
-    deleteListEntries(listProperties.getDbId(), db);
+    deleteListEntriesByListId(listProperties.getDbId(), db);
 
     // Define 'where' part of query.
     String selection = ListPropertiesEntry._ID + " LIKE ?";
@@ -439,11 +468,22 @@ public class TagDb {
     Log.d("ListPropertiesDB", "Number of Deleted rows: " + deletedRows);
   }
 
-  private void deleteListEntries(long dbId, SQLiteDatabase db) {
+  private void deleteListEntriesByListId(long listDbId, SQLiteDatabase db) {
     // Define 'where' part of query.
     String selection = ListEntriesEntry.COLUMN_NAME_LIST_ID + " LIKE ?";
     // Specify arguments in placeholder order.
-    String[] selectionArgs4 = {"" + dbId};
+    String[] selectionArgs4 = {"" + listDbId};
+    // Issue SQL statement.
+    int deletedRows = db.delete(ListEntriesEntry.TABLE_NAME, selection, selectionArgs4);
+    Log.d("ListEntriesDB", "Number of Deleted rows: " + deletedRows);
+  }
+
+  private void deleteListEntriesByTagId(long tagDbId) {
+    SQLiteDatabase db = TagDbHelper.getInstance(context).getWritableDatabase();
+    // Define 'where' part of query.
+    String selection = ListEntriesEntry.COLUMN_NAME_TAG_ID + " LIKE ?";
+    // Specify arguments in placeholder order.
+    String[] selectionArgs4 = {"" + tagDbId};
     // Issue SQL statement.
     int deletedRows = db.delete(ListEntriesEntry.TABLE_NAME, selection, selectionArgs4);
     Log.d("ListEntriesDB", "Number of Deleted rows: " + deletedRows);
@@ -469,29 +509,59 @@ public class TagDb {
     int deletedRows = db.delete(ListEntriesEntry.TABLE_NAME, selection, selectionArgs);
     Log.d("FavoriteDB", "Number of Deleted rows: " + deletedRows);
 
-    // Define 'where' part of query.
-    selection = LearningTracksEntry.COLUMN_NAME_TAG_ID + " LIKE ?";
-    // Specify arguments in placeholder order.
-    String[] selectionArgs3 = {"" + tag.getDbId()};
-    // Issue SQL statement.
-    deletedRows = db.delete(LearningTracksEntry.TABLE_NAME, selection, selectionArgs3);
-    Log.d("LearningTrackDB", "Number of Deleted rows: " + deletedRows);
+    deleteTag(tag);
+  }
 
-    // Define 'where' part of query.
-    selection = VideoEntry.COLUMN_NAME_TAG_ID + " LIKE ?";
-    // Specify arguments in placeholder order.
-    String[] selectionArgs4 = {"" + tag.getDbId()};
-    // Issue SQL statement.
-    deletedRows = db.delete(VideoEntry.TABLE_NAME, selection, selectionArgs4);
-    Log.d("VideoDB", "Number of Deleted rows: " + deletedRows);
+  private void deleteTag(Tag tag) {
+    SQLiteDatabase db = TagDbHelper.getInstance(context).getWritableDatabase();
 
-    // Define 'where' part of query.
-    selection = TagEntry._ID + " LIKE ?";
-    // Specify arguments in placeholder order.
-    String[] selectionArgs2 = {"" + tag.getDbId()};
-    // Issue SQL statement.
-    deletedRows = db.delete(TagEntry.TABLE_NAME, selection, selectionArgs2);
+    deleteTracks(tag.getDbId(), db);
+    deleteVideos(tag.getDbId(), db);
+
+    String selection = TagEntry._ID + " LIKE ?";
+    String[] selectionArgs = {tag.getDbId().toString()};
+    int deletedRows = db.delete(TagEntry.TABLE_NAME, selection, selectionArgs);
     Log.d("TagDB", "Number of Deleted rows: " + deletedRows);
+  }
+
+  public List<Long> getListsForTag(Tag tag) {
+    SQLiteDatabase db = TagDbHelper.getInstance(context).getWritableDatabase();
+    String sql =
+        "SELECT "
+            + ListEntriesEntry.COLUMN_NAME_LIST_ID
+            + " FROM "
+            + TagEntry.TABLE_NAME
+            + ", "
+            + ListEntriesEntry.TABLE_NAME
+            + " WHERE "
+            + TagEntry.TABLE_NAME
+            + "."
+            + TagEntry._ID
+            + " = "
+            + ListEntriesEntry.TABLE_NAME
+            + "."
+            + ListEntriesEntry.COLUMN_NAME_TAG_ID
+            + " AND "
+            + TagEntry.TABLE_NAME
+            + "."
+            + TagEntry.COLUMN_NAME_ID
+            + " = "
+            + tag.getId();
+
+    Cursor c = db.rawQuery(sql, new String[] {});
+
+    List<Long> dbIds = new ArrayList<>();
+    if (c.getCount() == 0) {
+      return dbIds;
+    }
+
+    c.moveToFirst();
+    do {
+      dbIds.add(c.getLong(c.getColumnIndex(ListEntriesEntry.COLUMN_NAME_LIST_ID)));
+    } while (c.moveToNext());
+
+    c.close();
+    return dbIds;
   }
 
   public Long isFavorite(Tag tag) {
@@ -523,7 +593,7 @@ public class TagDb {
     Long dbId = null;
     if (c.getCount() > 0) {
       c.moveToFirst();
-      dbId = c.getLong(c.getColumnIndex(TagEntry.COLUMN_NAME_ID));
+      dbId = c.getLong(c.getColumnIndex(TagEntry._ID));
     }
 
     c.close();
@@ -613,7 +683,7 @@ public class TagDb {
       addTracks(tag, db);
       addVideos(tag, db);
       tags.add(tag);
-      Log.d("TagDb", "" + c.getInt(c.getColumnIndex(TagEntry.COLUMN_NAME_ID)));
+      Log.d("TagDb", "Got favorite: " + tag.getId());
     } while (c.moveToNext());
     c.close();
     return tags;

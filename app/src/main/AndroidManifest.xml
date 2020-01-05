@@ -71,6 +71,13 @@
       android:label="@string/app_name"
       android:theme="@style/AppTheme.NoActionBar.List" />
 
+    <activity
+      android:name=".ui.lists.TagSelectListActivity"
+      android:configChanges="keyboardHidden|screenSize"
+      android:exported="false"
+      android:label="@string/app_name"
+      android:theme="@style/AppTheme.NoActionBar.List" />
+
     <service
       android:name="com.spelder.tagyourit.music.MusicService"
       android:exported="false">
