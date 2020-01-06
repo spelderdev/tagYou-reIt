@@ -2,10 +2,8 @@ package com.spelder.tagyourit.db;
 
 import android.content.ContentValues;
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.preference.PreferenceManager;
 import android.util.Log;
 import com.spelder.tagyourit.db.TagContract.LearningTracksEntry;
 import com.spelder.tagyourit.db.TagContract.ListEntriesEntry;
@@ -607,7 +605,30 @@ public class TagDb {
     }
   }
 
-  public List<Tag> getFavorites(FilterBy filter, SortBy sortBy, Long listDbId) {
+  public List<Tag> getTagsForList(Long listDbId) {
+    String sql =
+        "SELECT * FROM "
+            + TagEntry.TABLE_NAME
+            + ", "
+            + ListEntriesEntry.TABLE_NAME
+            + " WHERE "
+            + TagEntry.TABLE_NAME
+            + "."
+            + TagEntry._ID
+            + " = "
+            + ListEntriesEntry.TABLE_NAME
+            + "."
+            + ListEntriesEntry.COLUMN_NAME_TAG_ID
+            + " AND "
+            + ListEntriesEntry.COLUMN_NAME_LIST_ID
+            + " = "
+            + listDbId
+            + " ORDER BY "
+            + TagEntry.COLUMN_NAME_TITLE;
+    return getTagsForList(sql);
+  }
+
+  public List<Tag> getTagsForList(FilterBy filter, SortBy sortBy, Long listDbId) {
     Log.d("TagDb", filter.getDbFilter());
 
     String sql =
@@ -631,24 +652,14 @@ public class TagDb {
             + " ORDER BY "
             + getSortColumnName(sortBy);
 
-    return getFavorites(sql);
+    return getTagsForList(sql);
   }
 
-  private String getSortColumnName(SortBy sortBy) {
-    switch (sortBy) {
-      case RATING:
-        return TagEntry.COLUMN_NAME_RATING + " " + sortBy.getOrder().getLabel();
-      case DOWNLOAD:
-        return TagEntry.COLUMN_NAME_DOWNLOAD + " " + sortBy.getOrder().getLabel();
-      case LATEST:
-        return TagEntry.COLUMN_NAME_POSTED + " " + sortBy.getOrder().getLabel();
-      case TITLE:
-      default:
-        return TagEntry.COLUMN_NAME_TITLE + " " + sortBy.getOrder().getLabel();
-    }
+  public List<Tag> getFavorites() {
+    return getTagsForList(getListId(ListPropertiesEntry.FAVORITE_NAME));
   }
 
-  private List<Tag> getFavorites(String sql) {
+  private List<Tag> getTagsForList(String sql) {
     ArrayList<Tag> tags = new ArrayList<>();
     SQLiteDatabase db = TagDbHelper.getInstance(context).getWritableDatabase();
     Cursor c = db.rawQuery(sql, new String[] {});
@@ -656,9 +667,6 @@ public class TagDb {
       return tags;
     }
     c.moveToFirst();
-
-    SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
-    boolean saveFavorites = sharedPref.getBoolean("pref_favorites_save", false);
 
     do {
       Tag tag = new Tag();
@@ -679,37 +687,34 @@ public class TagDb {
       tag.setSheetMusicType(c.getString(c.getColumnIndex(TagEntry.COLUMN_NAME_SHEET_MUSIC_TYPE)));
       tag.setSheetMusicLink(c.getString(c.getColumnIndex(TagEntry.COLUMN_NAME_SHEET_MUSIC_LINK)));
       tag.setSheetMusicFile(c.getString(c.getColumnIndex(TagEntry.COLUMN_NAME_SHEET_MUSIC_FILE)));
-      tag.setDownloaded(saveFavorites);
+
+      ListProperties list =
+          getListProperties(c.getInt(c.getColumnIndex(ListEntriesEntry.COLUMN_NAME_LIST_ID)));
+      tag.setDownloaded(list.isDownloadSheet());
+
       addTracks(tag, db);
       addVideos(tag, db);
+
       tags.add(tag);
       Log.d("TagDb", "Got favorite: " + tag.getId());
     } while (c.moveToNext());
+
     c.close();
     return tags;
   }
 
-  public List<Tag> getFavorites() {
-    String sql =
-        "SELECT * FROM "
-            + TagEntry.TABLE_NAME
-            + ", "
-            + ListEntriesEntry.TABLE_NAME
-            + " WHERE "
-            + TagEntry.TABLE_NAME
-            + "."
-            + TagEntry._ID
-            + " = "
-            + ListEntriesEntry.TABLE_NAME
-            + "."
-            + ListEntriesEntry.COLUMN_NAME_TAG_ID
-            + " AND "
-            + ListEntriesEntry.COLUMN_NAME_LIST_ID
-            + " = "
-            + getListId(ListPropertiesEntry.FAVORITE_NAME)
-            + " ORDER BY "
-            + TagEntry.COLUMN_NAME_TITLE;
-    return getFavorites(sql);
+  private String getSortColumnName(SortBy sortBy) {
+    switch (sortBy) {
+      case RATING:
+        return TagEntry.COLUMN_NAME_RATING + " " + sortBy.getOrder().getLabel();
+      case DOWNLOAD:
+        return TagEntry.COLUMN_NAME_DOWNLOAD + " " + sortBy.getOrder().getLabel();
+      case LATEST:
+        return TagEntry.COLUMN_NAME_POSTED + " " + sortBy.getOrder().getLabel();
+      case TITLE:
+      default:
+        return TagEntry.COLUMN_NAME_TITLE + " " + sortBy.getOrder().getLabel();
+    }
   }
 
   private void addTracks(Tag tag, SQLiteDatabase db) {

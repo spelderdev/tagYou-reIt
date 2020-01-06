@@ -346,6 +346,10 @@ public class Tag implements Parcelable {
     isDownloaded = downloaded;
   }
 
+  public boolean isDownloaded() {
+    return isDownloaded;
+  }
+
   public void writeToParcel(Parcel parcel, int flags) {
     parcel.writeInt(id);
     parcel.writeString(title);

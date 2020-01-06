@@ -69,7 +69,7 @@ public class CustomListFragment extends ListFragment
     listProperties = db.getListProperties(listProperties.getDbId());
     SortBuilder sort = new SortBuilder(getContext());
     List<Tag> tags =
-        db.getFavorites(
+        db.getTagsForList(
             new FilterBuilder(getActivity()).build(), sort.build(), listProperties.getDbId());
     listAdapter.clearTags();
     listAdapter.addTags(tags);
@@ -129,7 +129,7 @@ public class CustomListFragment extends ListFragment
       TagDb db = new TagDb(getActivity());
       SortBuilder sort = new SortBuilder(getContext());
       List<Tag> tags =
-          db.getFavorites(
+          db.getTagsForList(
               new FilterBuilder(getActivity()).build(), sort.build(), listProperties.getDbId());
       listAdapter.clearTags();
       listAdapter.addTags(tags);

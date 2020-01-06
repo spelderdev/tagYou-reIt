@@ -3,6 +3,7 @@ package com.spelder.tagyourit.ui.lists;
 import static com.spelder.tagyourit.ui.FragmentSwitcher.PAR_KEY;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -11,6 +12,7 @@ import android.text.TextWatcher;
 import android.util.TypedValue;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -22,6 +24,8 @@ import com.spelder.tagyourit.db.TagDb;
 import com.spelder.tagyourit.model.ListColor;
 import com.spelder.tagyourit.model.ListIcon;
 import com.spelder.tagyourit.model.ListProperties;
+import com.spelder.tagyourit.networking.DownloadFavoritesService;
+import com.spelder.tagyourit.networking.RemoveFavoritesDownloadService;
 
 /** Activity used to edit list properties. */
 public class EditListActivity extends AppCompatActivity {
@@ -73,6 +77,21 @@ public class EditListActivity extends AppCompatActivity {
         });
 
     setupListProperties();
+
+    downloadSheet.setOnCheckedChangeListener(
+        (CompoundButton buttonView, boolean isChecked) -> {
+          if (isChecked) {
+            RemoveFavoritesDownloadService.cancel();
+            Intent intent = new Intent(this, DownloadFavoritesService.class);
+            intent.putExtra(PAR_KEY, listProperties);
+            this.startService(intent);
+          } else {
+            DownloadFavoritesService.cancel();
+            Intent intent = new Intent(this, RemoveFavoritesDownloadService.class);
+            intent.putExtra(PAR_KEY, listProperties);
+            this.startService(intent);
+          }
+        });
 
     LinearLayout iconView = findViewById(R.id.add_list_icons);
     for (ListIcon icon : ListIcon.values()) {

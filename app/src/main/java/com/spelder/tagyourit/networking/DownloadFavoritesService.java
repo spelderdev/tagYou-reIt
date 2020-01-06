@@ -1,5 +1,7 @@
 package com.spelder.tagyourit.networking;
 
+import static com.spelder.tagyourit.ui.FragmentSwitcher.PAR_KEY;
+
 import android.app.IntentService;
 import android.app.Notification;
 import android.app.NotificationChannel;
@@ -14,6 +16,7 @@ import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 import com.spelder.tagyourit.R;
 import com.spelder.tagyourit.db.TagDb;
+import com.spelder.tagyourit.model.ListProperties;
 import com.spelder.tagyourit.model.Tag;
 import java.io.File;
 import java.util.List;
@@ -36,8 +39,14 @@ public class DownloadFavoritesService extends IntentService {
   @Override
   protected void onHandleIntent(Intent workIntent) {
     Log.d(TAG, "Handle Intent");
+
     createNotification();
-    downloadTags();
+
+    ListProperties listProperties = workIntent.getParcelableExtra(PAR_KEY);
+    if (listProperties != null && listProperties.getDbId() != null) {
+      downloadTags(listProperties.getDbId());
+    }
+
     finishNotification();
   }
 
@@ -92,21 +101,21 @@ public class DownloadFavoritesService extends IntentService {
     }
   }
 
-  private void downloadTags() {
+  private void downloadTags(long dbId) {
     TagDb db = new TagDb(getApplicationContext());
-    List<Tag> favorites = db.getFavorites();
+    List<Tag> tags = db.getTagsForList(dbId);
 
-    if (favorites == null) {
+    if (tags == null) {
       return;
     }
 
-    for (int i = 0; i < favorites.size(); i++) {
+    for (int i = 0; i < tags.size(); i++) {
       if (shouldCancel) {
         return;
       }
 
-      Tag tag = favorites.get(i);
-      updateNotificationProgress(favorites.size(), i + 1);
+      Tag tag = tags.get(i);
+      updateNotificationProgress(tags.size(), i + 1);
 
       tag.setDownloaded(true);
       String absoluteFilePath = tag.getSheetMusicPath(getApplicationContext());

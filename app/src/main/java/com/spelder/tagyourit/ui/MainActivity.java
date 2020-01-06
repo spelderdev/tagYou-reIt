@@ -7,6 +7,7 @@ import static com.spelder.tagyourit.ui.video.VideoPlayerActivity.VIDEO_ID_KEY;
 import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
@@ -24,6 +25,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.SearchView.OnQueryTextListener;
@@ -405,8 +407,7 @@ public class MainActivity extends AppCompatActivity
         return true;
 
       case R.id.action_delete_list:
-        db.deleteList(manager.getDisplayedList());
-        manager.displayNavigationSelectedFragment(R.id.nav_lists);
+        deleteList();
         return true;
 
       case R.id.action_list_options:
@@ -420,6 +421,31 @@ public class MainActivity extends AppCompatActivity
       default:
         return super.onOptionsItemSelected(item);
     }
+  }
+
+  private void deleteList() {
+    DialogInterface.OnClickListener dialogClickListener =
+        (DialogInterface dialog, int which) -> {
+          switch (which) {
+            case DialogInterface.BUTTON_POSITIVE:
+              TagDb db = new TagDb(MainActivity.this);
+              db.deleteList(manager.getDisplayedList());
+              manager.displayNavigationSelectedFragment(R.id.nav_lists);
+              break;
+
+            case DialogInterface.BUTTON_NEGATIVE:
+              // No button clicked
+              break;
+          }
+        };
+
+    AlertDialog.Builder builder = new AlertDialog.Builder(this);
+    builder
+        .setTitle("Are you sure?")
+        .setMessage("Do you want to delete list?")
+        .setPositiveButton("Yes", dialogClickListener)
+        .setNegativeButton("No", dialogClickListener)
+        .show();
   }
 
   private void toggleSort() {

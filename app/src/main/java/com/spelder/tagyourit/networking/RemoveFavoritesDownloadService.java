@@ -1,5 +1,7 @@
 package com.spelder.tagyourit.networking;
 
+import static com.spelder.tagyourit.ui.FragmentSwitcher.PAR_KEY;
+
 import android.app.IntentService;
 import android.app.Notification;
 import android.app.NotificationChannel;
@@ -13,8 +15,11 @@ import androidx.annotation.RequiresApi;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 import com.spelder.tagyourit.R;
+import com.spelder.tagyourit.db.TagDb;
+import com.spelder.tagyourit.model.ListProperties;
 import com.spelder.tagyourit.model.Tag;
 import java.io.File;
+import java.util.List;
 
 public class RemoveFavoritesDownloadService extends IntentService {
   private final String TAG = RemoveFavoritesDownloadService.class.getName();
@@ -32,8 +37,14 @@ public class RemoveFavoritesDownloadService extends IntentService {
 
   @Override
   protected void onHandleIntent(Intent workIntent) {
+
     createNotification();
-    removeDownloadedTags();
+
+    ListProperties listProperties = workIntent.getParcelableExtra(PAR_KEY);
+    if (listProperties != null && listProperties.getDbId() != null) {
+      removeDownloadedTags(listProperties.getDbId());
+    }
+
     finishNotification();
   }
 
@@ -88,31 +99,30 @@ public class RemoveFavoritesDownloadService extends IntentService {
     }
   }
 
-  private void removeDownloadedTags() {
-    Tag t = new Tag();
-    t.setDownloaded(true);
-    File dir = new File(t.getSheetMusicDirectory(getApplicationContext()));
-    File[] files = dir.listFiles();
+  private void removeDownloadedTags(long dbId) {
+    TagDb db = new TagDb(getApplicationContext());
+    List<Tag> tags = db.getTagsForList(dbId);
 
-    if (files == null || files.length == 0) {
+    if (tags == null) {
       return;
     }
 
-    Log.d(TAG, "Removing Downloads of Size: " + files.length);
-    for (int i = 0; i < files.length; i++) {
+    for (int i = 0; i < tags.size(); i++) {
       if (shouldCancel) {
         return;
       }
 
-      File tag = files[i];
-      updateNotificationProgress(files.length, i + 1);
+      Tag tag = tags.get(i);
+      updateNotificationProgress(tags.size(), i + 1);
 
-      String absoluteFilePath = tag.getAbsolutePath();
-      Log.d(TAG, tag.getAbsolutePath());
-      Log.d(TAG, "" + tag.exists());
-      if (tag.exists()) {
+      tag.setDownloaded(true);
+      String absoluteFilePath = tag.getSheetMusicPath(getApplicationContext());
+      Log.d(TAG, absoluteFilePath);
+
+      File file = new File(absoluteFilePath);
+      if (file.exists()) {
         Log.d(TAG, "Removing file: " + absoluteFilePath);
-        Log.d(TAG, "" + tag.delete());
+        Log.d(TAG, "Deleted: " + file.delete());
       }
     }
   }
