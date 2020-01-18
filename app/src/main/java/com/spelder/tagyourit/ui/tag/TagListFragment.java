@@ -185,7 +185,7 @@ public class TagListFragment extends ListFragment
         "FragmentList",
         "Item clicked: " + clickedTag.getTitle() + " " + clickedTag.getSheetMusicType());
     TagDb db = new TagDb(context);
-    clickedTag.setDbId(db.isFavorite(clickedTag));
+    clickedTag.setDbId(db.isInDefaultList(clickedTag));
     MainActivity activity = (MainActivity) getActivity();
     if (activity != null) {
       activity.getManager().displayTag(clickedTag);

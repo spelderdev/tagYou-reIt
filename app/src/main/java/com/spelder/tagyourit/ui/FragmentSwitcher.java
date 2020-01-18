@@ -13,12 +13,12 @@ import com.spelder.tagyourit.R;
 import com.spelder.tagyourit.db.TagDb;
 import com.spelder.tagyourit.model.ListProperties;
 import com.spelder.tagyourit.model.Tag;
+import com.spelder.tagyourit.ui.lists.CustomListFragment;
+import com.spelder.tagyourit.ui.lists.ListFragment;
 import com.spelder.tagyourit.ui.pitch.PitchPipeFragment;
 import com.spelder.tagyourit.ui.settings.PreferencesFragment;
 import com.spelder.tagyourit.ui.settings.PrivacyPolicyFragment;
 import com.spelder.tagyourit.ui.tag.DisplayTag;
-import com.spelder.tagyourit.ui.lists.CustomListFragment;
-import com.spelder.tagyourit.ui.lists.ListFragment;
 import com.spelder.tagyourit.ui.tag.SearchListFragment;
 import com.spelder.tagyourit.ui.tag.TagListFragment;
 
@@ -237,14 +237,14 @@ public class FragmentSwitcher {
     return currentFragment != FRAGMENT_SEARCH;
   }
 
-  boolean isFavoriteVisible() {
-    return currentFragment == FRAGMENT_DISPLAY_TAG
-        && !((DisplayTag) fragmentDisplay).getDisplayedTag().isFavorited();
+  boolean isAddDefaultListVisible() {
+    TagDb db = new TagDb(activity);
+    return currentFragment == FRAGMENT_DISPLAY_TAG && db.isInDefaultList(getDisplayedTag()) == null;
   }
 
-  boolean isUnFavoriteVisible() {
-    return currentFragment == FRAGMENT_DISPLAY_TAG
-        && ((DisplayTag) fragmentDisplay).getDisplayedTag().isFavorited();
+  boolean isDeleteDefaultListVisible() {
+    TagDb db = new TagDb(activity);
+    return currentFragment == FRAGMENT_DISPLAY_TAG && db.isInDefaultList(getDisplayedTag()) != null;
   }
 
   boolean isMenuVisible() {
@@ -333,7 +333,7 @@ public class FragmentSwitcher {
 
   int getBaseFragmentId() {
     TagDb db = new TagDb(activity);
-    if (db.hasFavorites()) {
+    if (db.hasEntriesInDefaultList()) {
       return FRAGMENT_LIST;
     }
 

@@ -15,8 +15,6 @@ import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withSubstring;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import static com.spelder.tagyourit.action.OrientationChangeAction.orientationLandscape;
-import static org.hamcrest.CoreMatchers.not;
-import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.anything;
 import static org.hamcrest.core.StringContains.containsString;
 import static org.junit.Assert.assertEquals;
@@ -72,7 +70,7 @@ public class TestTrackPlayer {
   }
 
   private void clearCache(Context context) {
-    File musicDir = new File(TrackComponents.getTrackDirectory(context));
+    File musicDir = new File(TrackComponents.getTrackCacheDirectory(context));
     CacheManager.cleanDir(musicDir, CacheManager.getDirSize(musicDir), "");
 
     File sheetDir = new File(new Tag().getSheetMusicDirectory(context));

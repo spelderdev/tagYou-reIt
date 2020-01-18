@@ -11,6 +11,6 @@ public class CancelDownloadReceiver extends BroadcastReceiver {
   @Override
   public void onReceive(Context context, Intent intent) {
     Log.i(TAG, "Cancelling downloading");
-    DownloadFavoritesService.cancel();
+    DownloadTagService.cancel();
   }
 }

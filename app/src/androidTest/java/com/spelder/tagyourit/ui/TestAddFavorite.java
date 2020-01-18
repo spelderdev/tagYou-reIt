@@ -80,7 +80,7 @@ public class TestAddFavorite {
 
     onView(allOf(withId(R.id.tag_list_title), withText(tag_title))).perform(click());
 
-    onView(withId(R.id.action_favorite)).perform(click());
+    onView(withId(R.id.action_add_to_default_list)).perform(click());
 
     onView(withId(R.id.nav_lists)).perform(click());
 

@@ -26,6 +26,7 @@ import com.github.barteksc.pdfviewer.PDFView;
 import com.github.barteksc.pdfviewer.scroll.DefaultScrollHandle;
 import com.ortiz.touchview.TouchImageView;
 import com.spelder.tagyourit.R;
+import com.spelder.tagyourit.db.TagDb;
 import com.spelder.tagyourit.model.Tag;
 import com.spelder.tagyourit.networking.DownloadFileTask;
 import com.spelder.tagyourit.networking.videos.YouTubeVideoInformation;
@@ -99,6 +100,13 @@ public class DisplayTag extends Fragment {
       @NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
     setHasOptionsMenu(true);
     return inflater.inflate(R.layout.sheet_music_viewer, container, false);
+  }
+
+  @Override
+  public void onResume() {
+    super.onResume();
+    TagDb db = new TagDb(context);
+    tag.setDbId(db.isInDefaultList(tag));
   }
 
   @Override

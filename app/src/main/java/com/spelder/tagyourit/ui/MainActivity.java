@@ -38,6 +38,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.spelder.tagyourit.R;
 import com.spelder.tagyourit.db.TagDb;
 import com.spelder.tagyourit.drive.FavoritesBackup;
+import com.spelder.tagyourit.model.ListProperties;
 import com.spelder.tagyourit.model.Tag;
 import com.spelder.tagyourit.model.TrackComponents;
 import com.spelder.tagyourit.model.VideoComponents;
@@ -261,6 +262,8 @@ public class MainActivity extends AppCompatActivity
   @Override
   protected void onResume() {
     super.onResume();
+    Log.d(TAG, "onResume");
+    updateMenu();
   }
 
   @Override
@@ -347,14 +350,22 @@ public class MainActivity extends AppCompatActivity
     MenuInflater inflater = getMenuInflater();
     inflater.inflate(R.menu.main, menu);
 
-    menu.findItem(R.id.action_favorite).setVisible(manager.isFavoriteVisible());
-    menu.findItem(R.id.action_unfavorite).setVisible(manager.isUnFavoriteVisible());
+    menu.findItem(R.id.action_add_to_default_list).setVisible(manager.isAddDefaultListVisible());
+    menu.findItem(R.id.action_delete_from_default_list)
+        .setVisible(manager.isDeleteDefaultListVisible());
     menu.findItem(R.id.action_menu).setVisible(manager.isMenuVisible());
     menu.findItem(R.id.action_search).setVisible(manager.isSearchVisible());
     menu.findItem(R.id.action_sort).setVisible(manager.isSortVisible());
     menu.findItem(R.id.action_add_list).setVisible(manager.isAddListVisible());
     menu.findItem(R.id.action_delete_list).setVisible(manager.isDeleteListVisible());
     menu.findItem(R.id.action_list_options).setVisible(manager.isListOptionsVisible());
+
+    TagDb db = new TagDb(this);
+    ListProperties defaultList = db.getDefaultList();
+    menu.findItem(R.id.action_add_to_default_list)
+        .setIcon(defaultList.getIcon().getOutlineResourceId());
+    menu.findItem(R.id.action_delete_from_default_list)
+        .setIcon(defaultList.getIcon().getFilledResourceId());
 
     searchView = (SearchView) menu.findItem(R.id.action_search).getActionView();
     searchView.setOnQueryTextListener(this);
@@ -372,21 +383,20 @@ public class MainActivity extends AppCompatActivity
     Log.d(TAG, "Option selected");
     TagDb db = new TagDb(this);
     switch (item.getItemId()) {
-      case R.id.action_favorite:
+      case R.id.action_add_to_default_list:
         Tag tag = manager.getDisplayedTag();
 
-        long newRow = db.insertFavorite(tag);
+        long newRow = db.insertDefaultList(tag);
 
         tag.setDbId(newRow);
 
         updateMenu();
         return true;
 
-      case R.id.action_unfavorite:
-        Log.d("MainActivity", "UnFavorites");
+      case R.id.action_delete_from_default_list:
         Tag unTag = manager.getDisplayedTag();
 
-        db.deleteFavorite(unTag);
+        db.deleteFromDefaultList(unTag);
 
         unTag.setDbId(null);
 

@@ -57,9 +57,12 @@ public class TagDb {
     }
   }
 
-  public long insertFavorite(Tag tag) {
-    long tagDbId = insertTag(tag);
-    insertFavorite(tagDbId);
+  public long insertDefaultList(Tag tag) {
+    long tagDbId = getDbIdFromTagId(tag.getId());
+    if (tagDbId == -1) {
+      tagDbId = insertTag(tag);
+    }
+    insertDefaultList(tagDbId);
     return tagDbId;
   }
 
@@ -279,14 +282,18 @@ public class TagDb {
     }
   }
 
-  private void insertFavorite(long tagDbId) {
+  private void insertDefaultList(long tagDbId) {
+    ListProperties defaultList = getDefaultList();
+    if (defaultList == null) {
+      return;
+    }
+
     SQLiteDatabase db = TagDbHelper.getInstance(context).getWritableDatabase();
     ContentValues values = new ContentValues();
     values.put(ListEntriesEntry.COLUMN_NAME_TAG_ID, tagDbId);
-    values.put(
-        ListEntriesEntry.COLUMN_NAME_LIST_ID, getListId(ListPropertiesEntry.FAVORITE_NAME, db));
+    values.put(ListEntriesEntry.COLUMN_NAME_LIST_ID, defaultList.getDbId());
     db.insert(ListEntriesEntry.TABLE_NAME, null, values);
-    Log.d("ListEntryDb,", "Inserted favorite tagDbId: " + tagDbId);
+    Log.d("ListEntryDb,", "Inserted in default list tagDbId: " + tagDbId);
   }
 
   private void insertInList(long tagDbId, long listId) {
@@ -298,14 +305,9 @@ public class TagDb {
     Log.d("ListEntryDb,", "Inserted tagDbId: " + tagDbId + " into list: " + listId);
   }
 
-  private Long getListId(String listName) {
+  private Long getFavoritesListId() {
     SQLiteDatabase db = TagDbHelper.getInstance(context).getWritableDatabase();
-    Long id = getListId(listName, db);
 
-    return id;
-  }
-
-  private Long getListId(String listName, SQLiteDatabase db) {
     String sql =
         "SELECT "
             + ListPropertiesEntry._ID
@@ -314,7 +316,7 @@ public class TagDb {
             + " WHERE "
             + ListPropertiesEntry.COLUMN_NAME_NAME
             + " = '"
-            + listName
+            + ListPropertiesEntry.FAVORITE_NAME
             + "'";
 
     Cursor c = db.rawQuery(sql, new String[] {});
@@ -329,6 +331,10 @@ public class TagDb {
   }
 
   public void updateListProperties(ListProperties properties) {
+    if (properties.isDefaultList()) {
+      setAllListsNotDefault();
+    }
+
     if (properties.getDbId() == null) {
       addListProperties(properties);
       return;
@@ -339,6 +345,8 @@ public class TagDb {
     String strFilter = ListPropertiesEntry._ID + "=" + properties.getDbId();
     db.update(ListPropertiesEntry.TABLE_NAME, convertToContentValues(properties), strFilter, null);
     Log.d("TagDb", "Updated listId: " + properties.getDbId());
+
+    setFavoriteListAsDefaultIfNeeded();
   }
 
   private void addListProperties(ListProperties properties) {
@@ -349,6 +357,34 @@ public class TagDb {
     Log.d("TagDb,", "Inserted listId: " + newRowId);
   }
 
+  private void setAllListsNotDefault() {
+    SQLiteDatabase db = TagDbHelper.getInstance(context).getWritableDatabase();
+
+    ContentValues values = new ContentValues();
+    values.put(ListPropertiesEntry.COLUMN_NAME_DEFAULT_LIST, 0);
+
+    String strFilter = ListPropertiesEntry.COLUMN_NAME_DEFAULT_LIST + "=?";
+    db.update(ListPropertiesEntry.TABLE_NAME, values, strFilter, new String[] {"1"});
+  }
+
+  private void setFavoriteListAsDefaultIfNeeded() {
+    if (getDefaultList() != null) {
+      return;
+    }
+
+    SQLiteDatabase db = TagDbHelper.getInstance(context).getWritableDatabase();
+
+    ContentValues values = new ContentValues();
+    values.put(ListPropertiesEntry.COLUMN_NAME_DEFAULT_LIST, 1);
+
+    Long id = getFavoritesListId();
+    if (id != null) {
+      String strFilter = ListPropertiesEntry._ID + "=?";
+      db.update(
+          ListPropertiesEntry.TABLE_NAME, values, strFilter, new String[] {Long.toString(id)});
+    }
+  }
+
   private ContentValues convertToContentValues(ListProperties properties) {
     ContentValues values = new ContentValues();
     values.put(ListPropertiesEntry.COLUMN_NAME_NAME, properties.getName());
@@ -357,6 +393,7 @@ public class TagDb {
         ListPropertiesEntry.COLUMN_NAME_DOWNLOAD_SHEET, properties.isDownloadSheet() ? 1 : 0);
     values.put(
         ListPropertiesEntry.COLUMN_NAME_DOWNLOAD_TRACK, properties.isDownloadTrack() ? 1 : 0);
+    values.put(ListPropertiesEntry.COLUMN_NAME_DEFAULT_LIST, properties.isDefaultList() ? 1 : 0);
     values.put(ListPropertiesEntry.COLUMN_NAME_ICON, properties.getIcon().getDbId());
     values.put(ListPropertiesEntry.COLUMN_NAME_COLOR, properties.getColor());
 
@@ -385,10 +422,12 @@ public class TagDb {
           c.getInt(c.getColumnIndex(ListPropertiesEntry.COLUMN_NAME_DOWNLOAD_SHEET)) == 1);
       properties.setDownloadTrack(
           c.getInt(c.getColumnIndex(ListPropertiesEntry.COLUMN_NAME_DOWNLOAD_TRACK)) == 1);
+      properties.setDefaultList(
+          c.getInt(c.getColumnIndex(ListPropertiesEntry.COLUMN_NAME_DEFAULT_LIST)) == 1);
       properties.setIcon(
           ListIcon.fromDbId(c.getInt(c.getColumnIndex(ListPropertiesEntry.COLUMN_NAME_ICON))));
       properties.setColor(c.getInt(c.getColumnIndex(ListPropertiesEntry.COLUMN_NAME_COLOR)));
-      properties.setListSize(getListSize(properties.getDbId(), db));
+      properties.setListSize(getListSize(properties.getDbId()));
 
       listProperties.add(properties);
       Log.d("TagDb", "" + c.getInt(c.getColumnIndex(ListPropertiesEntry.COLUMN_NAME_NAME)));
@@ -399,8 +438,6 @@ public class TagDb {
   }
 
   public ListProperties getListProperties(long dbId) {
-    SQLiteDatabase db = TagDbHelper.getInstance(context).getWritableDatabase();
-
     String sql =
         "SELECT * FROM "
             + ListPropertiesEntry.TABLE_NAME
@@ -408,6 +445,12 @@ public class TagDb {
             + ListPropertiesEntry._ID
             + "="
             + dbId;
+
+    return getListProperties(sql);
+  }
+
+  private ListProperties getListProperties(String sql) {
+    SQLiteDatabase db = TagDbHelper.getInstance(context).getWritableDatabase();
 
     Cursor c = db.rawQuery(sql, new String[] {});
     if (c.getCount() == 0) {
@@ -424,16 +467,20 @@ public class TagDb {
         c.getInt(c.getColumnIndex(ListPropertiesEntry.COLUMN_NAME_DOWNLOAD_SHEET)) == 1);
     properties.setDownloadTrack(
         c.getInt(c.getColumnIndex(ListPropertiesEntry.COLUMN_NAME_DOWNLOAD_TRACK)) == 1);
+    properties.setDefaultList(
+        c.getInt(c.getColumnIndex(ListPropertiesEntry.COLUMN_NAME_DEFAULT_LIST)) == 1);
     properties.setIcon(
         ListIcon.fromDbId(c.getInt(c.getColumnIndex(ListPropertiesEntry.COLUMN_NAME_ICON))));
     properties.setColor(c.getInt(c.getColumnIndex(ListPropertiesEntry.COLUMN_NAME_COLOR)));
-    properties.setListSize(getListSize(properties.getDbId(), db));
+    properties.setListSize(getListSize(properties.getDbId()));
 
     c.close();
     return properties;
   }
 
-  private int getListSize(long listId, SQLiteDatabase db) {
+  private int getListSize(long listId) {
+    SQLiteDatabase db = TagDbHelper.getInstance(context).getWritableDatabase();
+
     String sql =
         "SELECT COUNT(*) AS tagCount FROM "
             + ListEntriesEntry.TABLE_NAME
@@ -464,6 +511,8 @@ public class TagDb {
     // Issue SQL statement.
     int deletedRows = db.delete(ListPropertiesEntry.TABLE_NAME, selection, selectionArgs4);
     Log.d("ListPropertiesDB", "Number of Deleted rows: " + deletedRows);
+
+    setFavoriteListAsDefaultIfNeeded();
   }
 
   private void deleteListEntriesByListId(long listDbId, SQLiteDatabase db) {
@@ -487,10 +536,18 @@ public class TagDb {
     Log.d("ListEntriesDB", "Number of Deleted rows: " + deletedRows);
   }
 
-  public void deleteFavorite(Tag tag) {
+  public void deleteFromDefaultList(Tag tag) {
     Log.d(
-        "FavoriteDB",
-        "Deleting favorite with title: " + tag.getTitle() + " and DB ID: " + tag.getDbId());
+        "ListEntryDB",
+        "Deleting from default list with title: "
+            + tag.getTitle()
+            + " and DB ID: "
+            + tag.getDbId());
+
+    ListProperties defaultList = getDefaultList();
+    if (defaultList == null) {
+      return;
+    }
 
     // Gets the data repository in write mode
     SQLiteDatabase db = TagDbHelper.getInstance(context).getWritableDatabase();
@@ -500,14 +557,16 @@ public class TagDb {
             + " LIKE ? AND "
             + ListEntriesEntry.COLUMN_NAME_LIST_ID
             + " = "
-            + getListId(ListPropertiesEntry.FAVORITE_NAME, db);
+            + defaultList.getDbId();
     // Specify arguments in placeholder order.
     String[] selectionArgs = {"" + tag.getDbId()};
     // Issue SQL statement.
     int deletedRows = db.delete(ListEntriesEntry.TABLE_NAME, selection, selectionArgs);
-    Log.d("FavoriteDB", "Number of Deleted rows: " + deletedRows);
+    Log.d("ListEntryDB", "Number of Deleted rows: " + deletedRows);
 
-    deleteTag(tag);
+    if (getListsForTag(tag).isEmpty()) {
+      deleteTag(tag);
+    }
   }
 
   private void deleteTag(Tag tag) {
@@ -562,7 +621,12 @@ public class TagDb {
     return dbIds;
   }
 
-  public Long isFavorite(Tag tag) {
+  public Long isInDefaultList(Tag tag) {
+    ListProperties defaultList = getDefaultList();
+    if (defaultList == null) {
+      return null;
+    }
+
     SQLiteDatabase db = TagDbHelper.getInstance(context).getWritableDatabase();
     String sql =
         "SELECT * FROM "
@@ -586,7 +650,7 @@ public class TagDb {
             + " AND "
             + ListEntriesEntry.COLUMN_NAME_LIST_ID
             + " = "
-            + getListId(ListPropertiesEntry.FAVORITE_NAME, db);
+            + defaultList.getDbId();
     Cursor c = db.rawQuery(sql, new String[] {});
     Long dbId = null;
     if (c.getCount() > 0) {
@@ -599,9 +663,9 @@ public class TagDb {
   }
 
   public void deleteAllFavorites() {
-    List<Tag> tags = getFavorites();
+    List<Tag> tags = getTagsForList(getFavoritesListId());
     for (Tag tag : tags) {
-      deleteFavorite(tag);
+      deleteFromDefaultList(tag);
     }
   }
 
@@ -655,10 +719,6 @@ public class TagDb {
     return getTagsForList(sql);
   }
 
-  public List<Tag> getFavorites() {
-    return getTagsForList(getListId(ListPropertiesEntry.FAVORITE_NAME));
-  }
-
   private List<Tag> getTagsForList(String sql) {
     ArrayList<Tag> tags = new ArrayList<>();
     SQLiteDatabase db = TagDbHelper.getInstance(context).getWritableDatabase();
@@ -692,15 +752,26 @@ public class TagDb {
           getListProperties(c.getInt(c.getColumnIndex(ListEntriesEntry.COLUMN_NAME_LIST_ID)));
       tag.setDownloaded(list.isDownloadSheet());
 
-      addTracks(tag, db);
+      addTracks(tag, db, list.isDownloadTrack());
       addVideos(tag, db);
 
       tags.add(tag);
-      Log.d("TagDb", "Got favorite: " + tag.getId());
+      Log.d("TagDb", "Got tag from list: " + tag.getId());
     } while (c.moveToNext());
 
     c.close();
     return tags;
+  }
+
+  public ListProperties getDefaultList() {
+    String sql =
+        "SELECT * FROM "
+            + ListPropertiesEntry.TABLE_NAME
+            + " WHERE "
+            + ListPropertiesEntry.COLUMN_NAME_DEFAULT_LIST
+            + "=1";
+
+    return getListProperties(sql);
   }
 
   private String getSortColumnName(SortBy sortBy) {
@@ -717,7 +788,7 @@ public class TagDb {
     }
   }
 
-  private void addTracks(Tag tag, SQLiteDatabase db) {
+  private void addTracks(Tag tag, SQLiteDatabase db, boolean isDownloaded) {
     String sql =
         "SELECT * FROM "
             + LearningTracksEntry.TABLE_NAME
@@ -736,7 +807,7 @@ public class TagDb {
       String type = c.getString(c.getColumnIndex(LearningTracksEntry.COLUMN_NAME_FILE_TYPE));
       String part = c.getString(c.getColumnIndex(LearningTracksEntry.COLUMN_NAME_PART));
       String link = c.getString(c.getColumnIndex(LearningTracksEntry.COLUMN_NAME_LINK));
-      tag.addTrack(part, link, type);
+      tag.addTrack(part, link, type, isDownloaded);
     } while (c.moveToNext());
 
     c.close();
@@ -789,15 +860,13 @@ public class TagDb {
     c.close();
   }
 
-  public boolean hasFavorites() {
-    SQLiteDatabase db = TagDbHelper.getInstance(context).getWritableDatabase();
-
-    Long id = getListId(ListPropertiesEntry.FAVORITE_NAME, db);
-    if (id == null) {
+  public boolean hasEntriesInDefaultList() {
+    ListProperties defaultList = getDefaultList();
+    if (defaultList == null) {
       return false;
     }
 
-    return getListSize(id, db) > 0;
+    return getListSize(defaultList.getDbId()) > 0;
   }
 
   public void insertUserRating(long tagId, double rating) {

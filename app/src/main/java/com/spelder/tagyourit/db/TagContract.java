@@ -262,6 +262,7 @@ public class TagContract {
     static final String COLUMN_NAME_COLOR = "color";
     static final String COLUMN_NAME_DOWNLOAD_SHEET = "download_sheet";
     static final String COLUMN_NAME_DOWNLOAD_TRACK = "download_track";
+    static final String COLUMN_NAME_DEFAULT_LIST = "default_list";
     static final String SQL_CREATE_ENTRIES =
         "CREATE TABLE "
             + TABLE_NAME
@@ -285,6 +286,9 @@ public class TagContract {
             + COMMA_SEP
             + COLUMN_NAME_DOWNLOAD_TRACK
             + INT_TYPE
+            + COMMA_SEP
+            + COLUMN_NAME_DEFAULT_LIST
+            + INT_TYPE
             + " )";
     static final String SQL_DELETE_ENTRIES = "DROP TABLE IF EXISTS " + TABLE_NAME;
     static final String SQL_CREATE_DEFAULT_ENTRIES =
@@ -302,13 +306,15 @@ public class TagContract {
             + COLUMN_NAME_DOWNLOAD_SHEET
             + COMMA_SEP
             + COLUMN_NAME_DOWNLOAD_TRACK
+            + COMMA_SEP
+            + COLUMN_NAME_DEFAULT_LIST
             + ") VALUES "
             + "('Favorites', 0, 1, "
             + ListColor.ORANGE.getColorId()
-            + ", 1, 0),"
+            + ", 1, 0, 1),"
             + "('Teachable', 0, 8, "
             + ListColor.CYAN.getColorId()
-            + ", 1, 0)";
+            + ", 1, 0, 0)";
     static final String FAVORITE_NAME = "Favorites";
   }
 

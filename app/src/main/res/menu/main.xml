@@ -1,16 +1,16 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
   xmlns:app="http://schemas.android.com/apk/res-auto">
   <item
-    android:id="@+id/action_favorite"
+    android:id="@+id/action_add_to_default_list"
     android:icon="@drawable/favorite_outline"
     android:orderInCategory="98"
-    android:title="@string/action_favorite"
+    android:title="@string/action_add_to_default_list"
     app:showAsAction="ifRoom"/>
   <item
-    android:id="@+id/action_unfavorite"
+    android:id="@+id/action_delete_from_default_list"
     android:icon="@drawable/favorite_filled"
     android:orderInCategory="99"
-    android:title="@string/action_unfavorite"
+    android:title="@string/action_delete_from_default_list"
     app:showAsAction="ifRoom"/>
   <item
     android:id="@+id/action_search"

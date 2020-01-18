@@ -18,6 +18,7 @@ public class ListProperties implements Parcelable {
           listProperties.setDownloadTrack(source.readInt() == 1);
           listProperties.setListSize(source.readInt());
           listProperties.setColor(source.readInt());
+          listProperties.setDefaultList(source.readInt() == 1);
           return listProperties;
         }
 
@@ -34,6 +35,7 @@ public class ListProperties implements Parcelable {
   private int color = Color.GRAY;
   private boolean downloadSheet;
   private boolean downloadTrack;
+  private boolean defaultList;
   private int listSize;
 
   public Long getDbId() {
@@ -96,6 +98,14 @@ public class ListProperties implements Parcelable {
     this.downloadTrack = downloadTrack;
   }
 
+  public boolean isDefaultList() {
+    return defaultList;
+  }
+
+  public void setDefaultList(boolean defaultList) {
+    this.defaultList = defaultList;
+  }
+
   public int getListSize() {
     return listSize;
   }
@@ -121,5 +131,6 @@ public class ListProperties implements Parcelable {
     parcel.writeInt(downloadTrack ? 1 : 0);
     parcel.writeInt(listSize);
     parcel.writeInt(color);
+    parcel.writeInt(defaultList ? 1 : 0);
   }
 }

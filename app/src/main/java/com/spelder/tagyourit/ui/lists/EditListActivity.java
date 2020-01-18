@@ -3,6 +3,7 @@ package com.spelder.tagyourit.ui.lists;
 import static com.spelder.tagyourit.ui.FragmentSwitcher.PAR_KEY;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Color;
@@ -18,14 +19,16 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Switch;
 import android.widget.TextView;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import com.spelder.tagyourit.R;
 import com.spelder.tagyourit.db.TagDb;
 import com.spelder.tagyourit.model.ListColor;
 import com.spelder.tagyourit.model.ListIcon;
 import com.spelder.tagyourit.model.ListProperties;
-import com.spelder.tagyourit.networking.DownloadFavoritesService;
-import com.spelder.tagyourit.networking.RemoveFavoritesDownloadService;
+import com.spelder.tagyourit.networking.DownloadTagService;
+import com.spelder.tagyourit.networking.RemoveTagDownloadService;
+import com.spelder.tagyourit.networking.RemoveTagTrackDownloadService;
 
 /** Activity used to edit list properties. */
 public class EditListActivity extends AppCompatActivity {
@@ -34,6 +37,7 @@ public class EditListActivity extends AppCompatActivity {
   private ListProperties listProperties;
   private Switch downloadSheet;
   private Switch downloadTrack;
+  private Switch defaultList;
   private EditText listName;
   private Button addButton;
   private TextView title;
@@ -51,6 +55,7 @@ public class EditListActivity extends AppCompatActivity {
 
     downloadSheet = findViewById(R.id.add_list_download_sheet);
     downloadTrack = findViewById(R.id.add_list_download_track);
+    defaultList = findViewById(R.id.add_list_default_list);
     title = findViewById(R.id.add_list_title);
 
     addButton = findViewById(R.id.add_list_create_button);
@@ -81,13 +86,39 @@ public class EditListActivity extends AppCompatActivity {
     downloadSheet.setOnCheckedChangeListener(
         (CompoundButton buttonView, boolean isChecked) -> {
           if (isChecked) {
-            RemoveFavoritesDownloadService.cancel();
-            Intent intent = new Intent(this, DownloadFavoritesService.class);
+            RemoveTagDownloadService.cancel();
+            Intent intent = new Intent(this, DownloadTagService.class);
             intent.putExtra(PAR_KEY, listProperties);
             this.startService(intent);
           } else {
-            DownloadFavoritesService.cancel();
-            Intent intent = new Intent(this, RemoveFavoritesDownloadService.class);
+            DownloadTagService.cancel();
+            Intent intent = new Intent(this, RemoveTagDownloadService.class);
+            intent.putExtra(PAR_KEY, listProperties);
+            this.startService(intent);
+          }
+        });
+
+    downloadTrack.setOnCheckedChangeListener(
+        (CompoundButton buttonView, boolean isChecked) -> {
+          if (isChecked) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder
+                .setTitle("Are you sure?")
+                .setMessage(
+                    "Tracks will be downloaded when first played, but will not be deleted until this switch is flipped again. This can take up a lot of space.")
+                .setPositiveButton(
+                    "Ok",
+                    (DialogInterface dialog, int id) -> {
+                      // Leave set
+                    })
+                .setNegativeButton(
+                    "Cancel",
+                    (DialogInterface dialog, int id) -> {
+                      downloadTrack.setChecked(false);
+                    });
+            builder.create().show();
+          } else {
+            Intent intent = new Intent(this, RemoveTagTrackDownloadService.class);
             intent.putExtra(PAR_KEY, listProperties);
             this.startService(intent);
           }
@@ -115,6 +146,7 @@ public class EditListActivity extends AppCompatActivity {
       listName.setText(listProperties.getName());
       downloadSheet.setChecked(listProperties.isDownloadSheet());
       downloadTrack.setChecked(listProperties.isDownloadTrack());
+      defaultList.setChecked(listProperties.isDefaultList());
       addButton.setText(R.string.list_update_button);
       title.setText(R.string.list_update);
       selectedColor = ListColor.fromDbId(listProperties.getColor());
@@ -127,6 +159,7 @@ public class EditListActivity extends AppCompatActivity {
     listProperties.setName(listName.getText().toString());
     listProperties.setDownloadSheet(downloadSheet.isChecked());
     listProperties.setDownloadTrack(downloadTrack.isChecked());
+    listProperties.setDefaultList(defaultList.isChecked());
     listProperties.setIcon(selectedIcon);
     listProperties.setColor(selectedColor.getColorId());
 

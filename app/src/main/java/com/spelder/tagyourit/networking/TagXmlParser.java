@@ -184,7 +184,7 @@ class TagXmlParser {
     String link = readText(parser);
     parser.require(XmlPullParser.END_TAG, ns, part);
     if (link.length() > 0) {
-      tag.addTrack(part, link, linkType);
+      tag.addTrack(part, link, linkType, false);
     }
   }
 

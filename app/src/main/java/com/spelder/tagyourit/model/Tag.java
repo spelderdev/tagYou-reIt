@@ -27,6 +27,7 @@ public class Tag implements Parcelable {
           tag.setPostedDate(new Date(source.readLong()));
           tag.setKey(source.readString());
           tag.setNumberOfParts(source.readInt());
+          tag.setDownloaded(source.readInt() == 1);
           tag.setLyrics(source.readString());
           tag.setType(source.readString());
           tag.setCollection(source.readString());
@@ -39,7 +40,8 @@ public class Tag implements Parcelable {
             String part = source.readString();
             String link = source.readString();
             String type = source.readString();
-            tag.addTrack(part, link, type);
+            boolean isDownloaded = source.readInt() == 1;
+            tag.addTrack(part, link, type, isDownloaded);
           }
           ArrayList<VideoComponents> videoComponents = new ArrayList<>();
           source.readList(videoComponents, VideoComponents.class.getClassLoader());
@@ -123,10 +125,6 @@ public class Tag implements Parcelable {
 
   public void setId(int id) {
     this.id = id;
-  }
-
-  public boolean isFavorited() {
-    return dbId != null;
   }
 
   public Long getDbId() {
@@ -283,11 +281,7 @@ public class Tag implements Parcelable {
   }
 
   public String getSheetMusicPath(Context context) {
-    if (!isDownloaded) {
-      return getSheetMusicDirectory(context) + "/" + getSheetMusicFileName();
-    } else {
-      return getSheetMusicDirectory(context) + "/" + getSheetMusicFileName();
-    }
+    return getSheetMusicDirectory(context) + "/" + getSheetMusicFileName();
   }
 
   public String getSheetMusicDirectory(Context context) {
@@ -302,11 +296,12 @@ public class Tag implements Parcelable {
     return getId() + "." + getSheetMusicType();
   }
 
-  public void addTrack(String part, String link, String type) {
+  public void addTrack(String part, String link, String type, boolean isDownloaded) {
     TrackComponents value = new TrackComponents();
     value.setLink(link);
     value.setPart(part);
     value.setType(type);
+    value.setDownloaded(isDownloaded);
     value.setTagId(getId());
     value.setTagTitle(getTitle());
     tracks.put(part, value);
@@ -357,6 +352,7 @@ public class Tag implements Parcelable {
     parcel.writeLong(postedDate.getTime());
     parcel.writeString(key);
     parcel.writeInt(numberParts);
+    parcel.writeInt(isDownloaded ? 1 : 0);
     parcel.writeString(lyrics);
     parcel.writeString(type);
     parcel.writeString(collection);
@@ -373,6 +369,7 @@ public class Tag implements Parcelable {
       parcel.writeString(entry.getKey());
       parcel.writeString(entry.getValue().getLink());
       parcel.writeString(entry.getValue().getType());
+      parcel.writeInt(entry.getValue().isDownloaded() ? 1 : 0);
     }
     parcel.writeList(videos);
   }

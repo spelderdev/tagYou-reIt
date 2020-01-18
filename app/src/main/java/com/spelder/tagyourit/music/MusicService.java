@@ -320,8 +320,7 @@ public class MusicService extends Service
       }
 
       DownloadFileTask task = new UpdatedDownloadFileTask(this, absoluteFilePath);
-      task.execute(
-          track.getLink(), TrackComponents.getTrackDirectory(context), track.getTrackFileName());
+      task.execute(track.getLink(), track.getTrackDirectory(context), track.getTrackFileName());
 
       return null;
     }

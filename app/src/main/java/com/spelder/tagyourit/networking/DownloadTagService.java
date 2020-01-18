@@ -20,29 +20,31 @@ import com.spelder.tagyourit.model.ListProperties;
 import com.spelder.tagyourit.model.Tag;
 import java.io.File;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
-public class RemoveFavoritesDownloadService extends IntentService {
-  private final String TAG = RemoveFavoritesDownloadService.class.getName();
-  private static final int NOTIFICATION_ID = 29335;
+public class DownloadTagService extends IntentService {
+  private final String TAG = DownloadTagService.class.getName();
+  private static final int NOTIFICATION_ID = 29336;
   private static final String CHANNEL_ID = "download_favorites";
 
   private NotificationManagerCompat notificationManager;
   private NotificationCompat.Builder builder;
   private static boolean shouldCancel = false;
 
-  public RemoveFavoritesDownloadService() {
-    super("RemoveFavoritesDownloadService");
+  public DownloadTagService() {
+    super("DownloadTagService");
     shouldCancel = false;
   }
 
   @Override
   protected void onHandleIntent(Intent workIntent) {
+    Log.d(TAG, "Handle Intent");
 
     createNotification();
 
     ListProperties listProperties = workIntent.getParcelableExtra(PAR_KEY);
     if (listProperties != null && listProperties.getDbId() != null) {
-      removeDownloadedTags(listProperties.getDbId());
+      downloadTags(listProperties.getDbId());
     }
 
     finishNotification();
@@ -67,7 +69,7 @@ public class RemoveFavoritesDownloadService extends IntentService {
             getApplicationContext(), 0, cancelIntent, PendingIntent.FLAG_CANCEL_CURRENT);
 
     builder
-        .setContentTitle("Removing Favorites Downloads")
+        .setContentTitle("Downloading Tags")
         .setSmallIcon(R.drawable.hand_music)
         .setPriority(NotificationCompat.PRIORITY_LOW)
         .addAction(
@@ -80,7 +82,7 @@ public class RemoveFavoritesDownloadService extends IntentService {
   }
 
   private void finishNotification() {
-    builder.setContentText("Removing complete").setProgress(0, 0, false);
+    builder.setContentText("Download complete").setProgress(0, 0, false);
     notificationManager.notify(NOTIFICATION_ID, builder.build());
     notificationManager.cancel(NOTIFICATION_ID);
   }
@@ -99,7 +101,7 @@ public class RemoveFavoritesDownloadService extends IntentService {
     }
   }
 
-  private void removeDownloadedTags(long dbId) {
+  private void downloadTags(long dbId) {
     TagDb db = new TagDb(getApplicationContext());
     List<Tag> tags = db.getTagsForList(dbId);
 
@@ -121,8 +123,19 @@ public class RemoveFavoritesDownloadService extends IntentService {
 
       File file = new File(absoluteFilePath);
       if (file.exists()) {
-        Log.d(TAG, "Removing file: " + absoluteFilePath);
-        Log.d(TAG, "Deleted: " + file.delete());
+        Log.d(TAG, "File exists");
+      } else {
+        DownloadFileTask task = new DownloadFileTask();
+        task.execute(
+            tag.getSheetMusicLink(),
+            tag.getSheetMusicDirectory(getApplicationContext()),
+            tag.getSheetMusicFileName());
+        try {
+          task.get();
+        } catch (InterruptedException | ExecutionException e) {
+          e.printStackTrace();
+        }
+        Log.d("DisplayTag", "Downloaded tag");
       }
     }
   }

@@ -89,7 +89,7 @@
     </service>
 
     <service
-      android:name="com.spelder.tagyourit.networking.DownloadFavoritesService"
+      android:name="com.spelder.tagyourit.networking.DownloadTagService"
       android:exported="false" />
 
     <receiver
@@ -98,7 +98,11 @@
       android:exported="false" />
 
     <service
-      android:name="com.spelder.tagyourit.networking.RemoveFavoritesDownloadService"
+      android:name="com.spelder.tagyourit.networking.RemoveTagDownloadService"
+      android:exported="false" />
+
+    <service
+      android:name="com.spelder.tagyourit.networking.RemoveTagTrackDownloadService"
       android:exported="false" />
 
     <receiver

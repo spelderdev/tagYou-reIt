@@ -5,13 +5,14 @@ CREATE TABLE list_properties (
  icon INT,
  color INT,
  download_sheet INT,
- download_track INT
+ download_track INT,
+ default_list INT
 );
 
-INSERT INTO list_properties (name, user_created, icon, color, download_sheet, download_track)
+INSERT INTO list_properties (name, user_created, icon, color, download_sheet, download_track, default_list)
 VALUES
-  ("Favorites", 0, 1, -1801946, 1, 0),
-  ("Teachable", 0, 8, -7617718, 1, 0);
+  ("Favorites", 0, 1, -1801946, 1, 0, 1),
+  ("Teachable", 0, 8, -7617718, 1, 0, 0);
 
 PRAGMA foreign_keys=off;
 
