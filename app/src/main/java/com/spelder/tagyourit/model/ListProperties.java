@@ -41,7 +41,11 @@ public class ListProperties implements Parcelable {
   }
 
   public void setDbId(Long dbId) {
-    this.dbId = dbId;
+    if (dbId != null && dbId == -1) {
+      this.dbId = null;
+    } else {
+      this.dbId = dbId;
+    }
   }
 
   public String getName() {
@@ -105,7 +109,11 @@ public class ListProperties implements Parcelable {
   }
 
   public void writeToParcel(Parcel parcel, int flags) {
-    parcel.writeLong(dbId);
+    if (dbId != null) {
+      parcel.writeLong(dbId);
+    } else {
+      parcel.writeLong(-1);
+    }
     parcel.writeString(name);
     parcel.writeInt(userCreated ? 1 : 0);
     parcel.writeInt(icon.getDbId());

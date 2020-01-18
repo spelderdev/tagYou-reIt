@@ -160,9 +160,11 @@ public class FavoritesBackup {
               switch (action) {
                 case BACKUP:
                   showMessage(activity, "Successfully backed up contents");
+                  signInResult.finished();
                   break;
                 case RESTORE:
                   showMessage(activity, "Successfully restored contents");
+                  signInResult.finished();
                   break;
               }
             })
@@ -205,12 +207,14 @@ public class FavoritesBackup {
     signIn();
   }
 
-  public void backup() {
+  public void backup(SignInResult result) {
+    signInResult = result;
     action = Action.BACKUP;
     signIn();
   }
 
-  public void restore() {
+  public void restore(SignInResult result) {
+    signInResult = result;
     action = Action.RESTORE;
     signIn();
   }

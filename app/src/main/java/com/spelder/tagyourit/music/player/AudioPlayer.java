@@ -215,7 +215,9 @@ public class AudioPlayer {
   }
 
   public void seekTo(long position) {
-    audioExtractor.seekTo(position);
+    if (audioExtractor != null) {
+      audioExtractor.seekTo(position);
+    }
   }
 
   public void setOnPreparedListener(OnPreparedListener listener) {

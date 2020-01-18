@@ -45,7 +45,7 @@ public class PreferencesFragment extends PreferenceFragmentCompat {
             back.signInCustomAction(
                 () -> {
                   accountPref.setTitle("Sign out");
-                  accountPref.setSummary(accountName);
+                  accountPref.setSummary(back.getSignedInEmail());
                 });
           }
           return true;
@@ -54,14 +54,22 @@ public class PreferencesFragment extends PreferenceFragmentCompat {
     Preference backupPref = findPreference("pref_key_backup");
     backupPref.setOnPreferenceClickListener(
         preference -> {
-          back.backup();
+          back.backup(
+              () -> {
+                accountPref.setTitle("Sign out");
+                accountPref.setSummary(back.getSignedInEmail());
+              });
           return true;
         });
 
     Preference restorePref = findPreference("pref_key_restore");
     restorePref.setOnPreferenceClickListener(
         preference -> {
-          back.restore();
+          back.restore(
+              () -> {
+                accountPref.setTitle("Sign out");
+                accountPref.setSummary(back.getSignedInEmail());
+              });
           return true;
         });
 
