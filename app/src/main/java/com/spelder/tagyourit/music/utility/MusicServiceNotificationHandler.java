@@ -174,9 +174,9 @@ public class MusicServiceNotificationHandler {
 
     int icon;
     if (state == PlayerStates.PLAYING) {
-      icon = R.drawable.ic_pause_white_24dp;
+      icon = R.drawable.pause;
     } else {
-      icon = R.drawable.ic_play_arrow_white_24dp;
+      icon = R.drawable.play_arrow;
     }
 
     String title = "title";
@@ -214,7 +214,7 @@ public class MusicServiceNotificationHandler {
                     context, PlaybackStateCompat.ACTION_PLAY_PAUSE)))
         .addAction(
             new NotificationCompat.Action(
-                R.drawable.ic_close_white_24dp,
+                R.drawable.close,
                 "Stop",
                 MediaButtonReceiver.buildMediaButtonPendingIntent(
                     context, PlaybackStateCompat.ACTION_STOP)))

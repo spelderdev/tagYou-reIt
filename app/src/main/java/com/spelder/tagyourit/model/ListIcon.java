@@ -3,30 +3,44 @@ package com.spelder.tagyourit.model;
 import com.spelder.tagyourit.R;
 
 public enum ListIcon {
-  DEFAULT(R.drawable.list_transparent, 0),
-  FAVORITE(R.drawable.favorite_transparent, 1),
-  STAR(R.drawable.star_transparent, 2),
-  KEY(R.drawable.key_transparent, 3),
-  RECENT(R.drawable.clock_transparent, 4),
-  DOWNLOAD(R.drawable.download_transparent, 5),
-  PLAY(R.drawable.play_transparent, 6),
-  NOTE(R.drawable.note_transparent, 7),
-  TEACH(R.drawable.teach_transparent, 8);
+  DEFAULT(0, R.drawable.list_transparent, R.drawable.list_filled, R.drawable.list_outline),
+  FAVORITE(
+      1, R.drawable.favorite_transparent, R.drawable.favorite_filled, R.drawable.favorite_outline),
+  STAR(2, R.drawable.star_transparent, R.drawable.star_filled, R.drawable.star_outline),
+  KEY(3, R.drawable.key_transparent, R.drawable.key_filled, R.drawable.key_outline),
+  RECENT(4, R.drawable.clock_transparent, R.drawable.clock_filled, R.drawable.clock_outline),
+  DOWNLOAD(
+      5, R.drawable.download_transparent, R.drawable.download_filled, R.drawable.download_outline),
+  PLAY(6, R.drawable.play_transparent, R.drawable.play_filled, R.drawable.play_outline),
+  NOTE(7, R.drawable.note_transparent, R.drawable.note_filled, R.drawable.note_outline),
+  TEACH(8, R.drawable.school_transparent, R.drawable.school_filled, R.drawable.school_outline);
 
   private int dbId;
-  private int resourceId;
+  private int mainResourceId;
+  private int filledResourceId;
+  private int outlineResourceId;
 
-  ListIcon(int resourceId, int dbId) {
+  ListIcon(int dbId, int mainResourceId, int filledResourceId, int outlineResourceId) {
     this.dbId = dbId;
-    this.resourceId = resourceId;
+    this.mainResourceId = mainResourceId;
+    this.filledResourceId = filledResourceId;
+    this.outlineResourceId = outlineResourceId;
   }
 
   public int getDbId() {
     return dbId;
   }
 
-  public int getResourceId() {
-    return resourceId;
+  public int getMainResourceId() {
+    return mainResourceId;
+  }
+
+  public int getFilledResourceId() {
+    return filledResourceId;
+  }
+
+  public int getOutlineResourceId() {
+    return outlineResourceId;
   }
 
   public static ListIcon fromDbId(int dbId) {

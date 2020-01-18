@@ -10,7 +10,7 @@
     android:layout_width="25dp"
     android:layout_height="30dp"
     android:contentDescription="@string/close"
-    android:src="@drawable/ic_close_white_24dp"
+    android:src="@drawable/close"
     android:tint="@color/darkTitle" />
 
   <TextView

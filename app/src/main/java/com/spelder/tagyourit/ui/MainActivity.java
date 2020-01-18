@@ -96,7 +96,7 @@ public class MainActivity extends AppCompatActivity
           trackLoading.setVisibility(View.GONE);
           trackPlayPause.setVisibility(View.VISIBLE);
           trackToolbar.setVisibility(View.VISIBLE);
-          trackPlayPause.setImageResource(R.drawable.ic_pause_white_24dp);
+          trackPlayPause.setImageResource(R.drawable.pause);
         }
 
         @Override
@@ -104,7 +104,7 @@ public class MainActivity extends AppCompatActivity
           trackLoading.setVisibility(View.GONE);
           trackPlayPause.setVisibility(View.VISIBLE);
           trackToolbar.setVisibility(View.VISIBLE);
-          trackPlayPause.setImageResource(R.drawable.ic_play_arrow_white_24dp);
+          trackPlayPause.setImageResource(R.drawable.play_arrow);
         }
 
         @Override

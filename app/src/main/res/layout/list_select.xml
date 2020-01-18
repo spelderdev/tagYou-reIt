@@ -12,7 +12,7 @@
     android:layout_gravity="center_vertical"
     android:layout_margin="10dp"
     android:contentDescription="List icon"
-    app:srcCompat="@drawable/favorite" />
+    app:srcCompat="@drawable/favorite_transparent" />
 
   <TextView
     android:id="@+id/list_select_name"

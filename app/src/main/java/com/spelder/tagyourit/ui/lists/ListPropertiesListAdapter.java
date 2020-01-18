@@ -67,7 +67,7 @@ class ListPropertiesListAdapter extends BaseAdapter {
     holder.name.setText(properties.getName());
     holder.count.setText(String.format(Locale.ENGLISH, "%d", properties.getListSize()));
     holder.icon.setImageDrawable(
-        mInflater.getContext().getResources().getDrawable(properties.getIcon().getResourceId()));
+        mInflater.getContext().getResources().getDrawable(properties.getIcon().getMainResourceId()));
     holder.icon.setColorFilter(properties.getColor());
     return view;
   }

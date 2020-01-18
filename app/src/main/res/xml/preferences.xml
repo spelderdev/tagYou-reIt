@@ -27,7 +27,7 @@
     <EditTextPreference
       android:defaultValue="14"
       android:digits="0123456789"
-      android:icon="@drawable/clock"
+      android:icon="@drawable/clock_transparent"
       android:inputType="number"
       android:key="pref_key_update_frequency"
       android:maxLength="3"

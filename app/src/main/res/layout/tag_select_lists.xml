@@ -13,7 +13,7 @@
     android:layout_marginEnd="19dp"
     android:layout_marginBottom="19dp"
     android:contentDescription="@string/close"
-    android:src="@drawable/ic_close_white_24dp"
+    android:src="@drawable/close"
     android:tint="@color/darkTitle" />
 
   <TextView

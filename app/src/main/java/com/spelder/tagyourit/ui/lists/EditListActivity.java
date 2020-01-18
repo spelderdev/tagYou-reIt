@@ -137,7 +137,7 @@ public class EditListActivity extends AppCompatActivity {
     int size = dpToPixels(48);
 
     ImageView iconView = new ImageView(context);
-    iconView.setImageResource(icon.getResourceId());
+    iconView.setImageResource(icon.getMainResourceId());
     iconView.setColorFilter(UNSELECTED_TINT);
     LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(size, size);
     iconView.setLayoutParams(layoutParams);

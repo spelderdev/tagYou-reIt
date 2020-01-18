@@ -19,7 +19,7 @@
       android:layout_height="10dp"
       android:layout_gravity="center_vertical"
       android:contentDescription="@string/music_content_description"
-      android:src="@drawable/ic_music_note_quarter_black"
+      android:src="@drawable/note_quarter_black"
       android:tint="@color/colorAlternativeAccent" />
 
     <ImageView
@@ -28,7 +28,7 @@
       android:layout_height="10dp"
       android:layout_marginStart="5dp"
       android:contentDescription="@string/track_content_description"
-      android:src="@drawable/ic_album_black"
+      android:src="@drawable/album_black"
       android:tint="@color/colorAlternativeAccent" />
 
     <ImageView
@@ -38,7 +38,7 @@
       android:layout_marginStart="5dp"
       android:layout_marginEnd="10dp"
       android:contentDescription="@string/video_content_description"
-      android:src="@drawable/ic_video_black"
+      android:src="@drawable/video_black"
       android:tint="@color/colorAlternativeAccent" />
 
   </LinearLayout>

@@ -78,7 +78,7 @@ class ListSelectionListAdapter extends BaseAdapter {
     ListProperties properties = listProperties.get(position);
     holder.name.setText(properties.getName());
     holder.icon.setImageDrawable(
-        mInflater.getContext().getResources().getDrawable(properties.getIcon().getResourceId()));
+        mInflater.getContext().getResources().getDrawable(properties.getIcon().getMainResourceId()));
     holder.icon.setColorFilter(properties.getColor());
     holder.selected.setChecked(selectedDbIds.contains(properties.getDbId()));
     holder.selected.setOnCheckedChangeListener(
