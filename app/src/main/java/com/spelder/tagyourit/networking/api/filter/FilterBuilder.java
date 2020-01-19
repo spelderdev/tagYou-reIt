@@ -28,6 +28,17 @@ public class FilterBuilder {
     COLLECTION_KEY = context.getResources().getString(R.string.filter_collection_key);
   }
 
+  public FilterBuilder(Context context, String id) {
+    preferences = PreferenceManager.getDefaultSharedPreferences(context);
+    SHEET_MUSIC_KEY = context.getResources().getString(R.string.filter_sheet_music_key) + id;
+    LEARNING_TRACK_KEY = context.getResources().getString(R.string.filter_learning_track_key) + id;
+    RATING_KEY = context.getResources().getString(R.string.filter_rating_key) + id;
+    TYPE_KEY = context.getResources().getString(R.string.filter_type_key) + id;
+    KEY_KEY = context.getResources().getString(R.string.filter_key_key) + id;
+    PARTS_NUMBER_KEY = context.getResources().getString(R.string.filter_part_key) + id;
+    COLLECTION_KEY = context.getResources().getString(R.string.filter_collection_key) + id;
+  }
+
   public FilterBy build() {
     FilterBy filter = new FilterBy();
     filter.setHasSheetMusic(getSheetMusic());

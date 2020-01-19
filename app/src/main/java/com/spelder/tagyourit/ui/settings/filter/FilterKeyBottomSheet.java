@@ -14,6 +14,14 @@ import com.spelder.tagyourit.networking.api.filter.FilterBuilder;
 import com.spelder.tagyourit.networking.api.filter.Key;
 
 public class FilterKeyBottomSheet extends BottomSheetDialogFragment {
+  private String id = "";
+
+  public FilterKeyBottomSheet() {}
+
+  public FilterKeyBottomSheet(String id) {
+    this.id = id;
+  }
+
   @Nullable
   @Override
   public View onCreateView(
@@ -28,7 +36,7 @@ public class FilterKeyBottomSheet extends BottomSheetDialogFragment {
   }
 
   private void setupView(View view) {
-    FilterBuilder filterBuilder = new FilterBuilder(getContext());
+    FilterBuilder filterBuilder = new FilterBuilder(getContext(), id);
 
     RadioGroup filterPartsGroup = view.findViewById(R.id.filter_key_radio);
 

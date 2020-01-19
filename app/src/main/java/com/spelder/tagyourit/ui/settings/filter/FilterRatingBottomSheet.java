@@ -14,6 +14,14 @@ import com.spelder.tagyourit.networking.api.filter.FilterBuilder;
 import com.spelder.tagyourit.networking.api.filter.Rating;
 
 public class FilterRatingBottomSheet extends BottomSheetDialogFragment {
+  private String id = "";
+
+  public FilterRatingBottomSheet() {}
+
+  public FilterRatingBottomSheet(String id) {
+    this.id = id;
+  }
+
   @Nullable
   @Override
   public View onCreateView(
@@ -28,7 +36,7 @@ public class FilterRatingBottomSheet extends BottomSheetDialogFragment {
   }
 
   private void setupView(View view) {
-    FilterBuilder filterBuilder = new FilterBuilder(getContext());
+    FilterBuilder filterBuilder = new FilterBuilder(getContext(), id);
 
     RadioGroup filterPartsGroup = view.findViewById(R.id.filter_rating_radio);
 

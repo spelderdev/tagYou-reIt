@@ -19,9 +19,15 @@ public class FilterBar implements SharedPreferences.OnSharedPreferenceChangeList
   private Button sheetMusicButton;
   private Context context;
   private FilterBuilder filterBuilder;
+  private String id = "";
 
   public FilterBar(Context context) {
     filterBuilder = new FilterBuilder(context);
+  }
+
+  public FilterBar(Context context, long listId) {
+    id = Long.toString(listId);
+    filterBuilder = new FilterBuilder(context, id);
   }
 
   public void setupFilterBar(View view, FragmentManager fragmentManager) {
@@ -30,35 +36,35 @@ public class FilterBar implements SharedPreferences.OnSharedPreferenceChangeList
     partsButton = view.findViewById(R.id.filter_parts);
     partsButton.setOnClickListener(
         v -> {
-          FilterPartsBottomSheet bottomSheet = new FilterPartsBottomSheet();
+          FilterPartsBottomSheet bottomSheet = new FilterPartsBottomSheet(id);
           bottomSheet.show(fragmentManager, "Filter Parts Bottom Sheet");
         });
 
     keyButton = view.findViewById(R.id.filter_key);
     keyButton.setOnClickListener(
         v -> {
-          FilterKeyBottomSheet bottomSheet = new FilterKeyBottomSheet();
+          FilterKeyBottomSheet bottomSheet = new FilterKeyBottomSheet(id);
           bottomSheet.show(fragmentManager, "Filter Key Bottom Sheet");
         });
 
     typeButton = view.findViewById(R.id.filter_type);
     typeButton.setOnClickListener(
         v -> {
-          FilterTypeBottomSheet bottomSheet = new FilterTypeBottomSheet();
+          FilterTypeBottomSheet bottomSheet = new FilterTypeBottomSheet(id);
           bottomSheet.show(fragmentManager, "Filter Parts Bottom Sheet");
         });
 
     ratingButton = view.findViewById(R.id.filter_rating);
     ratingButton.setOnClickListener(
         v -> {
-          FilterRatingBottomSheet bottomSheet = new FilterRatingBottomSheet();
+          FilterRatingBottomSheet bottomSheet = new FilterRatingBottomSheet(id);
           bottomSheet.show(fragmentManager, "Filter Parts Bottom Sheet");
         });
 
     collectionButton = view.findViewById(R.id.filter_collection);
     collectionButton.setOnClickListener(
         v -> {
-          FilterCollectionBottomSheet bottomSheet = new FilterCollectionBottomSheet();
+          FilterCollectionBottomSheet bottomSheet = new FilterCollectionBottomSheet(id);
           bottomSheet.show(fragmentManager, "Filter Collection Bottom Sheet");
         });
 

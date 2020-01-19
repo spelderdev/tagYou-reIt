@@ -47,7 +47,6 @@ import com.spelder.tagyourit.music.MusicService;
 import com.spelder.tagyourit.music.model.Speed;
 import com.spelder.tagyourit.networking.TagListRetriever;
 import com.spelder.tagyourit.networking.UpdateTagTask;
-import com.spelder.tagyourit.networking.api.filter.FilterBuilder;
 import com.spelder.tagyourit.ui.lists.EditListActivity;
 import com.spelder.tagyourit.ui.lists.TagSelectListActivity;
 import com.spelder.tagyourit.ui.music.MusicPlayerActivity;
@@ -69,7 +68,6 @@ public class MainActivity extends AppCompatActivity
   public static String currentQuery = "";
 
   private FragmentSwitcher manager;
-  private FilterBuilder filterBuilder;
   private Activity actionBar;
   private SearchView searchView;
   private View trackToolbar;
@@ -164,10 +162,6 @@ public class MainActivity extends AppCompatActivity
 
     if (manager == null) {
       manager = new FragmentSwitcher(this);
-    }
-
-    if (filterBuilder == null) {
-      filterBuilder = new FilterBuilder(this);
     }
 
     BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
@@ -295,7 +289,6 @@ public class MainActivity extends AppCompatActivity
     super.onDestroy();
 
     manager = null;
-    filterBuilder = null;
 
     stopService(playIntent);
     musicSrv = null;

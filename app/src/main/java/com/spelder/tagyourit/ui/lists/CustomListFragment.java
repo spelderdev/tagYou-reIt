@@ -70,7 +70,9 @@ public class CustomListFragment extends ListFragment
     SortBuilder sort = new SortBuilder(getContext());
     List<Tag> tags =
         db.getTagsForList(
-            new FilterBuilder(getActivity()).build(), sort.build(), listProperties.getDbId());
+            new FilterBuilder(getActivity(), listProperties.getDbId().toString()).build(),
+            sort.build(),
+            listProperties.getDbId());
     listAdapter.clearTags();
     listAdapter.addTags(tags);
     listAdapter.notifyDataSetChanged();
@@ -85,12 +87,12 @@ public class CustomListFragment extends ListFragment
     listView.setHeaderDividersEnabled(false);
 
     if (getActivity() != null) {
-      filterBar = new FilterBar(getActivity());
+      filterBar = new FilterBar(getActivity(), listProperties.getDbId());
       PreferenceManager.getDefaultSharedPreferences(getActivity())
           .registerOnSharedPreferenceChangeListener(filterBar);
       filterBar.setupFilterBar(listView, getActivity().getSupportFragmentManager());
 
-      filterBarEmpty = new FilterBar(getActivity());
+      filterBarEmpty = new FilterBar(getActivity(), listProperties.getDbId());
       PreferenceManager.getDefaultSharedPreferences(getActivity())
           .registerOnSharedPreferenceChangeListener(filterBarEmpty);
       filterBarEmpty.setupFilterBar(
@@ -130,7 +132,9 @@ public class CustomListFragment extends ListFragment
       SortBuilder sort = new SortBuilder(getContext());
       List<Tag> tags =
           db.getTagsForList(
-              new FilterBuilder(getActivity()).build(), sort.build(), listProperties.getDbId());
+              new FilterBuilder(getActivity(), listProperties.getDbId().toString()).build(),
+              sort.build(),
+              listProperties.getDbId());
       listAdapter.clearTags();
       listAdapter.addTags(tags);
       listAdapter.notifyDataSetChanged();
