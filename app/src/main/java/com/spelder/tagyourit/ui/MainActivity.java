@@ -37,7 +37,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.spelder.tagyourit.R;
 import com.spelder.tagyourit.db.TagDb;
-import com.spelder.tagyourit.drive.FavoritesBackup;
+import com.spelder.tagyourit.drive.DatabaseBackup;
 import com.spelder.tagyourit.model.ListProperties;
 import com.spelder.tagyourit.model.Tag;
 import com.spelder.tagyourit.model.TrackComponents;
@@ -494,7 +494,7 @@ public class MainActivity extends AppCompatActivity
   @Override
   protected void onActivityResult(int requestCode, int resultCode, Intent data) {
     super.onActivityResult(requestCode, resultCode, data);
-    if (requestCode == FavoritesBackup.REQUEST_CODE_SIGN_IN) {
+    if (requestCode == DatabaseBackup.REQUEST_CODE_SIGN_IN) {
       if (resultCode != RESULT_OK) {
         // Sign-in may fail or be cancelled by the user. For this sample, sign-in is
         // required and is fatal. For apps where sign-in is optional, handle

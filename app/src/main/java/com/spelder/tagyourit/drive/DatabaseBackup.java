@@ -22,10 +22,10 @@ import java.util.HashSet;
 import java.util.Set;
 
 /** Backs up and restores the tag database to the user's Google Drive account. */
-public class FavoritesBackup {
+public class DatabaseBackup {
   public static final int REQUEST_CODE_SIGN_IN = 0;
 
-  private static final String TAG = FavoritesBackup.class.getName();
+  private static final String TAG = DatabaseBackup.class.getName();
 
   private static final String FILE_NAME = TagDbHelper.DATABASE_NAME;
 
@@ -41,7 +41,7 @@ public class FavoritesBackup {
     SIGN_IN
   }
 
-  public FavoritesBackup(Activity activity) {
+  public DatabaseBackup(Activity activity) {
     dbFilePath = activity.getDatabasePath(TagDbHelper.DATABASE_NAME).getAbsolutePath();
     this.activity = activity;
   }
@@ -142,7 +142,8 @@ public class FavoritesBackup {
               Log.d(TAG, "Backing up file from " + dbFilePath);
               TagDbHelper.clearInstance();
               File dbFile = new File(dbFilePath);
-              Task<?> fileTask;
+              Task<com.google.api.services.drive.model.File> fileTask;
+              String f = task.getResult();
               if (task.getResult() != null && task.getResult().isEmpty()) {
                 fileTask = mDriveServiceHelper.createFile(FILE_NAME, dbFile);
               } else {
@@ -151,30 +152,38 @@ public class FavoritesBackup {
 
               checkTaskComplete(fileTask);
             })
-        .addOnFailureListener(task -> showMessage(activity, "Error while backing up contents"));
+        .addOnFailureListener(
+            exception -> {
+              Log.e(TAG, "Error while backing up contents", exception);
+              showMessage(activity, "Error while backing up contents");
+            });
   }
 
   private void checkTaskComplete(Task<?> task) {
     task.addOnCompleteListener(
             checkTask -> {
-              switch (action) {
-                case BACKUP:
-                  showMessage(activity, "Successfully backed up contents");
-                  signInResult.finished();
-                  break;
-                case RESTORE:
-                  showMessage(activity, "Successfully restored contents");
-                  signInResult.finished();
-                  break;
+              if (checkTask.isSuccessful()) {
+                switch (action) {
+                  case BACKUP:
+                    signInResult.finished();
+                    showMessage(activity, "Successfully backed up contents");
+                    break;
+                  case RESTORE:
+                    signInResult.finished();
+                    showMessage(activity, "Successfully restored contents");
+                    break;
+                }
               }
             })
         .addOnFailureListener(
-            checkTask -> {
+            exception -> {
               switch (action) {
                 case BACKUP:
+                  Log.e(TAG, "Error while backing up contents", exception);
                   showMessage(activity, "Error while backing up contents");
                   break;
                 case RESTORE:
+                  Log.e(TAG, "Error while restoring contents", exception);
                   showMessage(activity, "Error while restoring contents");
                   break;
               }

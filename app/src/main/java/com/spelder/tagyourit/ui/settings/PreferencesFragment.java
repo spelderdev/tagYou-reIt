@@ -5,13 +5,13 @@ import android.os.Bundle;
 import androidx.preference.Preference;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.spelder.tagyourit.R;
-import com.spelder.tagyourit.drive.FavoritesBackup;
+import com.spelder.tagyourit.drive.DatabaseBackup;
 import com.spelder.tagyourit.ui.MainActivity;
 import com.takisoft.fix.support.v7.preference.PreferenceFragmentCompat;
 
 /** Edits preferences for the system. */
 public class PreferencesFragment extends PreferenceFragmentCompat {
-  private FavoritesBackup back;
+  private DatabaseBackup back;
 
   @Override
   public void onCreatePreferencesFix(Bundle savedInstanceState, String rootKey) {
@@ -21,7 +21,7 @@ public class PreferencesFragment extends PreferenceFragmentCompat {
     if (activity == null) {
       return;
     }
-    back = new FavoritesBackup(activity);
+    back = new DatabaseBackup(activity);
 
     String accountName = back.getSignedInEmail();
 
