@@ -78,7 +78,6 @@ public class MainActivity extends AppCompatActivity
   private MusicService musicSrv;
   private Intent playIntent;
   private boolean musicBound = false;
-  private SortBottomSheet sortBottomSheet;
 
   private final MusicNotifier musicNotifier =
       new MusicNotifier() {
@@ -220,8 +219,6 @@ public class MainActivity extends AppCompatActivity
     trackToolbar.setOnClickListener(view -> openMusicPlayer());
 
     handleIntent();
-
-    sortBottomSheet = new SortBottomSheet();
 
     PreferenceManager.getDefaultSharedPreferences(this)
         .registerOnSharedPreferenceChangeListener(this);
@@ -452,6 +449,14 @@ public class MainActivity extends AppCompatActivity
   }
 
   private void toggleSort() {
+    ListProperties properties = manager.getDisplayedList();
+    SortBottomSheet sortBottomSheet;
+    if (properties == null) {
+      sortBottomSheet = new SortBottomSheet();
+    } else {
+      sortBottomSheet = new SortBottomSheet(properties.getDbId().toString());
+    }
+
     if (!sortBottomSheet.isVisible()) {
       sortBottomSheet.show(getSupportFragmentManager(), "Bottom sheet");
     } else {

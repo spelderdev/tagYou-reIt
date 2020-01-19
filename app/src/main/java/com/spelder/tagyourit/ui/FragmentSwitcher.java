@@ -320,7 +320,11 @@ public class FragmentSwitcher {
   }
 
   ListProperties getDisplayedList() {
-    return ((CustomListFragment) fragmentTagList).getListProperties();
+    if (currentFragment == FRAGMENT_TAG_LIST) {
+      return ((CustomListFragment) fragmentTagList).getListProperties();
+    } else {
+      return null;
+    }
   }
 
   Tag getDisplayedTag() {

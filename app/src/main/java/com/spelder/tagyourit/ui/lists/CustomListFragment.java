@@ -67,7 +67,7 @@ public class CustomListFragment extends ListFragment
 
     TagDb db = new TagDb(getActivity());
     listProperties = db.getListProperties(listProperties.getDbId());
-    SortBuilder sort = new SortBuilder(getContext());
+    SortBuilder sort = new SortBuilder(getContext(), listProperties.getDbId().toString());
     List<Tag> tags =
         db.getTagsForList(
             new FilterBuilder(getActivity(), listProperties.getDbId().toString()).build(),
@@ -129,7 +129,7 @@ public class CustomListFragment extends ListFragment
     if (key.startsWith("filter_") || SortBuilder.isSortKey(key)) {
       Log.d("TagListFragment", "filterChanged");
       TagDb db = new TagDb(getActivity());
-      SortBuilder sort = new SortBuilder(getContext());
+      SortBuilder sort = new SortBuilder(getContext(), listProperties.getDbId().toString());
       List<Tag> tags =
           db.getTagsForList(
               new FilterBuilder(getActivity(), listProperties.getDbId().toString()).build(),

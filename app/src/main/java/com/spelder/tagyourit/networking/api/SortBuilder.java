@@ -5,11 +5,18 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
 public class SortBuilder {
-  private static final String SORT_BY_LABEL = "SORT_BY";
+  private static final String SORT_BY_LABEL_BASE = "SORT_BY";
+  private final String SORT_BY_LABEL;
   private final SharedPreferences preferences;
 
   public SortBuilder(Context context) {
     preferences = PreferenceManager.getDefaultSharedPreferences(context);
+    SORT_BY_LABEL = SORT_BY_LABEL_BASE;
+  }
+
+  public SortBuilder(Context context, String id) {
+    preferences = PreferenceManager.getDefaultSharedPreferences(context);
+    SORT_BY_LABEL = SORT_BY_LABEL_BASE + id;
   }
 
   public SortBy build() {
@@ -21,6 +28,6 @@ public class SortBuilder {
   }
 
   public static boolean isSortKey(String key) {
-    return key.equals(SortBuilder.SORT_BY_LABEL);
+    return key.startsWith(SORT_BY_LABEL_BASE);
   }
 }
