@@ -57,7 +57,7 @@ public class MusicService extends Service
 
   private MusicServiceNotificationHandler notificationHandler;
 
-  private BroadcastReceiver noisyReceiver =
+  private final BroadcastReceiver noisyReceiver =
       new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {

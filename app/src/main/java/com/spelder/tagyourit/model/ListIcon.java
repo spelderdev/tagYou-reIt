@@ -15,10 +15,10 @@ public enum ListIcon {
   NOTE(7, R.drawable.note_transparent, R.drawable.note_filled, R.drawable.note_outline),
   TEACH(8, R.drawable.school_transparent, R.drawable.school_filled, R.drawable.school_outline);
 
-  private int dbId;
-  private int mainResourceId;
-  private int filledResourceId;
-  private int outlineResourceId;
+  private final int dbId;
+  private final int mainResourceId;
+  private final int filledResourceId;
+  private final int outlineResourceId;
 
   ListIcon(int dbId, int mainResourceId, int filledResourceId, int outlineResourceId) {
     this.dbId = dbId;

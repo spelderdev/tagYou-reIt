@@ -12,7 +12,7 @@ public enum ListColor {
   YELLOW(0xfffbc02d),
   PINK(0xffd81b60);
 
-  private int colorId;
+  private final int colorId;
 
   ListColor(int colorId) {
     this.colorId = colorId;

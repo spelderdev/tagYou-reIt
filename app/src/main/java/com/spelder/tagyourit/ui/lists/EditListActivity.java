@@ -112,10 +112,7 @@ public class EditListActivity extends AppCompatActivity {
                       // Leave set
                     })
                 .setNegativeButton(
-                    "Cancel",
-                    (DialogInterface dialog, int id) -> {
-                      downloadTrack.setChecked(false);
-                    });
+                    "Cancel", (DialogInterface dialog, int id) -> downloadTrack.setChecked(false));
             builder.create().show();
           } else {
             Intent intent = new Intent(this, RemoveTagTrackDownloadService.class);

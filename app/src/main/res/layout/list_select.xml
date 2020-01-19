@@ -11,7 +11,7 @@
     android:layout_height="45dp"
     android:layout_gravity="center_vertical"
     android:layout_margin="10dp"
-    android:contentDescription="List icon"
+    android:contentDescription="@string/list_icon_description"
     app:srcCompat="@drawable/favorite_transparent" />
 
   <TextView
@@ -22,7 +22,7 @@
     android:layout_weight="1"
     android:paddingStart="5dp"
     android:paddingEnd="5dp"
-    android:text="List Name"
+    android:text="@string/list_name_hint"
     android:textColor="@color/darkTitle"
     android:textSize="16sp" />
 

@@ -18,7 +18,7 @@ public class FilterCollectionBottomSheet extends BottomSheetDialogFragment {
 
   public FilterCollectionBottomSheet() {}
 
-  public FilterCollectionBottomSheet(String id) {
+  FilterCollectionBottomSheet(String id) {
     this.id = id;
   }
 

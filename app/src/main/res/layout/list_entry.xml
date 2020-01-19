@@ -11,7 +11,7 @@
     android:layout_height="45dp"
     android:layout_gravity="center_vertical"
     android:layout_margin="10dp"
-    android:contentDescription="List icon"
+    android:contentDescription="@string/list_icon_description"
     app:srcCompat="@drawable/favorite_transparent" />
 
   <LinearLayout
@@ -26,7 +26,7 @@
       android:id="@+id/list_entry_name"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
-      android:text="List Name"
+      android:text="@string/list_name_hint"
       android:textColor="@color/darkTitle"
       android:textSize="16sp" />
 
@@ -40,7 +40,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
-        android:text="0"
+        android:text="@string/list_entry_default_count"
         android:textColor="@color/lightSecondaryTitle"
         android:textSize="14sp" />
 
@@ -48,7 +48,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
-        android:text=" tags"
+        android:text="@string/list_entry_count_label"
         android:textColor="@color/lightSecondaryTitle"
         android:textSize="14sp" />
 

@@ -18,7 +18,7 @@ public class FilterKeyBottomSheet extends BottomSheetDialogFragment {
 
   public FilterKeyBottomSheet() {}
 
-  public FilterKeyBottomSheet(String id) {
+  FilterKeyBottomSheet(String id) {
     this.id = id;
   }
 

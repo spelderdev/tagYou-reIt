@@ -29,10 +29,10 @@ public class MusicServiceNotificationHandler {
   private static final String TAG = MusicServiceNotificationHandler.class.getName();
   private static final int NOTIFICATION_ID = 29334;
   private MediaSessionCompat mediaSession;
-  private Context context;
-  private MusicService service;
+  private final Context context;
+  private final MusicService service;
 
-  private MediaSessionCompat.Callback mMediaSessionCallback =
+  private final MediaSessionCompat.Callback mMediaSessionCallback =
       new MediaSessionCompat.Callback() {
         @Override
         public void onPlay() {

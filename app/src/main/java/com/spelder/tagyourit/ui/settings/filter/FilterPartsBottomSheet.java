@@ -18,7 +18,7 @@ public class FilterPartsBottomSheet extends BottomSheetDialogFragment {
 
   public FilterPartsBottomSheet() {}
 
-  public FilterPartsBottomSheet(String id) {
+  FilterPartsBottomSheet(String id) {
     this.id = id;
   }
 

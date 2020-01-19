@@ -15,7 +15,7 @@ import java.net.URLConnection;
 public class DownloadFileTask extends AsyncTask<String, Void, Boolean> {
   private final String TAG = DownloadFileTask.class.getName();
 
-  public DownloadFileTask() {}
+  protected DownloadFileTask() {}
 
   @Override
   protected Boolean doInBackground(String... context) {
@@ -54,7 +54,8 @@ public class DownloadFileTask extends AsyncTask<String, Void, Boolean> {
       byte[] buffer = new byte[contentLength];
       stream.readFully(buffer);
       stream.close();
-      if (file.getParentFile().exists() || file.getParentFile().mkdirs()) {
+      if (file.getParentFile() != null
+          && (file.getParentFile().exists() || file.getParentFile().mkdirs())) {
         fos = new DataOutputStream(new FileOutputStream(file, false));
         fos.write(buffer);
         fos.flush();

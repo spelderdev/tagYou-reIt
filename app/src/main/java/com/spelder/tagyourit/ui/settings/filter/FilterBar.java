@@ -18,7 +18,7 @@ public class FilterBar implements SharedPreferences.OnSharedPreferenceChangeList
   private Button learningTracksButton;
   private Button sheetMusicButton;
   private Context context;
-  private FilterBuilder filterBuilder;
+  private final FilterBuilder filterBuilder;
   private String id = "";
 
   public FilterBar(Context context) {

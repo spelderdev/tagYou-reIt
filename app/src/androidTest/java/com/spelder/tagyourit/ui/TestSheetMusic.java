@@ -39,7 +39,7 @@ import org.junit.runner.RunWith;
 @RunWith(AndroidJUnit4.class)
 public class TestSheetMusic {
   @Rule
-  public ActivityTestRule<MainActivity> mActivityTestRule =
+  public final ActivityTestRule<MainActivity> mActivityTestRule =
       new ActivityTestRule<>(MainActivity.class);
 
   @Before
@@ -110,7 +110,8 @@ public class TestSheetMusic {
   public void imageViewTest() {
     onView(ViewMatchers.withId(R.id.action_search)).perform(click());
 
-    onView(withId(com.google.android.material.R.id.search_src_text)).perform(replaceText("Smile Bobby Gray"));
+    onView(withId(com.google.android.material.R.id.search_src_text))
+        .perform(replaceText("Smile Bobby Gray"));
 
     onData(anything()).inAdapterView(withId(android.R.id.list)).atPosition(1).perform(click());
 

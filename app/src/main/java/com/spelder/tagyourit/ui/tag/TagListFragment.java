@@ -109,7 +109,7 @@ public class TagListFragment extends ListFragment
           if (connMgr != null) {
             NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
             if (networkInfo != null && networkInfo.isConnected()) {
-              getAndCancelDownloadTask(true);
+              getAndCancelDownloadTask();
               unsetNetworkError();
             }
           }
@@ -162,7 +162,7 @@ public class TagListFragment extends ListFragment
     setLoading(loading);
 
     ListView listView = getListView();
-    listView.addHeaderView(getLayoutInflater().inflate(R.layout.filter, null));
+    listView.addHeaderView(getLayoutInflater().inflate(R.layout.filter, listView));
     listView.setHeaderDividersEnabled(false);
 
     if (getActivity() != null) {
@@ -244,11 +244,11 @@ public class TagListFragment extends ListFragment
     }
   }
 
-  synchronized TagQueryTask getAndCancelDownloadTask(boolean shouldClear) {
+  synchronized TagQueryTask getAndCancelDownloadTask() {
     if (isLoadingMore() && currentDownloadTask != null) {
       currentDownloadTask.cancel();
     }
-    return getDownloadTask(shouldClear);
+    return getDownloadTask(true);
   }
 
   private synchronized TagQueryTask getDownloadTask(boolean shouldClear) {
@@ -293,7 +293,7 @@ public class TagListFragment extends ListFragment
       SortBuilder builder = new SortBuilder(context);
       sortBy = builder.build();
 
-      getAndCancelDownloadTask(true).execute();
+      getAndCancelDownloadTask().execute();
     }
   }
 

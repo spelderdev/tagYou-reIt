@@ -5,7 +5,6 @@ import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.action.ViewActions.closeSoftKeyboard;
 import static androidx.test.espresso.action.ViewActions.replaceText;
-import static androidx.test.espresso.action.ViewActions.swipeUp;
 import static androidx.test.espresso.intent.Intents.intended;
 import static androidx.test.espresso.intent.Intents.intending;
 import static androidx.test.espresso.intent.matcher.IntentMatchers.anyIntent;
@@ -20,7 +19,6 @@ import static org.hamcrest.Matchers.is;
 import android.app.Activity;
 import android.app.Instrumentation;
 import android.content.Intent;
-import android.os.SystemClock;
 import androidx.test.espresso.intent.rule.IntentsTestRule;
 import androidx.test.espresso.matcher.ViewMatchers;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
@@ -44,7 +42,8 @@ public class TestShareTag {
   public void openShareIntent() {
     onView(ViewMatchers.withId(R.id.action_search)).perform(click());
 
-    onView(withId(R.id.search_src_text)).perform(replaceText("like leaves tickner"), closeSoftKeyboard());
+    onView(withId(R.id.search_src_text))
+        .perform(replaceText("like leaves tickner"), closeSoftKeyboard());
 
     onData(anything()).inAdapterView(withId(android.R.id.list)).atPosition(1).perform(click());
 

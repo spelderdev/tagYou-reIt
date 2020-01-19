@@ -155,7 +155,9 @@
   <string name="list_icon_description">Icon for list</string>
   <string name="list_download_sheet">Download sheet</string>
   <string name="list_download_track">Download track</string>
-  <string name="list_default_list">Default List</string>
+  <string name="list_default_list">Default list</string>
   <string name="list_create_button">Create list</string>
   <string name="list_update_button">Update list</string>
+  <string name="list_entry_default_count">0</string>
+  <string name="list_entry_count_label">&#160;tags</string>
 </resources>

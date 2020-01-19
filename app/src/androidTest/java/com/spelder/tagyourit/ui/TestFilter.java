@@ -36,7 +36,8 @@ import org.junit.runner.RunWith;
 @RunWith(AndroidJUnit4.class)
 public class TestFilter {
   @Rule
-  public ActivityTestRule<MainActivity> mActivityRule = new ActivityTestRule<>(MainActivity.class);
+  public final ActivityTestRule<MainActivity> mActivityRule =
+      new ActivityTestRule<>(MainActivity.class);
 
   @Before
   public void init() {

@@ -143,7 +143,6 @@ public class DatabaseBackup {
               TagDbHelper.clearInstance();
               File dbFile = new File(dbFilePath);
               Task<com.google.api.services.drive.model.File> fileTask;
-              String f = task.getResult();
               if (task.getResult() != null && task.getResult().isEmpty()) {
                 fileTask = mDriveServiceHelper.createFile(FILE_NAME, dbFile);
               } else {

@@ -14,15 +14,11 @@ public enum Instrument {
   OBOE(OBOE_MAGNITUDES, 0, 0, AdvancedHarmonicOscillator.MOD_TYPE.FM, .2),
   PURE(PURE_MAGNITUDES, 0, 0, AdvancedHarmonicOscillator.MOD_TYPE.FM, .3);
 
-  double modulationDepth;
-
-  double lfoFrequencySemitoneRatio;
-
-  AdvancedHarmonicOscillator.MOD_TYPE modType;
-
-  double[] harmonicMagnitudes;
-
-  double gainMultiplier;
+  private final double modulationDepth;
+  private final double lfoFrequencySemitoneRatio;
+  private final AdvancedHarmonicOscillator.MOD_TYPE modType;
+  private final double[] harmonicMagnitudes;
+  private final double gainMultiplier;
 
   Instrument(
       double[] harmonicMagnitudes,
