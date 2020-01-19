@@ -9,10 +9,10 @@
     android:id="@+id/tag_detail_tag_item"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginTop="15dp"
     android:layout_marginStart="15dp"
-    android:layout_marginEnd="15dp"
     android:layout_marginLeft="15dp"
+    android:layout_marginTop="15dp"
+    android:layout_marginEnd="15dp"
     android:layout_marginRight="15dp"
     android:orientation="vertical">
 
@@ -25,7 +25,7 @@
       android:maxLines="1"
       android:text="@string/tag_name"
       android:textColor="@color/darkTitle"
-      android:textSize="26sp"/>
+      android:textSize="26sp" />
 
     <LinearLayout
       android:layout_width="match_parent"
@@ -39,21 +39,21 @@
         android:fontFamily="sans-serif-medium"
         android:text="@string/by_arranger"
         android:textColor="@color/lightSecondaryTitle"
-        android:textSize="14sp"/>
+        android:textSize="14sp" />
 
       <TextView
         android:id="@+id/tag_detail_line_sep"
-        android:textStyle="bold"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:paddingStart="4dp"
-        android:paddingEnd="4dp"
-        android:paddingLeft="4dp"
-        android:paddingRight="4dp"
         android:fontFamily="sans-serif-medium"
+        android:paddingStart="4dp"
+        android:paddingLeft="4dp"
+        android:paddingEnd="4dp"
+        android:paddingRight="4dp"
         android:text="@string/separator"
         android:textColor="@color/lightSecondaryTitle"
-        android:textSize="16sp"/>
+        android:textSize="16sp"
+        android:textStyle="bold" />
 
       <TextView
         android:id="@+id/tag_detail_version"
@@ -64,7 +64,7 @@
         android:maxLines="1"
         android:text="@string/long_version"
         android:textColor="@color/lightSecondaryTitle"
-        android:textSize="14sp"/>
+        android:textSize="14sp" />
 
     </LinearLayout>
 
@@ -82,14 +82,14 @@
         android:layout_height="20dp"
         android:layout_marginEnd="5dp"
         android:contentDescription="@string/rating_icon_description"
-        android:src="@drawable/star_empty"/>
+        android:src="@drawable/star_empty" />
 
       <TextView
         android:id="@+id/tag_detail_ratingText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textColor="@color/lightSecondaryTitle"
-        android:textSize="14sp"/>
+        android:textSize="14sp" />
 
     </LinearLayout>
 
@@ -98,10 +98,10 @@
   <LinearLayout
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginTop="20dp"
-    android:layout_marginBottom="20dp"
     android:layout_marginStart="10dp"
+    android:layout_marginTop="20dp"
     android:layout_marginEnd="10dp"
+    android:layout_marginBottom="20dp"
     android:orientation="horizontal">
 
     <androidx.appcompat.widget.AppCompatButton
@@ -110,12 +110,12 @@
       android:layout_height="match_parent"
       android:layout_weight="1"
       android:background="?attr/selectableItemBackgroundBorderless"
-      android:drawablePadding="2dp"
       android:drawableTop="@drawable/list_transparent"
+      android:drawablePadding="2dp"
       android:text="@string/tag_menu_lists"
       android:textColor="@color/lightSecondaryTitle"
       android:textSize="12sp"
-      android:theme="@style/PrimaryFlatButton"/>
+      android:theme="@style/PrimaryFlatButton" />
 
     <androidx.appcompat.widget.AppCompatButton
       android:id="@+id/tag_detail_rate_button"
@@ -123,13 +123,13 @@
       android:layout_height="match_parent"
       android:layout_weight="1"
       android:background="?attr/selectableItemBackgroundBorderless"
-      android:drawablePadding="2dp"
       android:drawableTop="@drawable/star_transparent"
+      android:drawablePadding="2dp"
       android:includeFontPadding="false"
       android:text="@string/tag_menu_rate"
       android:textColor="@color/lightSecondaryTitle"
       android:textSize="12sp"
-      android:theme="@style/PrimaryFlatButton"/>
+      android:theme="@style/PrimaryFlatButton" />
 
     <com.spelder.tagyourit.ui.tag.PitchButton
       android:id="@+id/tag_detail_key_button"
@@ -137,12 +137,12 @@
       android:layout_height="match_parent"
       android:layout_weight="1"
       android:background="?attr/selectableItemBackgroundBorderless"
-      android:drawablePadding="2dp"
       android:drawableTop="@drawable/key_transparent"
+      android:drawablePadding="2dp"
       android:text="@string/tag_menu_key"
       android:textColor="@color/lightSecondaryTitle"
       android:textSize="12sp"
-      android:theme="@style/PrimaryFlatButton"/>
+      android:theme="@style/PrimaryFlatButton" />
 
     <androidx.appcompat.widget.AppCompatButton
       android:id="@+id/tag_detail_share_button"
@@ -150,19 +150,19 @@
       android:layout_height="match_parent"
       android:layout_weight="1"
       android:background="?attr/selectableItemBackgroundBorderless"
-      android:drawablePadding="2dp"
       android:drawableTop="@drawable/share"
+      android:drawablePadding="2dp"
       android:text="@string/tag_menu_share"
       android:textColor="@color/lightSecondaryTitle"
       android:textSize="12sp"
-      android:theme="@style/PrimaryFlatButton"/>
+      android:theme="@style/PrimaryFlatButton" />
 
   </LinearLayout>
 
   <LinearLayout
     android:layout_width="match_parent"
     android:layout_height="1dp"
-    android:background="@color/divider_gray"/>
+    android:background="@color/divider_gray" />
 
   <androidx.core.widget.NestedScrollView
     android:layout_width="match_parent"
@@ -181,164 +181,164 @@
         <TextView
           android:layout_width="match_parent"
           android:layout_height="wrap_content"
-          android:layout_marginTop="10dp"
-          android:layout_marginBottom="10dp"
           android:layout_marginStart="15dp"
+          android:layout_marginTop="10dp"
           android:layout_marginEnd="15dp"
+          android:layout_marginBottom="10dp"
           android:gravity="start|center_vertical"
           android:text="@string/tag_menu_tracks"
-          android:textSize="16sp"/>
+          android:textSize="16sp" />
 
         <androidx.appcompat.widget.AppCompatButton
           android:id="@+id/tag_detail_track_all"
           android:layout_width="match_parent"
           android:layout_height="50dp"
-          android:paddingStart="30dp"
-          android:paddingEnd="30dp"
-          android:drawablePadding="30dp"
           android:drawableStart="@drawable/play_circle_outline"
+          android:drawablePadding="30dp"
           android:fontFamily="sans-serif"
           android:gravity="start|center_vertical"
+          android:paddingStart="30dp"
+          android:paddingEnd="30dp"
           android:text="@string/tag_menu_all_parts"
           android:textAllCaps="false"
           android:textColor="@color/lightSecondaryTitle"
           android:textSize="15sp"
-          android:theme="@style/PrimaryFlatButton"/>
+          android:theme="@style/PrimaryFlatButton" />
 
         <androidx.appcompat.widget.AppCompatButton
           android:id="@+id/tag_detail_track_tenor"
           android:layout_width="match_parent"
           android:layout_height="50dp"
-          android:paddingStart="30dp"
-          android:paddingEnd="30dp"
-          android:drawablePadding="30dp"
           android:drawableStart="@drawable/play_circle_tenor"
+          android:drawablePadding="30dp"
           android:fontFamily="sans-serif"
           android:gravity="start|center_vertical"
+          android:paddingStart="30dp"
+          android:paddingEnd="30dp"
           android:text="@string/tag_menu_tenor"
           android:textAllCaps="false"
           android:textColor="@color/lightSecondaryTitle"
           android:textSize="15sp"
-          android:theme="@style/PrimaryFlatButton"/>
+          android:theme="@style/PrimaryFlatButton" />
 
         <androidx.appcompat.widget.AppCompatButton
           android:id="@+id/tag_detail_track_lead"
           android:layout_width="match_parent"
           android:layout_height="50dp"
-          android:paddingStart="30dp"
-          android:paddingEnd="30dp"
-          android:drawablePadding="30dp"
           android:drawableStart="@drawable/play_circle_lead"
+          android:drawablePadding="30dp"
           android:fontFamily="sans-serif"
           android:gravity="start|center_vertical"
+          android:paddingStart="30dp"
+          android:paddingEnd="30dp"
           android:text="@string/tag_menu_lead"
           android:textAllCaps="false"
           android:textColor="@color/lightSecondaryTitle"
           android:textSize="15sp"
-          android:theme="@style/PrimaryFlatButton"/>
+          android:theme="@style/PrimaryFlatButton" />
 
         <androidx.appcompat.widget.AppCompatButton
           android:id="@+id/tag_detail_track_bass"
           android:layout_width="match_parent"
           android:layout_height="50dp"
-          android:paddingStart="30dp"
-          android:paddingEnd="30dp"
-          android:drawablePadding="30dp"
           android:drawableStart="@drawable/play_circle_bass"
+          android:drawablePadding="30dp"
           android:fontFamily="sans-serif"
           android:gravity="start|center_vertical"
+          android:paddingStart="30dp"
+          android:paddingEnd="30dp"
           android:text="@string/tag_menu_bass"
           android:textAllCaps="false"
           android:textColor="@color/lightSecondaryTitle"
           android:textSize="15sp"
-          android:theme="@style/PrimaryFlatButton"/>
+          android:theme="@style/PrimaryFlatButton" />
 
         <androidx.appcompat.widget.AppCompatButton
           android:id="@+id/tag_detail_track_bari"
           android:layout_width="match_parent"
           android:layout_height="50dp"
-          android:paddingStart="30dp"
-          android:paddingEnd="30dp"
-          android:drawablePadding="30dp"
           android:drawableStart="@drawable/play_circle_bari"
+          android:drawablePadding="30dp"
           android:fontFamily="sans-serif"
           android:gravity="start|center_vertical"
+          android:paddingStart="30dp"
+          android:paddingEnd="30dp"
           android:text="@string/tag_menu_bari"
           android:textAllCaps="false"
           android:textColor="@color/lightSecondaryTitle"
           android:textSize="15sp"
-          android:theme="@style/PrimaryFlatButton"/>
+          android:theme="@style/PrimaryFlatButton" />
 
         <androidx.appcompat.widget.AppCompatButton
           android:id="@+id/tag_detail_track_other1"
           android:layout_width="match_parent"
           android:layout_height="50dp"
-          android:paddingStart="30dp"
-          android:paddingEnd="30dp"
-          android:drawablePadding="30dp"
           android:drawableStart="@drawable/play"
+          android:drawablePadding="30dp"
           android:fontFamily="sans-serif"
           android:gravity="start|center_vertical"
+          android:paddingStart="30dp"
+          android:paddingEnd="30dp"
           android:text="@string/tag_menu_other1"
           android:textAllCaps="false"
           android:textColor="@color/lightSecondaryTitle"
           android:textSize="15sp"
-          android:theme="@style/PrimaryFlatButton"/>
+          android:theme="@style/PrimaryFlatButton" />
 
         <androidx.appcompat.widget.AppCompatButton
           android:id="@+id/tag_detail_track_other2"
           android:layout_width="match_parent"
           android:layout_height="50dp"
-          android:paddingStart="30dp"
-          android:paddingEnd="30dp"
-          android:drawablePadding="30dp"
           android:drawableStart="@drawable/play"
+          android:drawablePadding="30dp"
           android:fontFamily="sans-serif"
           android:gravity="start|center_vertical"
+          android:paddingStart="30dp"
+          android:paddingEnd="30dp"
           android:text="@string/tag_menu_other2"
           android:textAllCaps="false"
           android:textColor="@color/lightSecondaryTitle"
           android:textSize="15sp"
-          android:theme="@style/PrimaryFlatButton"/>
+          android:theme="@style/PrimaryFlatButton" />
 
         <androidx.appcompat.widget.AppCompatButton
           android:id="@+id/tag_detail_track_other3"
           android:layout_width="match_parent"
           android:layout_height="50dp"
-          android:paddingStart="30dp"
-          android:paddingEnd="30dp"
-          android:drawablePadding="30dp"
           android:drawableStart="@drawable/play"
+          android:drawablePadding="30dp"
           android:fontFamily="sans-serif"
           android:gravity="start|center_vertical"
+          android:paddingStart="30dp"
+          android:paddingEnd="30dp"
           android:text="@string/tag_menu_other3"
           android:textAllCaps="false"
           android:textColor="@color/lightSecondaryTitle"
           android:textSize="15sp"
-          android:theme="@style/PrimaryFlatButton"/>
+          android:theme="@style/PrimaryFlatButton" />
 
         <androidx.appcompat.widget.AppCompatButton
           android:id="@+id/tag_detail_track_other4"
           android:layout_width="match_parent"
           android:layout_height="50dp"
-          android:paddingStart="30dp"
-          android:paddingEnd="30dp"
-          android:drawablePadding="30dp"
           android:drawableStart="@drawable/play"
+          android:drawablePadding="30dp"
           android:fontFamily="sans-serif"
           android:gravity="start|center_vertical"
+          android:paddingStart="30dp"
+          android:paddingEnd="30dp"
           android:text="@string/tag_menu_other4"
           android:textAllCaps="false"
           android:textColor="@color/lightSecondaryTitle"
           android:textSize="15sp"
-          android:theme="@style/PrimaryFlatButton"/>
+          android:theme="@style/PrimaryFlatButton" />
 
       </LinearLayout>
 
       <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="@color/divider_gray"/>
+        android:background="@color/divider_gray" />
 
       <LinearLayout
         android:id="@+id/tag_detail_videos"
@@ -349,93 +349,103 @@
         <TextView
           android:layout_width="match_parent"
           android:layout_height="wrap_content"
-          android:layout_marginTop="10dp"
-          android:layout_marginBottom="10dp"
           android:layout_marginStart="15dp"
+          android:layout_marginTop="10dp"
           android:layout_marginEnd="15dp"
+          android:layout_marginBottom="10dp"
           android:gravity="start|center_vertical"
           android:text="@string/tag_menu_video_title"
-          android:textSize="16sp"/>
+          android:textSize="16sp" />
 
         <androidx.appcompat.widget.AppCompatButton
           android:id="@+id/tag_detail_video_1"
           android:layout_width="match_parent"
           android:layout_height="50dp"
-          android:paddingStart="30dp"
-          android:paddingEnd="30dp"
-          android:drawablePadding="30dp"
           android:drawableStart="@drawable/video_1"
+          android:drawablePadding="30dp"
+          android:ellipsize="end"
           android:fontFamily="sans-serif"
           android:gravity="start|center_vertical"
+          android:paddingStart="30dp"
+          android:paddingEnd="30dp"
+          android:singleLine="true"
           android:text="@string/tag_menu_video1"
           android:textAllCaps="false"
           android:textColor="@color/lightSecondaryTitle"
           android:textSize="15sp"
-          android:theme="@style/PrimaryFlatButton"/>
+          android:theme="@style/PrimaryFlatButton" />
 
         <androidx.appcompat.widget.AppCompatButton
           android:id="@+id/tag_detail_video_2"
           android:layout_width="match_parent"
           android:layout_height="50dp"
-          android:paddingStart="30dp"
-          android:paddingEnd="30dp"
-          android:drawablePadding="30dp"
           android:drawableStart="@drawable/video_2"
+          android:drawablePadding="30dp"
+          android:ellipsize="end"
           android:fontFamily="sans-serif"
           android:gravity="start|center_vertical"
+          android:paddingStart="30dp"
+          android:paddingEnd="30dp"
+          android:singleLine="true"
           android:text="@string/tag_menu_video2"
           android:textAllCaps="false"
           android:textColor="@color/lightSecondaryTitle"
           android:textSize="15sp"
-          android:theme="@style/PrimaryFlatButton"/>
+          android:theme="@style/PrimaryFlatButton" />
 
         <androidx.appcompat.widget.AppCompatButton
           android:id="@+id/tag_detail_video_3"
           android:layout_width="match_parent"
           android:layout_height="50dp"
-          android:paddingStart="30dp"
-          android:paddingEnd="30dp"
-          android:drawablePadding="30dp"
           android:drawableStart="@drawable/video_3"
+          android:drawablePadding="30dp"
+          android:ellipsize="end"
           android:fontFamily="sans-serif"
           android:gravity="start|center_vertical"
+          android:paddingStart="30dp"
+          android:paddingEnd="30dp"
+          android:singleLine="true"
           android:text="@string/tag_menu_video3"
           android:textAllCaps="false"
           android:textColor="@color/lightSecondaryTitle"
           android:textSize="15sp"
-          android:theme="@style/PrimaryFlatButton"/>
+          android:theme="@style/PrimaryFlatButton" />
 
         <androidx.appcompat.widget.AppCompatButton
           android:id="@+id/tag_detail_video_4"
           android:layout_width="match_parent"
           android:layout_height="50dp"
-          android:paddingStart="30dp"
-          android:paddingEnd="30dp"
-          android:drawablePadding="30dp"
           android:drawableStart="@drawable/video_4"
+          android:drawablePadding="30dp"
+          android:ellipsize="end"
           android:fontFamily="sans-serif"
           android:gravity="start|center_vertical"
+          android:paddingStart="30dp"
+          android:paddingEnd="30dp"
+          android:singleLine="true"
           android:text="@string/tag_menu_video4"
           android:textAllCaps="false"
           android:textColor="@color/lightSecondaryTitle"
           android:textSize="15sp"
-          android:theme="@style/PrimaryFlatButton"/>
+          android:theme="@style/PrimaryFlatButton" />
 
         <androidx.appcompat.widget.AppCompatButton
           android:id="@+id/tag_detail_video_more"
           android:layout_width="match_parent"
           android:layout_height="50dp"
-          android:paddingStart="30dp"
-          android:paddingEnd="30dp"
-          android:drawablePadding="30dp"
           android:drawableStart="@drawable/video_circle_outline"
+          android:drawablePadding="30dp"
+          android:ellipsize="end"
           android:fontFamily="sans-serif"
           android:gravity="start|center_vertical"
+          android:paddingStart="30dp"
+          android:paddingEnd="30dp"
+          android:singleLine="true"
           android:text="@string/tag_menu_video_more"
           android:textAllCaps="false"
           android:textColor="@color/lightSecondaryTitle"
           android:textSize="15sp"
-          android:theme="@style/PrimaryFlatButton"/>
+          android:theme="@style/PrimaryFlatButton" />
 
       </LinearLayout>
 
