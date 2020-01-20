@@ -4,7 +4,6 @@
   <string name="error_text">Error Text</string>
   <string name="no_pdf">No Sheet Music Available</string>
   <string name="try_again">Try Again</string>
-  <string name="image_content_description">App Logo</string>
   <string name="music_content_description">Sheet Music Identifier</string>
   <string name="track_content_description">Track Identifier</string>
   <string name="video_content_description">Video Identifier</string>
@@ -26,11 +25,7 @@
   <string name="action_add_list">Add List</string>
   <string name="action_delete_list">Delete List</string>
   <string name="action_list_options">List Options</string>
-  <string name="action_filter">Filter</string>
   <string name="action_menu">Menu</string>
-
-  <string name="navigation_drawer_open">Open navigation drawer</string>
-  <string name="navigation_drawer_close">Close navigation drawer</string>
 
   <string name="network_error">No network connection available.</string>
   <string name="previous">Previous</string>
@@ -95,7 +90,6 @@
 
   <string name="video_all">All Videos</string>
 
-  <string name="filter_reset">Reset</string>
   <string name="filter_part_key">filter_part</string>
   <string name="filter_sheet_music_key">filter_sheet_music</string>
   <string name="filter_learning_track_key">filter_learning_track</string>

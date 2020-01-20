@@ -83,7 +83,7 @@ public class CustomListFragment extends ListFragment
     setListAdapter(listAdapter);
 
     ListView listView = getListView();
-    listView.addHeaderView(getLayoutInflater().inflate(R.layout.filter, null));
+    listView.addHeaderView(View.inflate(getContext(), R.layout.filter, null));
     listView.setHeaderDividersEnabled(false);
 
     if (getActivity() != null) {

@@ -153,17 +153,18 @@ public class TagListFragment extends ListFragment
   @Override
   public void onActivityCreated(Bundle savedInstanceState) {
     super.onActivityCreated(savedInstanceState);
-    footerView = View.inflate(getContext(), R.layout.list_footer_view, null);
-    getListView().addFooterView(footerView);
     setListAdapter(listAdapter);
-    listAdapter.getCount();
-    getListView().setOnScrollListener(this);
-    created = true;
-    setLoading(loading);
 
     ListView listView = getListView();
-    listView.addHeaderView(getLayoutInflater().inflate(R.layout.filter, listView));
+    footerView = View.inflate(getContext(), R.layout.list_footer_view, null);
+    listView.addFooterView(footerView);
+    listView.addHeaderView(View.inflate(getContext(), R.layout.filter, null));
     listView.setHeaderDividersEnabled(false);
+
+    listAdapter.getCount();
+    listView.setOnScrollListener(this);
+    created = true;
+    setLoading(loading);
 
     if (getActivity() != null) {
       filterBar = new FilterBar(getActivity());
