@@ -1,12 +1,15 @@
 package com.spelder.tagyourit.ui;
 
+import static androidx.test.espresso.Espresso.onData;
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
+import static androidx.test.espresso.matcher.ViewMatchers.withContentDescription;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import static org.hamcrest.Matchers.allOf;
+import static org.hamcrest.Matchers.anything;
 import static org.junit.Assert.assertEquals;
 
 import android.os.SystemClock;
@@ -64,7 +67,8 @@ public class TestAddFavorite {
     TagDb db = new TagDb(mActivityRule.getActivity());
     db.deleteAllFavorites();
 
-    FilterBuilder filter = new FilterBuilder(mActivityRule.getActivity());
+    FilterBuilder filter =
+        new FilterBuilder(mActivityRule.getActivity(), db.getDefaultList().getDbId().toString());
     filter.applyDefaultFilter();
 
     SortBuilder sort = new SortBuilder(mActivityRule.getActivity());
@@ -84,6 +88,8 @@ public class TestAddFavorite {
 
     onView(withId(R.id.nav_lists)).perform(click());
 
+    onData(anything()).inAdapterView(withId(android.R.id.list)).atPosition(0).perform(click());
+
     TestUtility.unFavoriteTag(tag_title);
   }
 
@@ -99,6 +105,8 @@ public class TestAddFavorite {
 
     onView(withId(R.id.nav_lists)).perform(click());
 
+    onData(anything()).inAdapterView(withId(android.R.id.list)).atPosition(0).perform(click());
+
     TestUtility.unFavoriteTag(tagTitle1);
     TestUtility.unFavoriteTag(tagTitle2);
     TestUtility.unFavoriteTag(tagTitle3);
@@ -112,16 +120,15 @@ public class TestAddFavorite {
     TestUtility.favoriteTag(tagTitle1 + " Soren");
     TestUtility.favoriteTag(tagTitle2 + " Tickner");
 
-    onView(withId(R.id.nav_settings)).perform(click());
+    onView(withId(R.id.nav_lists)).perform(click());
 
-    ViewInteraction downloadToggle =
-        onView(
-            childAtPosition(
-                allOf(
-                    withId(R.id.recycler_view),
-                    childAtPosition(withId(android.R.id.list_container), 0)),
-                3));
-    downloadToggle.perform(click());
+    onData(anything()).inAdapterView(withId(android.R.id.list)).atPosition(0).perform(click());
+
+    onView(withContentDescription("More options")).perform(click());
+
+    onView(withText("List Options")).perform(click());
+
+    onView(withId(R.id.add_list_download_sheet)).perform(click());
 
     SystemClock.sleep(5000);
 
@@ -130,12 +137,16 @@ public class TestAddFavorite {
     File dir = new File(t.getSheetMusicDirectory(mActivityRule.getActivity()));
     assertEquals(0, dir.listFiles().length);
 
-    downloadToggle.perform(click());
+    onView(withId(R.id.add_list_download_sheet)).perform(click());
     SystemClock.sleep(8000);
 
     assertEquals(2, dir.listFiles().length);
 
+    onView(withId(R.id.add_list_create_button)).perform(click());
+
     onView(withId(R.id.nav_lists)).perform(click());
+
+    onData(anything()).inAdapterView(withId(android.R.id.list)).atPosition(0).perform(click());
 
     TestUtility.unFavoriteTag(tagTitle1);
     TestUtility.unFavoriteTag(tagTitle2);

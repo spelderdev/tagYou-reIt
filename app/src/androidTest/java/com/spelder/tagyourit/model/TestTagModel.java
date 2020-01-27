@@ -23,10 +23,10 @@ public class TestTagModel {
     tag.setSheetMusicType("mp3");
     tag.setSheetMusicFile("file");
     tag.setPostedDate(new Date());
-    tag.addTrack("Bass", "http://barbershoptags.org", "pdf");
-    tag.addTrack("Bari", "http://barbershoptags.org", "pdf");
-    tag.addTrack("Lead", "http://barbershoptags.org", "pdf");
-    tag.addTrack("Tenor", "http://barbershoptags.org", "pdf");
+    tag.addTrack("Bass", "http://barbershoptags.org", "pdf", false);
+    tag.addTrack("Bari", "http://barbershoptags.org", "pdf", false);
+    tag.addTrack("Lead", "http://barbershoptags.org", "pdf", false);
+    tag.addTrack("Tenor", "http://barbershoptags.org", "pdf", false);
 
     VideoComponents video1 = new VideoComponents();
     video1.setId(83);

@@ -43,6 +43,7 @@ import androidx.test.filters.LargeTest;
 import androidx.test.rule.ActivityTestRule;
 import com.spelder.tagyourit.R;
 import com.spelder.tagyourit.cache.CacheManager;
+import com.spelder.tagyourit.db.TagDb;
 import com.spelder.tagyourit.model.Tag;
 import com.spelder.tagyourit.model.TrackComponents;
 import com.spelder.tagyourit.music.MusicService;
@@ -414,7 +415,10 @@ public class TestTrackPlayer {
 
   @Test
   public void testTrackMenu() {
-    FilterBuilder filter = new FilterBuilder(mActivityTestRule.getActivity());
+    TagDb db = new TagDb(mActivityTestRule.getActivity());
+    FilterBuilder filter =
+        new FilterBuilder(
+            mActivityTestRule.getActivity(), db.getDefaultList().getDbId().toString());
     filter.applyDefaultFilter();
     filter.setPart(Part.FIVE);
 

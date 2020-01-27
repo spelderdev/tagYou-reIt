@@ -47,7 +47,9 @@ public class TestSheetMusic {
     TagDb db = new TagDb(mActivityTestRule.getActivity());
     db.deleteAllFavorites();
 
-    FilterBuilder filter = new FilterBuilder(mActivityTestRule.getActivity());
+    FilterBuilder filter =
+        new FilterBuilder(
+            mActivityTestRule.getActivity(), db.getDefaultList().getDbId().toString());
     filter.applyDefaultFilter();
 
     SortBuilder sort = new SortBuilder(mActivityTestRule.getActivity());
