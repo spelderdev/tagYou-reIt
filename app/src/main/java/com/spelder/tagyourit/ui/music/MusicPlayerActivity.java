@@ -82,7 +82,7 @@ public class MusicPlayerActivity extends AppCompatActivity {
               new MusicNotifier() {
                 @Override
                 public void done() {
-                  trackPlayPause.setImageResource(R.drawable.ic_play_circle_filled_white_48dp);
+                  trackPlayPause.setImageResource(R.drawable.play_circle_filled_white);
                   seekBar.setProgress(0);
                 }
 
@@ -97,7 +97,7 @@ public class MusicPlayerActivity extends AppCompatActivity {
                   trackLoading.setVisibility(View.GONE);
                   trackPlayPause.setVisibility(View.VISIBLE);
 
-                  trackPlayPause.setImageResource(R.drawable.ic_pause_circle_filled_white_48dp);
+                  trackPlayPause.setImageResource(R.drawable.pause_circle_filled);
                 }
 
                 @Override
@@ -108,7 +108,7 @@ public class MusicPlayerActivity extends AppCompatActivity {
                   speedSeekBar.setEnabled(true);
                   balanceSeekBar.setEnabled(true);
 
-                  trackPlayPause.setImageResource(R.drawable.ic_play_circle_filled_white_48dp);
+                  trackPlayPause.setImageResource(R.drawable.play_circle_filled_white);
                 }
 
                 @Override
@@ -140,11 +140,11 @@ public class MusicPlayerActivity extends AppCompatActivity {
           } else if (musicSrv.isPlaying()) {
             trackLoading.setVisibility(View.GONE);
             trackPlayPause.setVisibility(View.VISIBLE);
-            trackPlayPause.setImageResource(R.drawable.ic_pause_circle_filled_white_48dp);
+            trackPlayPause.setImageResource(R.drawable.pause_circle_filled);
           } else {
             trackLoading.setVisibility(View.GONE);
             trackPlayPause.setVisibility(View.VISIBLE);
-            trackPlayPause.setImageResource(R.drawable.ic_play_circle_filled_white_48dp);
+            trackPlayPause.setImageResource(R.drawable.play_circle_filled_white);
           }
 
           Log.d(TAG, "musicSrv: " + (musicSrv == null));

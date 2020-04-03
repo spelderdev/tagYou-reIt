@@ -1,5 +1,6 @@
 package com.spelder.tagyourit.ui;
 
+import static androidx.test.espresso.Espresso.onData;
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.action.ViewActions.scrollTo;
@@ -10,6 +11,7 @@ import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import static org.hamcrest.Matchers.allOf;
+import static org.hamcrest.Matchers.anything;
 
 import android.os.SystemClock;
 import android.view.View;
@@ -36,22 +38,26 @@ import org.junit.runner.RunWith;
 @RunWith(AndroidJUnit4.class)
 public class TestFilter {
   @Rule
-  public ActivityTestRule<MainActivity> mActivityRule = new ActivityTestRule<>(MainActivity.class);
+  public final ActivityTestRule<MainActivity> mActivityRule =
+      new ActivityTestRule<>(MainActivity.class);
 
   @Before
   public void init() {
-    FilterBuilder filter = new FilterBuilder(mActivityRule.getActivity());
+    TagDb db = new TagDb(mActivityRule.getActivity());
+    FilterBuilder filter =
+        new FilterBuilder(mActivityRule.getActivity(), db.getDefaultList().getDbId().toString());
     filter.applyDefaultFilter();
 
     SortBuilder sort = new SortBuilder(mActivityRule.getActivity());
     sort.setSortBy(SortBy.DOWNLOAD);
 
-    TagDb db = new TagDb(mActivityRule.getActivity());
     db.deleteAllFavorites();
   }
 
   private void resetFilter() {
-    FilterBuilder filter = new FilterBuilder(mActivityRule.getActivity());
+    TagDb db = new TagDb(mActivityRule.getActivity());
+    FilterBuilder filter =
+        new FilterBuilder(mActivityRule.getActivity(), db.getDefaultList().getDbId().toString());
     filter.applyDefaultFilter();
   }
 
@@ -65,21 +71,29 @@ public class TestFilter {
     TestUtility.favoriteTag(tagTitle2);
     TestUtility.favoriteTag(tagTitle3 + " Ethan");
 
-    onView(withId(R.id.nav_favorite)).perform(click());
+    onView(withId(R.id.nav_lists)).perform(click());
+
+    onData(anything()).inAdapterView(withId(android.R.id.list)).atPosition(0).perform(click());
 
     onView(allOf(withId(R.id.filter_parts), isDisplayed())).perform(scrollTo(), click());
 
     onView(withId(R.id.filter_parts_five)).perform(click());
 
-    onView(matcherAtCount(withId(R.id.tag_list_title), 1)).check(matches(withText(tagTitle2)));
+    onData(anything())
+        .inAdapterView(
+            (matcherAtCount(allOf(withId(R.id.tag_list_title), withText(tagTitle2)), 1)));
 
     resetFilter();
 
     onView(allOf(withId(R.id.filter_sheet_music), isDisplayed())).perform(scrollTo(), click());
 
-    onView(matcherAtCount(withId(R.id.tag_list_title), 1)).check(matches(withText(tagTitle2)));
+    onData(anything())
+        .inAdapterView(
+            (matcherAtCount(allOf(withId(R.id.tag_list_title), withText(tagTitle2)), 1)));
 
-    onView(matcherAtCount(withId(R.id.tag_list_title), 2)).check(matches(withText(tagTitle1)));
+    onData(anything())
+        .inAdapterView(
+            (matcherAtCount(allOf(withId(R.id.tag_list_title), withText(tagTitle1)), 2)));
 
     onView(withId(android.R.id.list)).check(ViewAssertions.matches(withListSize(2)));
 
@@ -113,7 +127,9 @@ public class TestFilter {
 
     onView(withId(R.id.filter_key_g)).perform(click());
 
-    onView(matcherAtCount(withId(R.id.tag_list_title), 1)).check(matches(withText(tagTitle3)));
+    onData(anything())
+        .inAdapterView(
+            (matcherAtCount(allOf(withId(R.id.tag_list_title), withText(tagTitle3)), 1)));
 
     onView(withId(android.R.id.list)).check(ViewAssertions.matches(withListSize(1)));
 
@@ -125,7 +141,9 @@ public class TestFilter {
 
     onView(withId(R.id.filter_type_other_male)).perform(click());
 
-    onView(matcherAtCount(withId(R.id.tag_list_title), 1)).check(matches(withText(tagTitle2)));
+    onData(anything())
+        .inAdapterView(
+            (matcherAtCount(allOf(withId(R.id.tag_list_title), withText(tagTitle2)), 1)));
 
     onView(withId(android.R.id.list)).check(ViewAssertions.matches(withListSize(1)));
 

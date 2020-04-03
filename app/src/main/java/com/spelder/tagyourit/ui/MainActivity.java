@@ -1,11 +1,13 @@
 package com.spelder.tagyourit.ui;
 
+import static com.spelder.tagyourit.ui.FragmentSwitcher.PAR_KEY;
 import static com.spelder.tagyourit.ui.video.VideoPlayerActivity.VIDEOS_KEY;
 import static com.spelder.tagyourit.ui.video.VideoPlayerActivity.VIDEO_ID_KEY;
 
 import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
@@ -23,6 +25,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.SearchView.OnQueryTextListener;
@@ -34,7 +37,8 @@ import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.spelder.tagyourit.R;
 import com.spelder.tagyourit.db.TagDb;
-import com.spelder.tagyourit.drive.FavoritesBackup;
+import com.spelder.tagyourit.drive.DatabaseBackup;
+import com.spelder.tagyourit.model.ListProperties;
 import com.spelder.tagyourit.model.Tag;
 import com.spelder.tagyourit.model.TrackComponents;
 import com.spelder.tagyourit.model.VideoComponents;
@@ -43,7 +47,8 @@ import com.spelder.tagyourit.music.MusicService;
 import com.spelder.tagyourit.music.model.Speed;
 import com.spelder.tagyourit.networking.TagListRetriever;
 import com.spelder.tagyourit.networking.UpdateTagTask;
-import com.spelder.tagyourit.networking.api.filter.FilterBuilder;
+import com.spelder.tagyourit.ui.lists.EditListActivity;
+import com.spelder.tagyourit.ui.lists.TagSelectListActivity;
 import com.spelder.tagyourit.ui.music.MusicPlayerActivity;
 import com.spelder.tagyourit.ui.settings.SortBottomSheet;
 import com.spelder.tagyourit.ui.video.VideoPlayerActivity;
@@ -60,34 +65,19 @@ public class MainActivity extends AppCompatActivity
         OnQueryTextListener,
         SharedPreferences.OnSharedPreferenceChangeListener {
   private static final String TAG = MainActivity.class.getName();
-
   public static String currentQuery = "";
 
   private FragmentSwitcher manager;
-
-  private FilterBuilder filterBuilder;
-
   private Activity actionBar;
-
   private SearchView searchView;
-
   private View trackToolbar;
-
   private TextView trackTitle;
-
   private TextView trackPart;
-
   private ImageView trackPlayPause;
-
   private View trackLoading;
-
   private MusicService musicSrv;
-
   private Intent playIntent;
-
   private boolean musicBound = false;
-
-  private SortBottomSheet sortBottomSheet;
 
   private final MusicNotifier musicNotifier =
       new MusicNotifier() {
@@ -104,7 +94,7 @@ public class MainActivity extends AppCompatActivity
           trackLoading.setVisibility(View.GONE);
           trackPlayPause.setVisibility(View.VISIBLE);
           trackToolbar.setVisibility(View.VISIBLE);
-          trackPlayPause.setImageResource(R.drawable.ic_pause_white_24dp);
+          trackPlayPause.setImageResource(R.drawable.pause);
         }
 
         @Override
@@ -112,7 +102,7 @@ public class MainActivity extends AppCompatActivity
           trackLoading.setVisibility(View.GONE);
           trackPlayPause.setVisibility(View.VISIBLE);
           trackToolbar.setVisibility(View.VISIBLE);
-          trackPlayPause.setImageResource(R.drawable.ic_play_arrow_white_24dp);
+          trackPlayPause.setImageResource(R.drawable.play_arrow);
         }
 
         @Override
@@ -173,10 +163,6 @@ public class MainActivity extends AppCompatActivity
       manager = new FragmentSwitcher(this);
     }
 
-    if (filterBuilder == null) {
-      filterBuilder = new FilterBuilder(this);
-    }
-
     BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
     bottomNavigationView.setOnNavigationItemSelectedListener(this);
 
@@ -234,8 +220,6 @@ public class MainActivity extends AppCompatActivity
 
     handleIntent();
 
-    sortBottomSheet = new SortBottomSheet();
-
     PreferenceManager.getDefaultSharedPreferences(this)
         .registerOnSharedPreferenceChangeListener(this);
   }
@@ -269,6 +253,8 @@ public class MainActivity extends AppCompatActivity
   @Override
   protected void onResume() {
     super.onResume();
+    Log.d(TAG, "onResume");
+    updateMenu();
   }
 
   @Override
@@ -300,13 +286,15 @@ public class MainActivity extends AppCompatActivity
     super.onDestroy();
 
     manager = null;
-    filterBuilder = null;
 
     stopService(playIntent);
     musicSrv = null;
 
     PreferenceManager.getDefaultSharedPreferences(this)
         .unregisterOnSharedPreferenceChangeListener(this);
+
+    TagDb db = new TagDb(this);
+    db.close();
   }
 
   @Override
@@ -352,11 +340,22 @@ public class MainActivity extends AppCompatActivity
     MenuInflater inflater = getMenuInflater();
     inflater.inflate(R.menu.main, menu);
 
-    menu.findItem(R.id.action_favorite).setVisible(manager.isFavoriteVisible());
-    menu.findItem(R.id.action_unfavorite).setVisible(manager.isUnFavoriteVisible());
+    menu.findItem(R.id.action_add_to_default_list).setVisible(manager.isAddDefaultListVisible());
+    menu.findItem(R.id.action_delete_from_default_list)
+        .setVisible(manager.isDeleteDefaultListVisible());
     menu.findItem(R.id.action_menu).setVisible(manager.isMenuVisible());
     menu.findItem(R.id.action_search).setVisible(manager.isSearchVisible());
     menu.findItem(R.id.action_sort).setVisible(manager.isSortVisible());
+    menu.findItem(R.id.action_add_list).setVisible(manager.isAddListVisible());
+    menu.findItem(R.id.action_delete_list).setVisible(manager.isDeleteListVisible());
+    menu.findItem(R.id.action_list_options).setVisible(manager.isListOptionsVisible());
+
+    TagDb db = new TagDb(this);
+    ListProperties defaultList = db.getDefaultList();
+    menu.findItem(R.id.action_add_to_default_list)
+        .setIcon(defaultList.getIcon().getOutlineResourceId());
+    menu.findItem(R.id.action_delete_from_default_list)
+        .setIcon(defaultList.getIcon().getFilledResourceId());
 
     searchView = (SearchView) menu.findItem(R.id.action_search).getActionView();
     searchView.setOnQueryTextListener(this);
@@ -372,25 +371,22 @@ public class MainActivity extends AppCompatActivity
   @Override
   public boolean onOptionsItemSelected(@NonNull MenuItem item) {
     Log.d(TAG, "Option selected");
-    // Handle presses on the action bar items
+    TagDb db = new TagDb(this);
     switch (item.getItemId()) {
-      case R.id.action_favorite:
+      case R.id.action_add_to_default_list:
         Tag tag = manager.getDisplayedTag();
 
-        TagDb db = new TagDb(this);
-        long newRow = db.insertFavorite(tag);
+        long newRow = db.insertDefaultList(tag);
 
         tag.setDbId(newRow);
 
         updateMenu();
         return true;
 
-      case R.id.action_unfavorite:
-        Log.d("MainActivity", "UnFavorites");
+      case R.id.action_delete_from_default_list:
         Tag unTag = manager.getDisplayedTag();
 
-        TagDb unDb = new TagDb(this);
-        unDb.deleteFavorite(unTag);
+        db.deleteFromDefaultList(unTag);
 
         unTag.setDbId(null);
 
@@ -406,6 +402,18 @@ public class MainActivity extends AppCompatActivity
         toggleSort();
         return true;
 
+      case R.id.action_add_list:
+        openAddList();
+        return true;
+
+      case R.id.action_delete_list:
+        deleteList();
+        return true;
+
+      case R.id.action_list_options:
+        openUpdateList();
+        return true;
+
       case android.R.id.home:
         onBackPressed();
         return true;
@@ -415,7 +423,40 @@ public class MainActivity extends AppCompatActivity
     }
   }
 
+  private void deleteList() {
+    DialogInterface.OnClickListener dialogClickListener =
+        (DialogInterface dialog, int which) -> {
+          switch (which) {
+            case DialogInterface.BUTTON_POSITIVE:
+              TagDb db = new TagDb(MainActivity.this);
+              db.deleteList(manager.getDisplayedList());
+              manager.displayNavigationSelectedFragment(R.id.nav_lists);
+              break;
+
+            case DialogInterface.BUTTON_NEGATIVE:
+              // No button clicked
+              break;
+          }
+        };
+
+    AlertDialog.Builder builder = new AlertDialog.Builder(this);
+    builder
+        .setTitle("Are you sure?")
+        .setMessage("Do you want to delete list?")
+        .setPositiveButton("Yes", dialogClickListener)
+        .setNegativeButton("No", dialogClickListener)
+        .show();
+  }
+
   private void toggleSort() {
+    ListProperties properties = manager.getDisplayedList();
+    SortBottomSheet sortBottomSheet;
+    if (properties == null) {
+      sortBottomSheet = new SortBottomSheet();
+    } else {
+      sortBottomSheet = new SortBottomSheet(properties.getDbId().toString());
+    }
+
     if (!sortBottomSheet.isVisible()) {
       sortBottomSheet.show(getSupportFragmentManager(), "Bottom sheet");
     } else {
@@ -451,7 +492,7 @@ public class MainActivity extends AppCompatActivity
   @Override
   protected void onActivityResult(int requestCode, int resultCode, Intent data) {
     super.onActivityResult(requestCode, resultCode, data);
-    if (requestCode == FavoritesBackup.REQUEST_CODE_SIGN_IN) {
+    if (requestCode == DatabaseBackup.REQUEST_CODE_SIGN_IN) {
       if (resultCode != RESULT_OK) {
         // Sign-in may fail or be cancelled by the user. For this sample, sign-in is
         // required and is fatal. For apps where sign-in is optional, handle
@@ -496,6 +537,26 @@ public class MainActivity extends AppCompatActivity
     Intent intent = new Intent(this, VideoPlayerActivity.class);
     intent.putExtra(VIDEO_ID_KEY, currentVideoId);
     intent.putParcelableArrayListExtra(VIDEOS_KEY, videos);
+    startActivity(intent);
+  }
+
+  private void openAddList() {
+    openActivityFromBottom();
+    Intent intent = new Intent(this, EditListActivity.class);
+    startActivity(intent);
+  }
+
+  public void openTagSelectList() {
+    openActivityFromBottom();
+    Intent intent = new Intent(this, TagSelectListActivity.class);
+    intent.putExtra(PAR_KEY, manager.getDisplayedTag());
+    startActivity(intent);
+  }
+
+  private void openUpdateList() {
+    openActivityFromBottom();
+    Intent intent = new Intent(this, EditListActivity.class);
+    intent.putExtra(PAR_KEY, manager.getDisplayedList());
     startActivity(intent);
   }
 

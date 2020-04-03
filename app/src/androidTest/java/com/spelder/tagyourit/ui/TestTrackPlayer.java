@@ -15,9 +15,9 @@ import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withSubstring;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import static com.spelder.tagyourit.action.OrientationChangeAction.orientationLandscape;
-import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.anything;
+import static org.hamcrest.Matchers.not;
 import static org.hamcrest.core.StringContains.containsString;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -43,6 +43,7 @@ import androidx.test.filters.LargeTest;
 import androidx.test.rule.ActivityTestRule;
 import com.spelder.tagyourit.R;
 import com.spelder.tagyourit.cache.CacheManager;
+import com.spelder.tagyourit.db.TagDb;
 import com.spelder.tagyourit.model.Tag;
 import com.spelder.tagyourit.model.TrackComponents;
 import com.spelder.tagyourit.music.MusicService;
@@ -72,7 +73,7 @@ public class TestTrackPlayer {
   }
 
   private void clearCache(Context context) {
-    File musicDir = new File(TrackComponents.getTrackDirectory(context));
+    File musicDir = new File(TrackComponents.getTrackCacheDirectory(context));
     CacheManager.cleanDir(musicDir, CacheManager.getDirSize(musicDir), "");
 
     File sheetDir = new File(new Tag().getSheetMusicDirectory(context));
@@ -414,7 +415,10 @@ public class TestTrackPlayer {
 
   @Test
   public void testTrackMenu() {
-    FilterBuilder filter = new FilterBuilder(mActivityTestRule.getActivity());
+    TagDb db = new TagDb(mActivityTestRule.getActivity());
+    FilterBuilder filter =
+        new FilterBuilder(
+            mActivityTestRule.getActivity(), db.getDefaultList().getDbId().toString());
     filter.applyDefaultFilter();
     filter.setPart(Part.FIVE);
 

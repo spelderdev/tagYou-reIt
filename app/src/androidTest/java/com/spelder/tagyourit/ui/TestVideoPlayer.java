@@ -79,9 +79,9 @@ public class TestVideoPlayer {
     onView(withId(R.id.youtube_view)).check(matches(not(isDisplayed())));
 
     onView(
-        allOf(
-            withId(R.id.video_list_title),
-            withText("Chanticleer Tag Time - Like Leaves Will Fall")))
+            allOf(
+                withId(R.id.video_list_title),
+                withText("Chanticleer Tag Time - Like Leaves Will Fall")))
         .check(matches(isDisplayed()));
 
     onView(allOf(withId(R.id.video_list_posted_by), withText("Chanticleer et al")))

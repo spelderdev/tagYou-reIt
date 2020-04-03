@@ -21,7 +21,7 @@ public class SearchListFragment extends TagListFragment {
     finished = false;
     if (created) {
       getListView().setSelection(0);
-      getAndCancelDownloadTask(true).execute();
+      getAndCancelDownloadTask().execute();
     }
   }
 

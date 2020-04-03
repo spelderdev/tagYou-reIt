@@ -57,7 +57,7 @@ public class MusicService extends Service
 
   private MusicServiceNotificationHandler notificationHandler;
 
-  private BroadcastReceiver noisyReceiver =
+  private final BroadcastReceiver noisyReceiver =
       new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -320,8 +320,7 @@ public class MusicService extends Service
       }
 
       DownloadFileTask task = new UpdatedDownloadFileTask(this, absoluteFilePath);
-      task.execute(
-          track.getLink(), TrackComponents.getTrackDirectory(context), track.getTrackFileName());
+      task.execute(track.getLink(), track.getTrackDirectory(context), track.getTrackFileName());
 
       return null;
     }

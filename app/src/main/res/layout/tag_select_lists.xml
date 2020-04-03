@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+  android:layout_width="match_parent"
+  android:layout_height="match_parent"
+  android:orientation="vertical">
+
+  <ImageView
+    android:id="@+id/tag_select_close"
+    android:layout_width="25dp"
+    android:layout_height="30dp"
+    android:layout_marginStart="19dp"
+    android:layout_marginTop="19dp"
+    android:layout_marginEnd="19dp"
+    android:layout_marginBottom="19dp"
+    android:contentDescription="@string/close"
+    android:src="@drawable/close"
+    android:tint="@color/darkTitle" />
+
+  <TextView
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
+    android:layout_marginStart="10dp"
+    android:layout_marginBottom="10dp"
+    android:text="@string/list_select"
+    android:textColor="@color/darkTitle"
+    android:textSize="28sp" />
+
+  <ListView
+    android:id="@android:id/list"
+    android:layout_width="match_parent"
+    android:layout_height="0dp"
+    android:layout_weight="1"
+    android:dividerHeight="1dp"
+    android:drawSelectorOnTop="true" />
+
+  <androidx.appcompat.widget.AppCompatButton
+    android:id="@+id/tag_select_apply_button"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginStart="30dp"
+    android:layout_marginTop="10dp"
+    android:layout_marginEnd="30dp"
+    android:layout_marginBottom="10dp"
+    android:backgroundTint="@color/colorPrimary"
+    android:text="@string/apply"
+    android:textAllCaps="false"
+    android:textColor="@color/card_view_background" />
+
+</LinearLayout>

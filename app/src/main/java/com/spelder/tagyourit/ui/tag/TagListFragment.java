@@ -109,7 +109,7 @@ public class TagListFragment extends ListFragment
           if (connMgr != null) {
             NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
             if (networkInfo != null && networkInfo.isConnected()) {
-              getAndCancelDownloadTask(true);
+              getAndCancelDownloadTask();
               unsetNetworkError();
             }
           }
@@ -153,17 +153,18 @@ public class TagListFragment extends ListFragment
   @Override
   public void onActivityCreated(Bundle savedInstanceState) {
     super.onActivityCreated(savedInstanceState);
-    footerView = View.inflate(getContext(), R.layout.list_footer_view, null);
-    getListView().addFooterView(footerView);
     setListAdapter(listAdapter);
-    listAdapter.getCount();
-    getListView().setOnScrollListener(this);
-    created = true;
-    setLoading(loading);
 
     ListView listView = getListView();
-    listView.addHeaderView(getLayoutInflater().inflate(R.layout.filter, null));
+    footerView = View.inflate(getContext(), R.layout.list_footer_view, null);
+    listView.addFooterView(footerView);
+    listView.addHeaderView(View.inflate(getContext(), R.layout.filter, null));
     listView.setHeaderDividersEnabled(false);
+
+    listAdapter.getCount();
+    listView.setOnScrollListener(this);
+    created = true;
+    setLoading(loading);
 
     if (getActivity() != null) {
       filterBar = new FilterBar(getActivity());
@@ -185,7 +186,7 @@ public class TagListFragment extends ListFragment
         "FragmentList",
         "Item clicked: " + clickedTag.getTitle() + " " + clickedTag.getSheetMusicType());
     TagDb db = new TagDb(context);
-    clickedTag.setDbId(db.isFavorite(clickedTag));
+    clickedTag.setDbId(db.isInDefaultList(clickedTag));
     MainActivity activity = (MainActivity) getActivity();
     if (activity != null) {
       activity.getManager().displayTag(clickedTag);
@@ -244,11 +245,11 @@ public class TagListFragment extends ListFragment
     }
   }
 
-  synchronized TagQueryTask getAndCancelDownloadTask(boolean shouldClear) {
+  synchronized TagQueryTask getAndCancelDownloadTask() {
     if (isLoadingMore() && currentDownloadTask != null) {
       currentDownloadTask.cancel();
     }
-    return getDownloadTask(shouldClear);
+    return getDownloadTask(true);
   }
 
   private synchronized TagQueryTask getDownloadTask(boolean shouldClear) {
@@ -293,7 +294,7 @@ public class TagListFragment extends ListFragment
       SortBuilder builder = new SortBuilder(context);
       sortBy = builder.build();
 
-      getAndCancelDownloadTask(true).execute();
+      getAndCancelDownloadTask().execute();
     }
   }
 

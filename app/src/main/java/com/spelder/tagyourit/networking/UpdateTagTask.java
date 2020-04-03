@@ -31,11 +31,7 @@ public class UpdateTagTask implements Runnable {
 
   private int getUpdateFrequencyInDays() {
     String freq = preferences.getString("pref_key_update_frequency", "14");
-    if (freq != null) {
-      return Integer.valueOf(freq);
-    }
-
-    return 14;
+    return Integer.valueOf(freq);
   }
 
   @Override

@@ -18,7 +18,7 @@ import java.util.concurrent.Executors;
  * picker UI via Storage Access Framework.
  */
 class DriveServiceHelper {
-  private static final String TYPE_UNKNOWN = "application/vnd.google-apps.unknown";
+  private static final String TYPE_UNKNOWN = "application/octet-stream";
   private final Executor mExecutor = Executors.newSingleThreadExecutor();
   private final Drive mDriveService;
 
@@ -45,15 +45,15 @@ class DriveServiceHelper {
     return Tasks.call(
         mExecutor,
         () -> {
-          File metadata =
-              new File()
-                  .setName(name)
-                  .setMimeType(TYPE_UNKNOWN)
-                  .setParents(Collections.singletonList("appDataFolder"));
+          File metadata = new File().setName(name).setMimeType(TYPE_UNKNOWN);
 
           FileContent fileContent = new FileContent(TYPE_UNKNOWN, localFile);
 
-          return mDriveService.files().update(fileId, metadata, fileContent).execute();
+          Drive.Files.Update updateRequest =
+              mDriveService.files().update(fileId, metadata, fileContent);
+          updateRequest.setAddParents("appDataFolder");
+
+          return updateRequest.execute();
         });
   }
 

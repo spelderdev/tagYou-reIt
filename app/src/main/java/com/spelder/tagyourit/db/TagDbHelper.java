@@ -21,7 +21,7 @@ public class TagDbHelper extends SQLiteOpenHelper {
   public static final String DATABASE_NAME = "Tag.db";
 
   // If you change the database schema, you must increment the database version.
-  static final int DATABASE_VERSION = 7;
+  static final int DATABASE_VERSION = 8;
 
   private static final String TAG = TagDbHelper.class.getName();
 
@@ -49,7 +49,9 @@ public class TagDbHelper extends SQLiteOpenHelper {
   public void onCreate(SQLiteDatabase db) {
     db.execSQL(TagContract.TagEntry.SQL_CREATE_ENTRIES);
     db.execSQL(TagContract.LearningTracksEntry.SQL_CREATE_ENTRIES);
-    db.execSQL(TagContract.FavoritesEntry.SQL_CREATE_ENTRIES);
+    db.execSQL(TagContract.ListPropertiesEntry.SQL_CREATE_ENTRIES);
+    db.execSQL(TagContract.ListPropertiesEntry.SQL_CREATE_DEFAULT_ENTRIES);
+    db.execSQL(TagContract.ListEntriesEntry.SQL_CREATE_ENTRIES);
     db.execSQL(TagContract.RatingEntry.SQL_CREATE_ENTRIES);
     db.execSQL(TagContract.VideoEntry.SQL_CREATE_ENTRIES);
   }
@@ -59,7 +61,8 @@ public class TagDbHelper extends SQLiteOpenHelper {
     if (DATABASE_VERSION <= 3) {
       db.execSQL(TagContract.TagEntry.SQL_DELETE_ENTRIES);
       db.execSQL(TagContract.LearningTracksEntry.SQL_DELETE_ENTRIES);
-      db.execSQL(TagContract.FavoritesEntry.SQL_DELETE_ENTRIES);
+      db.execSQL(TagContract.ListPropertiesEntry.SQL_DELETE_ENTRIES);
+      db.execSQL(TagContract.ListEntriesEntry.SQL_DELETE_ENTRIES);
       db.execSQL(TagContract.RatingEntry.SQL_DELETE_ENTRIES);
       db.execSQL(TagContract.VideoEntry.SQL_DELETE_ENTRIES);
       onCreate(db);

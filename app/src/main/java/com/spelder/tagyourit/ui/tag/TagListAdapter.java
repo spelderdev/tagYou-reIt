@@ -14,12 +14,12 @@ import java.util.List;
 import java.util.Locale;
 
 /** List adapter for the tags. This sets up the actual tag list holder. */
-class TagListAdapter extends BaseAdapter {
+public class TagListAdapter extends BaseAdapter {
   private final LayoutInflater mInflater;
 
   private final List<Tag> tags;
 
-  TagListAdapter(Context context) {
+  public TagListAdapter(Context context) {
     mInflater = LayoutInflater.from(context);
     tags = new ArrayList<>();
   }
@@ -39,13 +39,13 @@ class TagListAdapter extends BaseAdapter {
     return position;
   }
 
-  void addTags(List<Tag> toAdd) {
+  public void addTags(List<Tag> toAdd) {
     if (toAdd != null) {
       tags.addAll(toAdd);
     }
   }
 
-  void clearTags() {
+  public void clearTags() {
     tags.clear();
   }
 

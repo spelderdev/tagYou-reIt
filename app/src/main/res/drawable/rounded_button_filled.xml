@@ -5,5 +5,6 @@
       <item android:drawable="@drawable/rounded_shape_filled" />
     </ripple>
   </item>
+  <item android:state_enabled="false" android:drawable="@drawable/rounded_shape_filled_disabled" />
   <item android:drawable="@drawable/rounded_shape_filled" />
 </selector>

@@ -11,7 +11,6 @@ import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.anything;
 
-import android.os.SystemClock;
 import androidx.test.espresso.matcher.ViewMatchers;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.filters.LargeTest;
@@ -33,7 +32,8 @@ public class TestSearch {
 
     onView(ViewMatchers.withId(R.id.action_search)).perform(click());
 
-    onView(withId(R.id.search_src_text)).perform(replaceText(title + " Tickner"), closeSoftKeyboard());
+    onView(withId(R.id.search_src_text))
+        .perform(replaceText(title + " Tickner"), closeSoftKeyboard());
 
     onData(anything()).inAdapterView(withId(android.R.id.list)).atPosition(1).perform(click());
 

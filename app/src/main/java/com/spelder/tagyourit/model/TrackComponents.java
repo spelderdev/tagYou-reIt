@@ -16,8 +16,18 @@ public class TrackComponents {
 
   private String tagTitle;
 
-  public static String getTrackDirectory(Context context) {
+  private boolean isDownloaded = false;
+
+  public static String getTrackCacheDirectory(Context context) {
     return context.getCacheDir().getAbsolutePath() + "/" + TRACK_DIRECTORY;
+  }
+
+  public String getTrackDirectory(Context context) {
+    if (!isDownloaded) {
+      return context.getCacheDir().getAbsolutePath() + "/" + TRACK_DIRECTORY;
+    } else {
+      return context.getFilesDir().getAbsolutePath() + "/" + TRACK_DIRECTORY;
+    }
   }
 
   public String getLink() {
@@ -66,5 +76,13 @@ public class TrackComponents {
 
   public String getTrackPath(Context context) {
     return getTrackDirectory(context) + "/" + getTrackFileName();
+  }
+
+  public void setDownloaded(boolean downloaded) {
+    isDownloaded = downloaded;
+  }
+
+  boolean isDownloaded() {
+    return isDownloaded;
   }
 }

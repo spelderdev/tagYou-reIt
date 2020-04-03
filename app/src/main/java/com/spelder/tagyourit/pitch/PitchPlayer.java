@@ -35,10 +35,6 @@ public class PitchPlayer {
     return null;
   }
 
-  public static void playPitch(Context context, String key) {
-    playPitch(context, Pitch.determinePitch(key));
-  }
-
   public static void togglePitch(Context context) {
     if (player != null && player.isNotStopped()) {
       stopPitch();

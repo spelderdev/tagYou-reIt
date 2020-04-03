@@ -8,20 +8,14 @@ import com.spelder.tagyourit.music.model.AudioFormat;
  */
 public class AdvancedHarmonicOscillator extends HarmonicOscillator {
   private static final double MOD_DEPTH_MIN = 0.0;
-
   private static final double MOD_DEPTH_MAX = 1.0;
 
   private double frequency;
-
-  private HarmonicOscillator lfo;
-
+  private final HarmonicOscillator lfo;
   private MOD_TYPE modulationType;
-
   private double modulationDepth;
-
-  private double rangeMultiplier;
-
-  private double detuneMultiplier;
+  private final double rangeMultiplier;
+  private final double detuneMultiplier;
 
   public AdvancedHarmonicOscillator(AudioFormat audioFormat) {
     super(audioFormat);

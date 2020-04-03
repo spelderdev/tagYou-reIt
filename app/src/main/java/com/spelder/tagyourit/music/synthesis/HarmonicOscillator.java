@@ -17,7 +17,7 @@ public class HarmonicOscillator {
 
   private double gainMultiplier = 1;
 
-  private int sampleRate;
+  private final int sampleRate;
 
   HarmonicOscillator(AudioFormat audioFormat) {
     setFrequency(440);

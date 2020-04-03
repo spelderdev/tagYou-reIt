@@ -25,7 +25,7 @@ public class TestUtility {
 
     onData(anything()).inAdapterView(withId(android.R.id.list)).atPosition(1).perform(click());
 
-    onView(withId(R.id.action_favorite)).perform(click());
+    onView(withId(R.id.action_add_to_default_list)).perform(click());
 
     onView(allOf(withContentDescription("Navigate up"), isDisplayed())).perform(click());
   }
@@ -35,7 +35,7 @@ public class TestUtility {
         .check(matches(isCompletelyDisplayed()))
         .perform(click());
 
-    onView(withId(R.id.action_unfavorite)).perform(click());
+    onView(withId(R.id.action_delete_from_default_list)).perform(click());
 
     ViewInteraction navUp = onView(allOf(withContentDescription("Navigate up"), isDisplayed()));
     navUp.perform(click());

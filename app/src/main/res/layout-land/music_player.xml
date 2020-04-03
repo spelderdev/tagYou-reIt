@@ -13,7 +13,7 @@
     android:layout_marginStart="10dp"
     android:layout_marginTop="@dimen/media_player_close_top"
     android:contentDescription="@string/close"
-    android:src="@drawable/ic_close_white_24dp"/>
+    android:src="@drawable/close"/>
 
   <LinearLayout
     android:id="@+id/music_player_play_tracks_layout"
@@ -31,7 +31,7 @@
       android:layout_marginEnd="10dp"
       android:layout_marginRight="10dp"
       android:contentDescription="@string/track_content_description"
-      android:src="@drawable/ic_play_circle_bari_white"/>
+      android:src="@drawable/play_circle_bari_white"/>
 
     <ImageView
       android:id="@+id/music_player_play_bass"
@@ -42,7 +42,7 @@
       android:layout_marginEnd="10dp"
       android:layout_marginRight="10dp"
       android:contentDescription="@string/track_content_description"
-      android:src="@drawable/ic_play_circle_bass_white"/>
+      android:src="@drawable/play_circle_bass_white"/>
 
     <ImageView
       android:id="@+id/music_player_play_all"
@@ -53,7 +53,7 @@
       android:layout_marginEnd="10dp"
       android:layout_marginRight="10dp"
       android:contentDescription="@string/track_content_description"
-      android:src="@drawable/ic_play_circle_outline_white"/>
+      android:src="@drawable/play_circle_outline_white"/>
 
     <ImageView
       android:id="@+id/music_player_play_lead"
@@ -64,7 +64,7 @@
       android:layout_marginEnd="10dp"
       android:layout_marginRight="10dp"
       android:contentDescription="@string/track_content_description"
-      android:src="@drawable/ic_play_circle_lead_white"/>
+      android:src="@drawable/play_circle_lead_white"/>
 
     <ImageView
       android:id="@+id/music_player_play_tenor"
@@ -75,7 +75,7 @@
       android:layout_marginEnd="10dp"
       android:layout_marginRight="10dp"
       android:contentDescription="@string/track_content_description"
-      android:src="@drawable/ic_play_circle_tenor_white"/>
+      android:src="@drawable/play_circle_tenor_white"/>
 
   </LinearLayout>
 
@@ -182,7 +182,7 @@
         android:layout_height="match_parent"
         android:contentDescription="@string/playbackControl"
         android:visibility="gone"
-        app:srcCompat="@drawable/ic_play_circle_filled_white_48dp"/>
+        app:srcCompat="@drawable/play_circle_filled_white"/>
 
     </LinearLayout>
 

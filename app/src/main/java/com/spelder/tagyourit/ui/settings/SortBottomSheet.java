@@ -14,6 +14,13 @@ import com.spelder.tagyourit.networking.api.SortBuilder;
 import com.spelder.tagyourit.networking.api.SortBy;
 
 public class SortBottomSheet extends BottomSheetDialogFragment {
+  private String id = "";
+
+  public SortBottomSheet() {}
+
+  public SortBottomSheet(String id) {
+    this.id = id;
+  }
 
   @Nullable
   @Override
@@ -29,7 +36,7 @@ public class SortBottomSheet extends BottomSheetDialogFragment {
   }
 
   private void setupView(View view) {
-    SortBuilder builder = new SortBuilder(view.getContext());
+    SortBuilder builder = new SortBuilder(view.getContext(), id);
 
     RadioGroup sortByGroup = view.findViewById(R.id.sort_by_radio);
 
