@@ -29,6 +29,8 @@ import java.util.Locale;
 
 /** Used to manage the database for tags. */
 public class TagDb {
+  private static final String TAG = "TagDb";
+
   private final Context context;
 
   private final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
@@ -67,6 +69,11 @@ public class TagDb {
   }
 
   private long insertTag(Tag tag) {
+    if (!tag.isTagValid()) {
+      Log.e(TAG, "Invalid tag data: " + tag);
+      return -1;
+    }
+
     SQLiteDatabase db = TagDbHelper.getInstance(context).getWritableDatabase();
 
     ContentValues values = new ContentValues();
@@ -85,7 +92,6 @@ public class TagDb {
     values.put(TagEntry.COLUMN_NAME_COLLECTION, tag.getCollection());
     values.put(TagEntry.COLUMN_NAME_SHEET_MUSIC_TYPE, tag.getSheetMusicType());
     values.put(TagEntry.COLUMN_NAME_SHEET_MUSIC_LINK, tag.getSheetMusicLink());
-    values.put(TagEntry.COLUMN_NAME_SHEET_MUSIC_FILE, tag.getSheetMusicFile());
     values.put(TagEntry.COLUMN_NAME_LAST_MODIFIED_DATE, sdf.format(new Date()));
 
     long newRowId = db.insert(TagEntry.TABLE_NAME, null, values);
@@ -98,11 +104,8 @@ public class TagDb {
   }
 
   public void updateTags(List<Tag> tags) {
-    // Gets the data repository in write mode
-    SQLiteDatabase db = TagDbHelper.getInstance(context).getWritableDatabase();
-
     for (Tag tag : tags) {
-      updateTag(tag, db);
+      updateTag(tag);
     }
   }
 
@@ -111,17 +114,30 @@ public class TagDb {
       return;
     }
 
-    SQLiteDatabase db = TagDbHelper.getInstance(context).getWritableDatabase();
-
     long dbId = getDbIdFromTagId(videos.get(0).getTagId());
     if (dbId > -1) {
-      deleteVideos(dbId, db);
+      deleteVideos(dbId);
 
       insertVideos(videos, dbId);
     }
   }
 
-  private void updateTag(Tag tag, SQLiteDatabase db) {
+  private void updateTag(Tag tag) {
+    updateTag(tag, new Date());
+
+    long dbId = getDbIdFromTagId(tag.getId());
+    if (dbId > -1) {
+      deleteTracks(dbId);
+      deleteVideos(dbId);
+
+      insertTrack(tag.getTracks(), dbId);
+      insertVideos(tag.getVideos(), dbId);
+    }
+  }
+
+  void updateTag(Tag tag, Date lastModifiedDate) {
+    SQLiteDatabase db = TagDbHelper.getInstance(context).getWritableDatabase();
+
     // Create a new map of values, where column names are the keys
     ContentValues values = new ContentValues();
     values.put(TagEntry.COLUMN_NAME_TITLE, tag.getTitle());
@@ -138,24 +154,16 @@ public class TagDb {
     values.put(TagEntry.COLUMN_NAME_COLLECTION, tag.getCollection());
     values.put(TagEntry.COLUMN_NAME_SHEET_MUSIC_TYPE, tag.getSheetMusicType());
     values.put(TagEntry.COLUMN_NAME_SHEET_MUSIC_LINK, tag.getSheetMusicLink());
-    values.put(TagEntry.COLUMN_NAME_SHEET_MUSIC_FILE, tag.getSheetMusicFile());
-    values.put(TagEntry.COLUMN_NAME_LAST_MODIFIED_DATE, sdf.format(new Date()));
+    values.put(TagEntry.COLUMN_NAME_LAST_MODIFIED_DATE, sdf.format(lastModifiedDate));
     // Insert the new row, returning the primary key value of the new row
     String strFilter = TagEntry.COLUMN_NAME_ID + "=" + tag.getId();
     db.update(TagEntry.TABLE_NAME, values, strFilter, null);
     Log.d("TagDb,", "Updated tagId: " + tag.getId());
-
-    long dbId = getDbIdFromTagId(tag.getId());
-    if (dbId > -1) {
-      deleteTracks(dbId, db);
-      deleteVideos(dbId, db);
-
-      insertTrack(tag.getTracks(), dbId);
-      insertVideos(tag.getVideos(), dbId);
-    }
   }
 
-  private void deleteVideos(long dbId, SQLiteDatabase db) {
+  private void deleteVideos(long dbId) {
+    SQLiteDatabase db = TagDbHelper.getInstance(context).getWritableDatabase();
+
     // Define 'where' part of query.
     String selection = VideoEntry.COLUMN_NAME_TAG_ID + " LIKE ?";
     // Specify arguments in placeholder order.
@@ -165,7 +173,9 @@ public class TagDb {
     Log.d("VideoDB", "Number of Deleted rows: " + deletedRows);
   }
 
-  private void deleteTracks(long dbId, SQLiteDatabase db) {
+  private void deleteTracks(long dbId) {
+    SQLiteDatabase db = TagDbHelper.getInstance(context).getWritableDatabase();
+
     // Define 'where' part of query.
     String selection = LearningTracksEntry.COLUMN_NAME_TAG_ID + " LIKE ?";
     // Specify arguments in placeholder order.
@@ -175,7 +185,7 @@ public class TagDb {
     Log.d("LearningTrackDB", "Number of Deleted rows: " + deletedRows);
   }
 
-  private long getDbIdFromTagId(int tagId) {
+  long getDbIdFromTagId(int tagId) {
     SQLiteDatabase db = TagDbHelper.getInstance(context).getWritableDatabase();
 
     String sql =
@@ -502,7 +512,7 @@ public class TagDb {
   public void deleteList(ListProperties listProperties) {
     SQLiteDatabase db = TagDbHelper.getInstance(context).getWritableDatabase();
 
-    deleteListEntriesByListId(listProperties.getDbId(), db);
+    deleteListEntriesByListId(listProperties.getDbId());
 
     // Define 'where' part of query.
     String selection = ListPropertiesEntry._ID + " LIKE ?";
@@ -515,7 +525,9 @@ public class TagDb {
     setFavoriteListAsDefaultIfNeeded();
   }
 
-  private void deleteListEntriesByListId(long listDbId, SQLiteDatabase db) {
+  private void deleteListEntriesByListId(long listDbId) {
+    SQLiteDatabase db = TagDbHelper.getInstance(context).getWritableDatabase();
+
     // Define 'where' part of query.
     String selection = ListEntriesEntry.COLUMN_NAME_LIST_ID + " LIKE ?";
     // Specify arguments in placeholder order.
@@ -537,6 +549,11 @@ public class TagDb {
   }
 
   public void deleteFromDefaultList(Tag tag) {
+    if (!tag.isTagValid()) {
+      Log.e(TAG, "Invalid tag data: " + tag);
+      return;
+    }
+
     Log.d(
         "ListEntryDB",
         "Deleting from default list with title: "
@@ -570,10 +587,15 @@ public class TagDb {
   }
 
   private void deleteTag(Tag tag) {
+    if (!tag.isTagValid()) {
+      Log.e(TAG, "Invalid tag data: " + tag);
+      return;
+    }
+
     SQLiteDatabase db = TagDbHelper.getInstance(context).getWritableDatabase();
 
-    deleteTracks(tag.getDbId(), db);
-    deleteVideos(tag.getDbId(), db);
+    deleteTracks(tag.getDbId());
+    deleteVideos(tag.getDbId());
 
     String selection = TagEntry._ID + " LIKE ?";
     String[] selectionArgs = {tag.getDbId().toString()};
@@ -622,6 +644,11 @@ public class TagDb {
   }
 
   public Long isInDefaultList(Tag tag) {
+    if (!tag.isTagValid()) {
+      Log.e(TAG, "Invalid tag data: " + tag);
+      return null;
+    }
+
     ListProperties defaultList = getDefaultList();
     if (defaultList == null) {
       return null;
@@ -746,14 +773,13 @@ public class TagDb {
       tag.setCollection(c.getString(c.getColumnIndex(TagEntry.COLUMN_NAME_COLLECTION)));
       tag.setSheetMusicType(c.getString(c.getColumnIndex(TagEntry.COLUMN_NAME_SHEET_MUSIC_TYPE)));
       tag.setSheetMusicLink(c.getString(c.getColumnIndex(TagEntry.COLUMN_NAME_SHEET_MUSIC_LINK)));
-      tag.setSheetMusicFile(c.getString(c.getColumnIndex(TagEntry.COLUMN_NAME_SHEET_MUSIC_FILE)));
 
       ListProperties list =
           getListProperties(c.getInt(c.getColumnIndex(ListEntriesEntry.COLUMN_NAME_LIST_ID)));
       tag.setDownloaded(list.isDownloadSheet());
 
-      addTracks(tag, db, list.isDownloadTrack());
-      addVideos(tag, db);
+      addTracks(tag, list.isDownloadTrack());
+      addVideos(tag);
 
       tags.add(tag);
       Log.d("TagDb", "Got tag from list: " + tag.getId());
@@ -788,7 +814,9 @@ public class TagDb {
     }
   }
 
-  private void addTracks(Tag tag, SQLiteDatabase db, boolean isDownloaded) {
+  private void addTracks(Tag tag, boolean isDownloaded) {
+    SQLiteDatabase db = TagDbHelper.getInstance(context).getWritableDatabase();
+
     String sql =
         "SELECT * FROM "
             + LearningTracksEntry.TABLE_NAME
@@ -813,7 +841,9 @@ public class TagDb {
     c.close();
   }
 
-  private void addVideos(Tag tag, SQLiteDatabase db) {
+  private void addVideos(Tag tag) {
+    SQLiteDatabase db = TagDbHelper.getInstance(context).getWritableDatabase();
+
     String sql =
         "SELECT * FROM "
             + VideoEntry.TABLE_NAME

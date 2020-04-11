@@ -5,8 +5,8 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import androidx.annotation.NonNull;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -33,7 +33,6 @@ public class Tag implements Parcelable {
           tag.setCollection(source.readString());
           tag.setSheetMusicLink(source.readString());
           tag.setSheetMusicType(source.readString());
-          tag.setSheetMusicFile(source.readString());
           tag.setDbId(source.readLong());
           int size = source.readInt();
           for (int i = 0; i < size; i++) {
@@ -90,8 +89,6 @@ public class Tag implements Parcelable {
   private String sheetMusicLink;
 
   private String sheetMusicType;
-
-  private String sheetMusicFile;
 
   private ArrayList<VideoComponents> videos;
 
@@ -268,14 +265,6 @@ public class Tag implements Parcelable {
     this.sheetMusicType = type;
   }
 
-  public String getSheetMusicFile() {
-    return sheetMusicFile;
-  }
-
-  public void setSheetMusicFile(String file) {
-    this.sheetMusicFile = file;
-  }
-
   public boolean hasSheetMusic() {
     return !sheetMusicLink.equals("");
   }
@@ -311,8 +300,8 @@ public class Tag implements Parcelable {
     return tracks.get(part);
   }
 
-  public Collection<TrackComponents> getTracks() {
-    return tracks.values();
+  public List<TrackComponents> getTracks() {
+    return new ArrayList<>(tracks.values());
   }
 
   public boolean hasLearningTracks() {
@@ -341,6 +330,10 @@ public class Tag implements Parcelable {
     isDownloaded = downloaded;
   }
 
+  public boolean isTagValid() {
+    return id > 0 && postedDate != null && title != null;
+  }
+
   public void writeToParcel(Parcel parcel, int flags) {
     parcel.writeInt(id);
     parcel.writeString(title);
@@ -358,7 +351,6 @@ public class Tag implements Parcelable {
     parcel.writeString(collection);
     parcel.writeString(sheetMusicLink);
     parcel.writeString(sheetMusicType);
-    parcel.writeString(sheetMusicFile);
     if (dbId != null) {
       parcel.writeLong(dbId);
     } else {

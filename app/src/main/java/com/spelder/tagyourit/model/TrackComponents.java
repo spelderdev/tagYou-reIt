@@ -34,7 +34,7 @@ public class TrackComponents {
     return link;
   }
 
-  void setLink(String link) {
+  public void setLink(String link) {
     this.link = link;
   }
 
@@ -82,7 +82,7 @@ public class TrackComponents {
     isDownloaded = downloaded;
   }
 
-  boolean isDownloaded() {
+  public boolean isDownloaded() {
     return isDownloaded;
   }
 }

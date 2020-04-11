@@ -33,7 +33,6 @@ public class TagContract {
     static final String COLUMN_NAME_ARRANGER = "arranger";
     static final String COLUMN_NAME_LYRICS = "lyrics";
     static final String COLUMN_NAME_SHEET_MUSIC_TYPE = "sheet_music_type";
-    static final String COLUMN_NAME_SHEET_MUSIC_FILE = "sheet_music_file";
     static final String COLUMN_NAME_LAST_MODIFIED_DATE = "last_modified_date";
     static final String SQL_CREATE_ENTRIES =
         "CREATE TABLE "
@@ -78,9 +77,6 @@ public class TagContract {
             + TEXT_TYPE
             + COMMA_SEP
             + COLUMN_NAME_SHEET_MUSIC_LINK
-            + TEXT_TYPE
-            + COMMA_SEP
-            + COLUMN_NAME_SHEET_MUSIC_FILE
             + TEXT_TYPE
             + COMMA_SEP
             + COLUMN_NAME_LAST_MODIFIED_DATE
@@ -291,7 +287,7 @@ public class TagContract {
             + INT_TYPE
             + " )";
     static final String SQL_DELETE_ENTRIES = "DROP TABLE IF EXISTS " + TABLE_NAME;
-    static final String SQL_CREATE_DEFAULT_ENTRIES =
+    private static final String SQL_CREATE_DEFAULT_ENTRIES =
         "INSERT INTO "
             + TABLE_NAME
             + " ("
@@ -308,10 +304,14 @@ public class TagContract {
             + COLUMN_NAME_DOWNLOAD_TRACK
             + COMMA_SEP
             + COLUMN_NAME_DEFAULT_LIST
-            + ") VALUES "
+            + ") VALUES ";
+    static final String SQL_CREATE_DEFAULT_FAVORITES_ENTRY =
+        SQL_CREATE_DEFAULT_ENTRIES
             + "('Favorites', 0, 1, "
             + ListColor.ORANGE.getColorId()
-            + ", 1, 0, 1),"
+            + ", 1, 0, 1)";
+    static final String SQL_CREATE_DEFAULT_TEACHABLE_ENTRY =
+        SQL_CREATE_DEFAULT_ENTRIES
             + "('Teachable', 0, 8, "
             + ListColor.CYAN.getColorId()
             + ", 1, 0, 0)";

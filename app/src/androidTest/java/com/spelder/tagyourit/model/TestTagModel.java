@@ -10,7 +10,7 @@ import org.junit.Test;
 
 public class TestTagModel {
   @Test
-  public void testTag() {
+  public void testTagParcelable() {
     Tag tag = new Tag("1234");
     tag.setTitle("test");
     tag.setVersion("ver");
@@ -21,7 +21,6 @@ public class TestTagModel {
     tag.setLyrics("Lyrics");
     tag.setSheetMusicLink("http://barbershoptags.org");
     tag.setSheetMusicType("mp3");
-    tag.setSheetMusicFile("file");
     tag.setPostedDate(new Date());
     tag.addTrack("Bass", "http://barbershoptags.org", "pdf", false);
     tag.addTrack("Bari", "http://barbershoptags.org", "pdf", false);
@@ -64,7 +63,6 @@ public class TestTagModel {
     assertEquals(tag.getArrangerDisplay(), createdFromParcel.getArrangerDisplay());
     assertEquals(tag.getKey(), createdFromParcel.getKey());
     assertEquals(tag.getLyrics(), createdFromParcel.getLyrics());
-    assertEquals(tag.getSheetMusicFile(), createdFromParcel.getSheetMusicFile());
     assertEquals(tag.getSheetMusicLink(), createdFromParcel.getSheetMusicLink());
     assertEquals(tag.getSheetMusicFileName(), createdFromParcel.getSheetMusicFileName());
     assertEquals(tag.getVersion(), createdFromParcel.getVersion());

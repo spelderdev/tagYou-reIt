@@ -6,6 +6,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.text.TextUtils;
 import android.util.Log;
+import androidx.annotation.VisibleForTesting;
+import com.spelder.tagyourit.db.TagContract.ListPropertiesEntry;
 import com.spelder.tagyourit.db.TagContract.TagEntry;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -41,7 +43,7 @@ public class TagDbHelper extends SQLiteOpenHelper {
     return mInstance;
   }
 
-  // @VisibleForTesting
+  @VisibleForTesting
   public static void clearInstance() {
     mInstance = null;
   }
@@ -50,7 +52,8 @@ public class TagDbHelper extends SQLiteOpenHelper {
     db.execSQL(TagContract.TagEntry.SQL_CREATE_ENTRIES);
     db.execSQL(TagContract.LearningTracksEntry.SQL_CREATE_ENTRIES);
     db.execSQL(TagContract.ListPropertiesEntry.SQL_CREATE_ENTRIES);
-    db.execSQL(TagContract.ListPropertiesEntry.SQL_CREATE_DEFAULT_ENTRIES);
+    db.execSQL(TagContract.ListPropertiesEntry.SQL_CREATE_DEFAULT_FAVORITES_ENTRY);
+    db.execSQL(ListPropertiesEntry.SQL_CREATE_DEFAULT_TEACHABLE_ENTRY);
     db.execSQL(TagContract.ListEntriesEntry.SQL_CREATE_ENTRIES);
     db.execSQL(TagContract.RatingEntry.SQL_CREATE_ENTRIES);
     db.execSQL(TagContract.VideoEntry.SQL_CREATE_ENTRIES);
