@@ -21,6 +21,8 @@ import com.spelder.tagyourit.music.player.AudioPlayer;
 import com.spelder.tagyourit.music.processor.BalanceProcessor;
 import com.spelder.tagyourit.music.processor.MultiChannelToMono;
 import com.spelder.tagyourit.music.processor.PitchShiftProcessor;
+import com.spelder.tagyourit.music.processor.WaveformSimilarityBasedOverlapAdd;
+import com.spelder.tagyourit.music.processor.WaveformSimilarityBasedOverlapAdd.Parameters;
 import com.spelder.tagyourit.music.utility.MusicServiceNotificationHandler;
 import com.spelder.tagyourit.networking.DownloadFileTask;
 import java.io.File;
@@ -54,6 +56,8 @@ public class MusicService extends Service
   private BalanceProcessor balanceProcessor;
 
   private PitchShiftProcessor pitchShiftProcessor;
+
+  private WaveformSimilarityBasedOverlapAdd wsola;
 
   private MusicServiceNotificationHandler notificationHandler;
 
@@ -100,11 +104,14 @@ public class MusicService extends Service
     player.setOnErrorListener(this);
 
     balanceProcessor = new BalanceProcessor();
-    pitchShiftProcessor = new PitchShiftProcessor(0, player.getChannelSize());
+    pitchShiftProcessor = new PitchShiftProcessor(0, player);
     MultiChannelToMono monoProcessor = new MultiChannelToMono();
+    wsola = new WaveformSimilarityBasedOverlapAdd(Parameters.slowdownDefaults(1));
+
     player.addProcessor(balanceProcessor);
     player.addProcessor(monoProcessor);
     player.addProcessor(pitchShiftProcessor);
+    player.addProcessor(wsola);
   }
 
   public Tag getTag() {
@@ -216,8 +223,9 @@ public class MusicService extends Service
 
   public void setSpeed(Speed speed) {
     boolean applied = false;
-    if (player != null) {
-      applied = player.setSpeed(speed);
+    if (wsola != null) {
+      wsola.setParameters(Parameters.slowdownDefaults(speed.getSpeed(), wsola.getSampleRate()));
+      applied = true;
     }
 
     if (applied) {
@@ -278,6 +286,7 @@ public class MusicService extends Service
         File file = new File(trackFile);
         FileInputStream is = new FileInputStream(file);
         player.initialize(is.getFD());
+        wsola.setTrackWriter(player.getTrackWriter());
       } catch (Exception e) {
         Log.e("MUSIC SERVICE", "Error setting data source", e);
       }

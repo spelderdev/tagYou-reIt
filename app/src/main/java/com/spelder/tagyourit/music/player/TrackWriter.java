@@ -13,7 +13,7 @@ import java.io.PipedInputStream;
 import java.util.List;
 
 /** Writes the raw audio buffer to the AudioTrack, which actually plays the audio. */
-class TrackWriter implements Runnable {
+public class TrackWriter implements Runnable {
   private static final String TAG = TrackWriter.class.getName();
   private final PipedInputStream inputStream;
   private final AudioFormat format;
@@ -21,6 +21,7 @@ class TrackWriter implements Runnable {
   private List<AudioProcessor> processors;
   private AudioTrack audioTrack;
   private boolean running = false;
+  private int bufferSize = AudioPlayer.BUFFER_SIZE;
 
   TrackWriter(PipedInputStream inputStream, AudioFormat format, PlayerState state) {
     this.inputStream = inputStream;
@@ -51,6 +52,14 @@ class TrackWriter implements Runnable {
             AudioTrack.MODE_STREAM);
   }
 
+  public void setBufferSize(int bufferSize) {
+    this.bufferSize = bufferSize * 4;
+  }
+
+  public int getBufferSize(){
+    return bufferSize;
+  }
+
   @Override
   public void run() {
     running = true;
@@ -59,11 +68,15 @@ class TrackWriter implements Runnable {
 
       audioTrack.play();
 
-      byte[] chunk = new byte[AudioPlayer.BUFFER_SIZE];
+      byte[] chunk = new byte[bufferSize];
       while (state.isRunning()) {
+        if (chunk.length != bufferSize) {
+          chunk = new byte[bufferSize];
+        }
+
         state.waitPlay();
         if (inputStream != null
-            && inputStream.available() >= AudioPlayer.BUFFER_SIZE
+            && inputStream.available() >= bufferSize
             && inputStream.read(chunk) != -1) {
           AudioEvent event = new AudioEvent(format.getChannels());
           event.setByteBuffer(chunk);

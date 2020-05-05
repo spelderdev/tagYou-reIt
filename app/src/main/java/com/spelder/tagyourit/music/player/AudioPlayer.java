@@ -241,6 +241,14 @@ public class AudioPlayer {
   }
 
   public int getChannelSize() {
-    return BUFFER_SIZE / 4;
+    if (trackWriter != null) {
+      return trackWriter.getBufferSize() / 4;
+    } else {
+      return BUFFER_SIZE / 4;
+    }
+  }
+
+  public TrackWriter getTrackWriter() {
+    return trackWriter;
   }
 }

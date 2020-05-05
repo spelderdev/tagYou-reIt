@@ -8,6 +8,7 @@ import static java.lang.Math.sqrt;
 
 import android.util.Log;
 import com.spelder.tagyourit.music.model.AudioEvent;
+import com.spelder.tagyourit.music.player.AudioPlayer;
 import org.apache.commons.math3.complex.Complex;
 import org.apache.commons.math3.transform.DftNormalization;
 import org.apache.commons.math3.transform.FastFourierTransformer;
@@ -19,21 +20,23 @@ public class PitchShiftProcessor implements AudioProcessor {
 
   private static final int O_SAMPLE = 8;
 
-  private final int size;
+  private final AudioPlayer player;
 
-  private final float[] gInFIFO;
+  private int size;
 
-  private final float[] gOutFIFO;
+  private float[] gInFIFO;
 
-  private final double[] gLastPhase;
+  private float[] gOutFIFO;
 
-  private final float[] gSumPhase;
+  private double[] gLastPhase;
 
-  private final float[] gOutputAccumulator;
+  private float[] gSumPhase;
 
-  private final double[] gAnaFreq;
+  private float[] gOutputAccumulator;
 
-  private final double[] gAnaMagnitude;
+  private double[] gAnaFreq;
+
+  private double[] gAnaMagnitude;
 
   private final FastFourierTransformer fft;
 
@@ -43,8 +46,20 @@ public class PitchShiftProcessor implements AudioProcessor {
 
   private int gRover = 0;
 
-  private PitchShiftProcessor(int size) {
-    this.size = size;
+  private PitchShiftProcessor(AudioPlayer player) {
+    this.player = player;
+    initialize();
+    fft = new FastFourierTransformer(DftNormalization.STANDARD);
+  }
+
+  public PitchShiftProcessor(int semitones, AudioPlayer player) {
+    this(player);
+    setPitch(semitones);
+    Log.d(TAG, "Pitch shift factor: " + pitchShift);
+  }
+
+  private void initialize() {
+    size = player.getChannelSize();
     gInFIFO = new float[size];
     gOutFIFO = new float[size];
     gFftWorkspace = new Complex[size];
@@ -53,13 +68,6 @@ public class PitchShiftProcessor implements AudioProcessor {
     gOutputAccumulator = new float[2 * size];
     gAnaFreq = new double[size];
     gAnaMagnitude = new double[size];
-    fft = new FastFourierTransformer(DftNormalization.STANDARD);
-  }
-
-  public PitchShiftProcessor(int semitones, int size) {
-    this(size);
-    setPitch(semitones);
-    Log.d(TAG, "Pitch shift factor: " + pitchShift);
   }
 
   public void setPitch(int semitones) {
@@ -76,10 +84,14 @@ public class PitchShiftProcessor implements AudioProcessor {
       return;
     }
 
+    if (size != player.getChannelSize()) {
+      initialize();
+    }
+
     for (int channel = 1; channel <= audioEvent.getChannelNumber(); channel++) {
       float[] floatBuffer = audioEvent.getFloatBuffer(channel);
       float[] outBuffer = new float[floatBuffer.length];
-      pitchShift(size, (float) audioEvent.getSampleRate(), floatBuffer, outBuffer);
+      pitchShift(player.getChannelSize(), (float) audioEvent.getSampleRate(), floatBuffer, outBuffer);
       audioEvent.setFloatBuffer(outBuffer, channel);
     }
   }
