@@ -52,6 +52,7 @@ public class WaveformSimilarityBasedOverlapAdd implements AudioProcessor {
   public void setTrackWriter(TrackWriter writer) {
     this.writer = writer;
     writer.setBufferSize(getInputBufferSize());
+    writer.setOverlapSize(getOverlap());
   }
 
   public void setParameters(Parameters params) {
@@ -98,6 +99,7 @@ public class WaveformSimilarityBasedOverlapAdd implements AudioProcessor {
     newParameters = null;
     if (writer != null) {
       writer.setBufferSize(getInputBufferSize());
+      writer.setOverlapSize(getOverlap());
     }
   }
 
@@ -209,10 +211,6 @@ public class WaveformSimilarityBasedOverlapAdd implements AudioProcessor {
   public void process(AudioEvent audioEvent) {
     if (newParameters != null) {
       applyNewParameters();
-    }
-
-    if (tempo > 0.999 && tempo < 1.00001) {
-      return;
     }
 
     if (audioEvent.getSampleRate() != sampleRate) {

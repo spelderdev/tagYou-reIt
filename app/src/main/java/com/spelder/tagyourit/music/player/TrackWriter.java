@@ -22,6 +22,7 @@ public class TrackWriter implements Runnable {
   private AudioTrack audioTrack;
   private boolean running = false;
   private int bufferSize = AudioPlayer.BUFFER_SIZE;
+  private int overlapSize = bufferSize / 2;
 
   TrackWriter(PipedInputStream inputStream, AudioFormat format, PlayerState state) {
     this.inputStream = inputStream;
@@ -56,8 +57,12 @@ public class TrackWriter implements Runnable {
     this.bufferSize = bufferSize * 4;
   }
 
-  public int getBufferSize(){
+  public int getBufferSize() {
     return bufferSize;
+  }
+
+  public void setOverlapSize(int overlapSize) {
+    this.overlapSize = overlapSize * 4;
   }
 
   @Override
@@ -74,10 +79,14 @@ public class TrackWriter implements Runnable {
           chunk = new byte[bufferSize];
         }
 
+        int stepSize = bufferSize - overlapSize;
+        System.arraycopy(chunk, stepSize, chunk, 0, overlapSize);
+
         state.waitPlay();
         if (inputStream != null
-            && inputStream.available() >= bufferSize
-            && inputStream.read(chunk) != -1) {
+            && inputStream.available() >= stepSize
+            && inputStream.read(chunk, overlapSize, stepSize) != -1) {
+
           AudioEvent event = new AudioEvent(format.getChannels());
           event.setByteBuffer(chunk);
           event.setSampleRate(format.getSampleRate());
